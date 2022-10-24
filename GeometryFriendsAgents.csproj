@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6F45AB29-7874-4B3D-8073-B2D5F0C1A35F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GeometryFriendsAgents</RootNamespace>
+    <AssemblyName>GeometryFriendsAgents</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>GeometryFriendsGame\Release\Agents\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>GeometryFriendsGame\Release\Agents\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GeometryFriends">
+      <HintPath>GeometryFriendsGame\Release\GeometryFriends.exe</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CircleAgent.cs" />
+    <Compile Include="DFS\DFS.cs" />
+    <Compile Include="DFS\DFSNode.cs" />
+    <Compile Include="GameStates\CircleGameState.cs" />
+    <Compile Include="GameStates\GameState.cs" />
+    <Compile Include="GameStates\InterPlatformPlayedGameStateInfo.cs" />
+    <Compile Include="GameStates\IntraPlatformPlayedGameStateInfo.cs" />
+    <Compile Include="GameStates\SixthGameState.cs" />
+    <Compile Include="GameStates\SquareGameState.cs" />
+    <Compile Include="Graph\CircleGraph.cs" />
+    <Compile Include="Graph\Graph.cs" />
+    <Compile Include="Graph\GraphLink.cs" />
+    <Compile Include="Graph\GraphNode.cs" />
+    <Compile Include="Graph\SquareGraph.cs" />
+    <Compile Include="Learning\CircleLearningCenter.cs" />
+    <Compile Include="Learning\LearningCenter.cs" />
+    <Compile Include="Learning\SquareLearningCenter.cs" />
+    <Compile Include="Managers\CiclePlatformManager.cs" />
+    <Compile Include="Managers\PlatformManager.cs" />
+    <Compile Include="Managers\SquarePlatformManager.cs" />
+    <Compile Include="Model\CircleWorldModel.cs" />
+    <Compile Include="Model\SquareWorldModel.cs" />
+    <Compile Include="Model\WorldModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RectangleAgent.cs" />
+    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="WorldObjects\Collectible.cs" />
+    <Compile Include="WorldObjects\Platforms\CirclePlatform.cs" />
+    <Compile Include="WorldObjects\Platforms\Platform.cs" />
+    <Compile Include="WorldObjects\Platforms\SquarePlatform.cs" />
+    <Compile Include="WorldObjects\WorldObject.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="GeometryFriendsGame\Release\Content\Common\background.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Common\blank.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Common\geometryfriends-logo.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Common\geometryfriends-logo1.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Common\gradient.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Common\Lock-icon.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Common\logo.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Common\test.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Common\tools.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Common\wiimote.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\BlackPlatformToolCursor.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\BlackPlatformToolIcon.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\CircleStartToolIcon.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\CollectibleToolIcon.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\DialogBg.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\EraserToolIcon.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\ExitToolIcon.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\GreenPlatformToolIcon.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\SquareStartToolIcon.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\LevelEditor\YellowPlatformToolIcon.png" />
+    <Content Include="GeometryFriendsGame\Release\Content\Sound\contract.wav" />
+    <Content Include="GeometryFriendsGame\Release\Content\Sound\down.wav" />
+    <Content Include="GeometryFriendsGame\Release\Content\Sound\grow.wav" />
+    <Content Include="GeometryFriendsGame\Release\Content\Sound\levelMusic.wav" />
+    <Content Include="GeometryFriendsGame\Release\Content\Sound\menuMusic.wav" />
+    <Content Include="GeometryFriendsGame\Release\Content\Sound\nyanyan.wav" />
+    <Content Include="GeometryFriendsGame\Release\Content\Sound\spring1.wav" />
+    <Content Include="GeometryFriendsGame\Release\Content\Sound\up.wav" />
+    <Content Include="GeometryFriendsGame\Release\Content\Sound\victoryMusic.wav" />
+    <Content Include="GeometryFriendsGame\Release\Content\XBoxLogoWithBorder.png" />
+    <Content Include="GeometryFriendsGame\Release\FarseerPhysics.dll" />
+    <Content Include="GeometryFriendsGame\Release\FarseerPhysics.pdb" />
+    <Content Include="GeometryFriendsGame\Release\GeometryFriends.exe" />
+    <Content Include="GeometryFriendsGame\Release\GeometryFriends.pdb" />
+    <Content Include="GeometryFriendsGame\Release\Levels\AlfaCircleLevels.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\AlfaSquareLevels.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Circle 2013 Competition.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Circle 2014 Competition.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Comp C.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Comp R.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Compcoop.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Cooperative 2013 Competition.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Cooperative 2014 Competition.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Dangerous.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\GF 2015 Circle Track.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\GF 2015 Coop Track.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\GF 2015 Rectangle Track.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\GF-CoG 2019 - Rectangle Track.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\GF-CoG 2022 - Cooperation Track.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Hard Core.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Levels.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\New World.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\OtherWorld.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Recommended.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Rectangle 2013 Competition.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\Rectangle 2014 Competition.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\SingleTest.xml" />
+    <Content Include="GeometryFriendsGame\Release\Levels\tutorials.xml" />
+    <Content Include="GeometryFriendsGame\Release\OpenTK.dll" />
+    <Content Include="GeometryFriendsGame\Release\OpenTK.pdb" />
+    <Content Include="GeometryFriendsGame\Release\OpenTK.xml" />
+    <Content Include="GeometryFriendsGame\Release\WiimoteInput.dll" />
+    <Content Include="GeometryFriendsGame\Release\WiimoteLib.dll" />
+    <Content Include="obj\Debug\GeometryFriendsAgents.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\GeometryFriendsAgents.dll" />
+    <Content Include="obj\Debug\GeometryFriendsAgents.pdb" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GeometryFriendsGame\Release\Content\Common\geometryfriends-logo.xcf" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\Arista.ttf" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\CARTOONIA.TTF" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\detailsFont.spritefont" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\diagnosticFont.spritefont" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\elevatorCollFont.spritefont" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\frameRateCounterFont.spritefont" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\gameFont.spritefont" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\menuFont.spritefont" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\subtitleFont.spritefont" />
+    <None Include="GeometryFriendsGame\Release\Content\Fonts\titleFont.spritefont" />
+    <None Include="GeometryFriendsGame\Release\OpenTK.dll.config" />
+    <None Include="obj\Debug\AssemblyReference.cache" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\GeometryFriendsAgents.csprojAssemblyReference.cache" />
+    <None Include="obj\Debug\ReinforcementLearningAgents.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\ReinforcementLearningAgents.csprojAssemblyReference.cache" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GeometryFriendsGame\Release\Agents\" />
+    <Folder Include="obj\Debug\TempPE\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
