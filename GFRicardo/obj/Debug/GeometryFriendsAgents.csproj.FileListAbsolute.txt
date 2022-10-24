@@ -1,0 +1,17 @@
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\IST Agents.dll
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\IST Agents.pdb
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\GeometryFriends.exe
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\FarseerPhysics.dll
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\OpenTK.dll
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\WiimoteInput.dll
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\WiimoteLib.dll
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\GeometryFriends.pdb
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\FarseerPhysics.pdb
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\OpenTK.pdb
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\OpenTK.xml
+C:\Users\llama\Desktop\GFRicardo\GeometryFriendsGame\Release\Agents\OpenTK.dll.config
+C:\Users\llama\Desktop\GFRicardo\obj\Debug\GeometryFriendsAgents.csprojAssemblyReference.cache
+C:\Users\llama\Desktop\GFRicardo\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
+C:\Users\llama\Desktop\GFRicardo\obj\Debug\GeometryFriendsAgents.csproj.CopyComplete
+C:\Users\llama\Desktop\GFRicardo\obj\Debug\IST Agents.dll
+C:\Users\llama\Desktop\GFRicardo\obj\Debug\IST Agents.pdb
