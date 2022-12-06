@@ -168,7 +168,7 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
-            //No platform union were needed
+            //No platform union is needed
 
             //Rename id
             int i = 0;
