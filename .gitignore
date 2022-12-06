@@ -1,5 +1,5 @@
 
 *.suo
-GFUCM/obj/Debug/*.*
+*/obj/Debug/
 *.cache
 GFUCM/GeometryFriendsAgents.sln
