@@ -1,0 +1,4 @@
+
+*.suo
+GFUCM/obj/Debug/*.*
+*.cache
