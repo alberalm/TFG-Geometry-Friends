@@ -229,10 +229,13 @@ namespace GeometryFriendsAgents
                     //simulate 2 seconds (predict what will happen 2 seconds ahead)
                     toSim.Update(2);
 
+               
                     //prepare all the debug information to be passed to the agents manager
                     List<DebugInformation> newDebugInfo = new List<DebugInformation>();
                     //clear any previously passed debug information (information passed to the manager is cumulative unless cleared in this way)
                     newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
+                    
+                    
                     levelMap.debug(ref newDebugInfo);             
                     //set all the debug information to be read by the agents manager
                     debugInfo = newDebugInfo.ToArray();                    

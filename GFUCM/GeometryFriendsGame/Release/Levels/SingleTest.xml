@@ -51,4 +51,21 @@
       <HighScore name="No Name" value="6" />
     </HighScores>
   </Level2>
+  <Level3>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="184" Y="184" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="1112" Y="648" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="704" height="80" X="152" Y="280" centered="false" />
+      <Obstacle width="96" height="480" X="856" Y="280" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+  </Level3>
 </Levels>

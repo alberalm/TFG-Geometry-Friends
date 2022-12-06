@@ -23,8 +23,8 @@ namespace GeometryFriendsAgents
         public const float FALL_VELOCITYY = 0;
         public const float GRAVITY = 299.1f;
 
-        public const int LEVEL_MAP_WIDTH = 159;
-        public const int LEVEL_MAP_HEIGHT = 97;
+        public const int LEVEL_MAP_WIDTH = 160;
+        public const int LEVEL_MAP_HEIGHT = 100;
         public const int LEVEL_WIDTH = 1272;
         public const int LEVEL_HEIGHT = 776;
         public const int PIXEL_LENGTH = 8;
