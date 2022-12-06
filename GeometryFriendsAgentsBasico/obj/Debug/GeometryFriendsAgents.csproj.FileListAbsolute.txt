@@ -1,0 +1,12 @@
+C:\Users\llama\Downloads\GeometryFriendsAgents\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.dll
+C:\Users\llama\Downloads\GeometryFriendsAgents\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.pdb
+C:\Users\llama\Downloads\GeometryFriendsAgents\obj\Debug\GeometryFriendsAgents.csprojAssemblyReference.cache
+C:\Users\llama\Downloads\GeometryFriendsAgents\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
+C:\Users\llama\Downloads\GeometryFriendsAgents\obj\Debug\GeometryFriendsAgents.dll
+C:\Users\llama\Downloads\GeometryFriendsAgents\obj\Debug\GeometryFriendsAgents.pdb
+C:\Users\llama\Desktop\GeometryFriendsAgents - copia\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.dll
+C:\Users\llama\Desktop\GeometryFriendsAgents - copia\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.pdb
+C:\Users\llama\Desktop\GeometryFriendsAgents - copia\obj\Debug\GeometryFriendsAgents.csprojAssemblyReference.cache
+C:\Users\llama\Desktop\GeometryFriendsAgents - copia\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
+C:\Users\llama\Desktop\GeometryFriendsAgents - copia\obj\Debug\GeometryFriendsAgents.dll
+C:\Users\llama\Desktop\GeometryFriendsAgents - copia\obj\Debug\GeometryFriendsAgents.pdb
