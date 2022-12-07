@@ -11,10 +11,11 @@ namespace GeometryFriendsAgents
 {
     class LevelMap
     {
-        public enum pixelType
+        public enum PixelType
         {
             EMPTY, OBSTACLE, DIAMOND, PLATFORM
         };
+        
         public struct Platform
         {
             public int id;
@@ -52,12 +53,11 @@ namespace GeometryFriendsAgents
             }
         }
 
-
         List<Platform> platformList;
 
-        private int[] COLLECTIBLE_SIZE = new int[] { 1, 2, 3, 3, 2, 1 };//Divided by 2
+        private readonly int[] COLLECTIBLE_SIZE = new int[] { 1, 2, 3, 3, 2, 1 };//Divided by 2
 
-        public pixelType[,] levelMap = new pixelType[GameInfo.LEVEL_MAP_WIDTH , GameInfo.LEVEL_MAP_HEIGHT]; //x=i, y=j
+        public PixelType[,] levelMap = new PixelType[GameInfo.LEVEL_MAP_WIDTH , GameInfo.LEVEL_MAP_HEIGHT]; //x=i, y=j
 
         public CollectibleRepresentation[] initialCollectiblesInfo;
 
@@ -85,7 +85,6 @@ namespace GeometryFriendsAgents
             }
         }
 
-
         public static MapPoint ConvertPointIntoArrayPoint(Point value)
         {
             return new MapPoint(ConvertValue_PointIntoArrayPoint(value.x), ConvertValue_PointIntoArrayPoint(value.y));
@@ -106,7 +105,7 @@ namespace GeometryFriendsAgents
             return arrayValue * GameInfo.PIXEL_LENGTH;
         }
 
-        public pixelType[,] GetlevelMap()
+        public PixelType[,] GetlevelMap()
         {
             return levelMap;
         }
@@ -121,8 +120,16 @@ namespace GeometryFriendsAgents
 
             SetObstacles(cPI);
 
-            IdentifyPlatforms(oI, cPI);
+            IdentifyPlatforms(oI);
+
+            IdentifyPlatforms(cPI);
+
+            ObstacleRepresentation bottomPlatform = new ObstacleRepresentation(GameInfo.LEVEL_WIDTH / 2, GameInfo.LEVEL_MAP_HEIGHT - 4, GameInfo.LEVEL_WIDTH - 2 * GameInfo.CIRCLE_RADIUS, 1);
+
+            IdentifyPlatforms(new ObstacleRepresentation[] { bottomPlatform });
+
             PlatformUnion();
+
             //DEBUG
             String s = "\n";
             foreach (Platform p in platformList)
@@ -135,54 +142,84 @@ namespace GeometryFriendsAgents
             }
             Log.LogInformation(s, true);
         }
-        private void PlatformUnion()
+
+        private void SetCollectibles(CollectibleRepresentation[] colI)
         {
-            foreach (Platform p1 in platformList)
+            foreach (CollectibleRepresentation d in colI)
             {
-                foreach (Platform p2 in platformList)
+                int xMap = (int)(d.X / GameInfo.PIXEL_LENGTH);
+                int yMap = (int)(d.Y / GameInfo.PIXEL_LENGTH);
+
+                for (int x = xMap - 3; x < xMap + 3; x++)
                 {
-                    if (p1.yTop == p2.yTop)
+                    int i = x - xMap + 3;
+                    for (int k = -COLLECTIBLE_SIZE[i]; k < COLLECTIBLE_SIZE[i]; k++)
                     {
-                        if(p1.rightEdge+2== p2.leftEdge)//Union is needed
-                        {
-                            levelMap[p1.rightEdge + 1, p1.yTop] = pixelType.PLATFORM;
+                        levelMap[x, yMap + k] = PixelType.DIAMOND;
 
-                            platformList.Add(new Platform(p1.id, p1.yTop, p1.leftEdge, p2.rightEdge, new List<MoveInformation>()));
-                            platformList.Remove(p1);
-                            platformList.Remove(p2);
-                            //Each time two platforms are unified, process starts again (I don't know how foreach works when iterable is modified inside the construction)
-                            PlatformUnion();
-                            return;
-                        }
-                        if (p2.rightEdge + 2 == p1.leftEdge)//Union is needed
-                        {
-                            levelMap[p2.rightEdge + 1, p1.yTop] = pixelType.PLATFORM;
-
-                            platformList.Add(new Platform(p1.id, p1.yTop, p2.leftEdge, p1.rightEdge, new List<MoveInformation>()));
-                            platformList.Remove(p1);
-                            platformList.Remove(p2);
-
-                            PlatformUnion();
-                            return;
-                        }
                     }
                 }
             }
-            //No platform union is needed
-
-            //Rename id
-            int i = 0;
-            List<Platform> newPlatformList = new List<Platform>();
-            foreach (Platform p in platformList)
-            {
-                newPlatformList.Add(new Platform(i, p.yTop, p.leftEdge, p.rightEdge, new List<MoveInformation>()));
-                i++;
-            }
-            platformList = newPlatformList;
         }
-        private void IdentifyPlatforms(ObstacleRepresentation[] oI, ObstacleRepresentation[] cPI)
+
+        private void SetDefaultObstacles()
         {
-            //TODO cPI
+            //Top obstacle
+            for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
+            {
+                for (int y = 0; y < 5; y++)
+                {
+                    levelMap[x, y] = PixelType.OBSTACLE;
+                }
+            }
+            //Right obstacle
+            for (int x = GameInfo.LEVEL_MAP_WIDTH - 5; x < GameInfo.LEVEL_MAP_WIDTH; x++)
+            {
+                for (int y = 0; y < GameInfo.LEVEL_MAP_HEIGHT; y++)
+                {
+                    levelMap[x, y] = PixelType.OBSTACLE;
+                }
+            }
+            //Bottom obstacle
+            for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
+            {
+                for (int y = GameInfo.LEVEL_MAP_HEIGHT - 5; y < GameInfo.LEVEL_MAP_HEIGHT; y++)
+                {
+                    levelMap[x, y] = PixelType.OBSTACLE;
+                }
+            }
+            //Left obstacle
+            for (int x = 0; x < 5; x++)
+            {
+                for (int y = 0; y < GameInfo.LEVEL_MAP_HEIGHT; y++)
+                {
+                    levelMap[x, y] = PixelType.OBSTACLE;
+                }
+            }
+        }
+
+        private void SetObstacles(ObstacleRepresentation[] oI)
+        {
+            foreach (ObstacleRepresentation o in oI)
+            {
+                int xMap = (int)(o.X / GameInfo.PIXEL_LENGTH);
+                int yMap = (int)(o.Y / GameInfo.PIXEL_LENGTH);
+                int height = (int)(o.Height / GameInfo.PIXEL_LENGTH);
+                int width = (int)(o.Width / GameInfo.PIXEL_LENGTH);
+
+                for (int x = xMap - width / 2; x < (xMap + width / 2); x++)
+                {
+                    for (int y = yMap - height / 2; y < (yMap + height / 2); y++)
+                    {
+                        levelMap[x, y] = PixelType.OBSTACLE;
+
+                    }
+                }
+            }
+        }
+
+        private void IdentifyPlatforms(ObstacleRepresentation[] oI)
+        {
             platformList = new List<Platform>();
             bool prevPlatform = false;
             int xleft = 0;
@@ -195,8 +232,8 @@ namespace GeometryFriendsAgents
                 int leftEdge= xMap - width / 2 + 1;
                 int rightEdge = xMap + width / 2 - 1;
                 int yTop = yMap - height / 2;
-
                 prevPlatform = false;
+
                 for (int x = leftEdge; x <= rightEdge; x++)
                 {
                     bool flag = false;
@@ -205,7 +242,7 @@ namespace GeometryFriendsAgents
                     {
                         for(int j=yTop-1; j> yTop-2* GameInfo.CIRCLE_RADIUS/ GameInfo.PIXEL_LENGTH; j--)
                         {
-                            if(levelMap[i,j]==pixelType.OBSTACLE|| levelMap[i, j] == pixelType.PLATFORM)
+                            if(levelMap[i,j]==PixelType.OBSTACLE|| levelMap[i, j] == PixelType.PLATFORM)
                             {
                                 flag = true;
                             }
@@ -213,12 +250,11 @@ namespace GeometryFriendsAgents
                     }
                     if (!flag)
                     {
-                        levelMap[x, yTop] = pixelType.PLATFORM;
+                        levelMap[x, yTop] = PixelType.PLATFORM;
                         if (!prevPlatform)
                         {
                             xleft = x;
                         }
-                        
                         prevPlatform = true;
                     }
                     else
@@ -234,132 +270,56 @@ namespace GeometryFriendsAgents
                 {
                     platformList.Add(new Platform(platformList.Count, yTop, xleft, rightEdge, new List<MoveInformation>()));
                 }
-
-
             }
+        }
 
-            //Bottom obstacle
-            prevPlatform = false;
-            xleft = 0;
-            for (int x = GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; x < GameInfo.LEVEL_MAP_WIDTH- GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; x++)
+        private void PlatformUnion()
+        {
+            foreach (Platform p1 in platformList)
             {
-                int yTop = GameInfo.LEVEL_MAP_HEIGHT - 5;
-                bool flag = false;
-                //Square=Cirle
-                for (int i = x - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i <= x + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
+                foreach (Platform p2 in platformList)
                 {
-                    for (int j = yTop - 1; j > yTop - 2 * GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; j--)
+                    if (p1.yTop == p2.yTop)
                     {
-                        if (levelMap[i, j] == pixelType.OBSTACLE || levelMap[i, j] == pixelType.PLATFORM)
+                        if (p1.rightEdge + 2 == p2.leftEdge) //Union is needed
                         {
-                            flag = true;
+                            levelMap[p1.rightEdge + 1, p1.yTop] = PixelType.PLATFORM;
+
+                            platformList.Add(new Platform(p1.id, p1.yTop, p1.leftEdge, p2.rightEdge, new List<MoveInformation>()));
+                            platformList.Remove(p1);
+                            platformList.Remove(p2);
+                            // Each time two platforms are unified, process starts again (I don't know how foreach works when iterable is modified inside the construction)
+                            PlatformUnion();
+                            return;
+                        }
+                        if (p2.rightEdge + 2 == p1.leftEdge) //Union is needed
+                        {
+                            levelMap[p2.rightEdge + 1, p1.yTop] = PixelType.PLATFORM;
+
+                            platformList.Add(new Platform(p1.id, p1.yTop, p2.leftEdge, p1.rightEdge, new List<MoveInformation>()));
+                            platformList.Remove(p1);
+                            platformList.Remove(p2);
+
+                            PlatformUnion();
+                            return;
                         }
                     }
                 }
-                if (!flag)
-                {
-                    levelMap[x, yTop] = pixelType.PLATFORM;
-                    if (!prevPlatform)
-                    {
-                        xleft = x;
-                    }
+            }
+            // No more platform union is needed
 
-                    prevPlatform = true;
-                }
-                else
-                {
-                    if (prevPlatform)
-                    {
-                        platformList.Add(new Platform(platformList.Count, yTop, xleft, x - 1, new List<MoveInformation>()));
-                    }
-                    prevPlatform = false;
-                }
-
-            }
-            if (prevPlatform)
+            // Rename id
+            int i = 0;
+            List<Platform> newPlatformList = new List<Platform>();
+            foreach (Platform p in platformList)
             {
-                platformList.Add(new Platform(platformList.Count, GameInfo.LEVEL_MAP_HEIGHT - 5, xleft, GameInfo.LEVEL_MAP_WIDTH - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH-1, new List<MoveInformation>()));
+                newPlatformList.Add(new Platform(i, p.yTop, p.leftEdge, p.rightEdge, new List<MoveInformation>()));
+                i++;
             }
-
-        }
-        private void SetDefaultObstacles()
-        {
-            //Top obstacle
-            for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
-            {
-                for (int y = 0; y < 5; y++)
-                {
-                    levelMap[x, y] = pixelType.OBSTACLE;
-                }
-            }
-            //Right obstacle
-            for (int x = GameInfo.LEVEL_MAP_WIDTH-5; x < GameInfo.LEVEL_MAP_WIDTH; x++)
-            {
-                for (int y = 0; y < GameInfo.LEVEL_MAP_HEIGHT; y++)
-                {
-                    levelMap[x, y] = pixelType.OBSTACLE;
-                }
-            }
-            //Bottom obstacle
-            for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
-            {
-                for (int y = GameInfo.LEVEL_MAP_HEIGHT-5; y < GameInfo.LEVEL_MAP_HEIGHT; y++)
-                {
-                    levelMap[x, y] = pixelType.OBSTACLE;
-                }
-            }
-            //Left obstacle
-            for (int x = 0; x < 5; x++)
-            {
-                for (int y = 0; y < GameInfo.LEVEL_MAP_HEIGHT; y++)
-                {
-                    levelMap[x, y] = pixelType.OBSTACLE;
-                }
-            }
+            platformList = newPlatformList;
         }
 
-        private void SetObstacles(ObstacleRepresentation[] oI)
-        {
-            foreach (ObstacleRepresentation o in oI)
-            {
-                int xMap = (int)(o.X / GameInfo.PIXEL_LENGTH);
-                int yMap = (int)(o.Y / GameInfo.PIXEL_LENGTH);
-                int height = (int)(o.Height / GameInfo.PIXEL_LENGTH);
-                int width = (int)(o.Width / GameInfo.PIXEL_LENGTH);
-
-                for (int x = xMap - width/2; x < (xMap + width/2); x++)
-                {
-                    for (int y = yMap- height / 2; y < (yMap + height/2); y++)
-                    {
-                        levelMap[x, y] = pixelType.OBSTACLE;
-                        
-                    }
-                }
-            }
-        }
-
-        private void SetCollectibles(CollectibleRepresentation[] colI)
-        {
-
-            foreach (CollectibleRepresentation d in colI)
-            {
-                int xMap = (int)(d.X / GameInfo.PIXEL_LENGTH);
-                int yMap = (int)(d.Y / GameInfo.PIXEL_LENGTH);
-                
-                for (int x = xMap-3; x < xMap+3; x++)
-                {
-                    int i = x - xMap + 3;
-                    for (int k =-COLLECTIBLE_SIZE[i]; k< COLLECTIBLE_SIZE[i]; k++)
-                    {
-                        levelMap[x, yMap + k] = pixelType.DIAMOND;
-                        
-                    }
-                }
-            }
-        }
-
-
-        public void debug(ref List<DebugInformation> debugInformation)
+        public void Debug(ref List<DebugInformation> debugInformation)
         {
             GeometryFriends.XNAStub.Color color = GeometryFriends.XNAStub.Color.Red;
             for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
@@ -367,21 +327,21 @@ namespace GeometryFriendsAgents
                 for (int y = 0; y < GameInfo.LEVEL_MAP_HEIGHT; y++)
                 {
 
-                    if (levelMap[x, y] == pixelType.OBSTACLE)
+                    if (levelMap[x, y] == PixelType.OBSTACLE)
                     {
                         debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH-4, GameInfo.PIXEL_LENGTH-4), color));
-                        change(ref color);
+                        Change(ref color);
 
                     }
-                    else if (levelMap[x, y] == pixelType.EMPTY)
+                    else if (levelMap[x, y] == PixelType.EMPTY)
                     {
                         //debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF position, Size size, XNAStub.Color color););
                     }
-                    else if (levelMap[x, y] == pixelType.DIAMOND)
+                    else if (levelMap[x, y] == PixelType.DIAMOND)
                     {//DIAMOND
                         debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.ForestGreen));
 
-                    } else if(levelMap[x, y] == pixelType.PLATFORM)
+                    } else if(levelMap[x, y] == PixelType.PLATFORM)
                     {
                         debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Chocolate));
 
@@ -391,7 +351,8 @@ namespace GeometryFriendsAgents
             }
 
         }
-        private void change(ref GeometryFriends.XNAStub.Color color)
+
+        private void Change(ref GeometryFriends.XNAStub.Color color)
         {
             if (color == GeometryFriends.XNAStub.Color.Red)
             {
