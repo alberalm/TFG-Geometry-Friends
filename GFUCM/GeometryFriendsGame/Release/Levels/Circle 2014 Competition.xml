@@ -18,11 +18,11 @@
     <OrangeElevators />
     <TimeLimit value="20" />
     <HighScores>
+      <HighScore name="RandPredictorCircle" value="5" />
       <HighScore name="RandCircle" value="5" />
       <HighScore name="LearningBall" value="6" />
+      <HighScore name="RandPredictorCircle" value="6" />
       <HighScore name="LearningBall" value="8" />
-      <HighScore name="RandPredictorCircle" value="9" />
-      <HighScore name="LearningBall" value="14" />
     </HighScores>
   </Level1>
   <Level2>
@@ -61,7 +61,6 @@
     </Collectibles>
     <GreenObstacles />
     <BlackObstacles>
-      <Obstacle width="16" height="16" X="8" Y="24" centered="false" />
       <Obstacle width="208" height="448" X="1032" Y="312" centered="false" />
       <Obstacle width="336" height="272" X="136" Y="472" centered="false" />
       <Obstacle width="336" height="288" X="136" Y="472" centered="false" />
@@ -70,14 +69,6 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
-    <TimeLimit value="60" />
-    <HighScores>
-      <HighScore name="RandBall&amp;RandRect" value="3" />
-      <HighScore name="RandBall&amp;RandRect" value="3" />
-      <HighScore name="RandBall&amp;RandRect" value="3" />
-      <HighScore name="RandBall&amp;RandRect" value="3" />
-      <HighScore name="RandBall&amp;RandRect" value="3" />
-    </HighScores>
   </Level3>
   <Level4>
     <Description />
@@ -243,6 +234,7 @@
     <TimeLimit value="100" />
     <HighScores>
       <HighScore name="No Name" value="89" />
+      <HighScore name="RandPredictorCircle" value="185" />
     </HighScores>
   </Level10>
 </Levels>

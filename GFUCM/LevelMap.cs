@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace GeometryFriendsAgents
 {
@@ -36,6 +37,14 @@ namespace GeometryFriendsAgents
                 this.rightEdge = rightEdge;
                 this.moveInfoList = moveInfoList;
             }
+            public Platform(int id)
+            {
+                this.id = id;
+                this.yTop = 0;
+                this.leftEdge = 0;
+                this.rightEdge = 0;
+                this.moveInfoList = null;
+            }
         }
        
         public struct MoveInformation
@@ -61,6 +70,8 @@ namespace GeometryFriendsAgents
 
         private readonly int[] COLLECTIBLE_SIZE = new int[] { 1, 2, 3, 3, 2, 1 };//Divided by 2
         private readonly int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3};//Divided by 2
+        private readonly int NUM_VELOCITIES = 10;
+        private readonly int VELOCITY_STEP = 20;
 
         public PixelType[,] levelMap = new PixelType[GameInfo.LEVEL_MAP_WIDTH , GameInfo.LEVEL_MAP_HEIGHT]; //x=i, y=j
 
@@ -133,8 +144,10 @@ namespace GeometryFriendsAgents
 
             PlatformUnion();
 
+            GenerateMoveInformation();
+
             //DEBUG
-            String s = "\n";
+            /*String s = "\n\n";
             s += platformList.Count.ToString();
             foreach (Platform p in platformList)
             {
@@ -143,8 +156,17 @@ namespace GeometryFriendsAgents
                 s += "      Left edge = " + p.leftEdge + "\n";
                 s += "      Right edge = " + p.rightEdge + "\n";
                 s += "      Ytop = " + p.yTop + "\n";
+                int i = 1;
+                foreach(MoveInformation m in p.moveInfoList)
+                {
+                    s += "      Movement " + i.ToString() + "\n";
+                    s += "          Jump Point = (" + m.x + "," + p.yTop + ")" + "\n";
+                    s += "          X Velocity = " + m.velocityX + "\n";
+                    s += "          Land Platf = " + m.landingPlatform.id + "\n";
+                    i++;
+                }
             }
-            Log.LogInformation(s, true);
+            Log.LogInformation(s, true);*/
         }
         
         private void SetCollectibles(CollectibleRepresentation[] colI)
@@ -302,6 +324,7 @@ namespace GeometryFriendsAgents
                 platformList.Add(new Platform(platformList.Count, GameInfo.LEVEL_MAP_HEIGHT - 5, xleft, GameInfo.LEVEL_MAP_WIDTH - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH - 1, new List<MoveInformation>()));
             }
         }
+
         private void PlatformUnion()
         {
             foreach (Platform p1 in platformList)
@@ -365,6 +388,140 @@ namespace GeometryFriendsAgents
 
             return false;
         }
+
+        private void GenerateMoveInformation()
+        {
+            foreach (Platform p in platformList) {
+                //Parabolic JUMPS
+                
+                Parallel.For(p.leftEdge, p.rightEdge + 1, x =>
+                {
+                    
+                    Parallel.For(0, NUM_VELOCITIES, i =>
+                    {
+                        int vx = i * VELOCITY_STEP;
+
+                        if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
+                        {
+                            Platform landingPlatform = new Platform();
+                            int xlandPoint=0;
+                            SimulateMove(x*GameInfo.PIXEL_LENGTH, (p.yTop-GameInfo.CIRCLE_RADIUS/GameInfo.PIXEL_LENGTH) *GameInfo.PIXEL_LENGTH, vx, (int) GameInfo.JUMP_VELOCITYY, ref landingPlatform, ref xlandPoint);
+                            MoveInformation m = new MoveInformation(landingPlatform,x,xlandPoint,vx,true);
+                            //Check whether move should be added
+                            lock (platformList)
+                            {
+                                p.moveInfoList.Add(m);
+                            }
+                             
+                        }
+
+
+                        if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, -vx))
+                        {
+                            Platform landingPlatform = new Platform();
+                            int xlandPoint = 0;
+                            SimulateMove(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, -vx, (int)GameInfo.JUMP_VELOCITYY, ref landingPlatform, ref xlandPoint);
+                            MoveInformation m = new MoveInformation(landingPlatform, x, xlandPoint, -vx, true);
+                            //Check whether move should be added
+                            lock (platformList)
+                            {
+                                p.moveInfoList.Add(m);
+                            }
+                        }
+  
+                    });
+
+                });
+                //Parabolic FALLS
+                Parallel.For(0, NUM_VELOCITIES, i =>
+                {
+                    int vx = i * VELOCITY_STEP;
+
+                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge, vx))
+                    {
+                        Platform landingPlatform = new Platform();
+                        int xlandPoint = 0;
+                        SimulateMove(p.rightEdge * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, 0, ref landingPlatform, ref xlandPoint);
+                        MoveInformation m = new MoveInformation(landingPlatform, p.rightEdge, xlandPoint, vx, false);
+                        lock (platformList)
+                        {
+                            p.moveInfoList.Add(m);
+                        }
+                    }
+
+
+                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge, -vx))
+                    {
+                        Platform landingPlatform = new Platform();
+                        int xlandPoint = 0;
+                        SimulateMove(p.leftEdge * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, -vx, 0, ref landingPlatform, ref xlandPoint);
+                        MoveInformation m = new MoveInformation(landingPlatform, p.leftEdge, xlandPoint, -vx, false);
+                        lock (platformList)
+                        {
+                            p.moveInfoList.Add(m);
+                        }
+                    }
+
+                });
+                //No move?
+                
+                
+    }
+
+        }
+
+        private void SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref Platform landingPlatform, ref int xlandPoint)
+        {
+            float t = 0;
+            int x_t = (int)(x_0/GameInfo.PIXEL_LENGTH);
+            int y_t = (int)(y_0 / GameInfo.PIXEL_LENGTH);
+            while (!CircleIntersectsWithObstacle(x_t,y_t))
+            {
+                x_t = (int)((x_0 + vx_0 * t)/GameInfo.PIXEL_LENGTH);
+                y_t = (int)((y_0 - vy_0 * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2)/GameInfo.PIXEL_LENGTH);
+                
+                t += 0.01f;
+            }
+            //We asume that the parabola lands in a platform without collinding with any obstacle/roof
+
+            xlandPoint = x_t;
+            landingPlatform = GetPlatform(x_t, y_t);
+            
+        }
+
+        private Platform GetPlatform(int x, int y)
+        {
+            int xcollide = 0;
+            int ycollide = 0;
+            for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
+            {
+                for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
+                {
+                    if (levelMap[x + i, y + j] == PixelType.OBSTACLE || levelMap[x + i, y + j] == PixelType.PLATFORM)
+                    {
+                        xcollide = x + i;
+                        ycollide = y + j;
+                    }
+                }
+            }
+            //Log.LogInformation("Colision" + xcollide.ToString()+" "+ ycollide.ToString(), true);
+            foreach (Platform p in platformList)
+            {
+                if(p.yTop == ycollide && p.leftEdge<= xcollide && xcollide <= p.rightEdge)
+                {
+                    return p;
+                }
+            }
+            //Bugs when the collision isn't whith the top of an obstacle aka platform 
+            return new Platform(-1);
+        }
+
+        private bool EnoughSpaceToAccelerate(int leftEdge, int rigthEdge, int x, int vx)
+        {
+            //TODO
+            return true;
+        }
+
         public void Debug(ref List<DebugInformation> debugInformation, CircleRepresentation circleInfo)
         {
             GeometryFriends.XNAStub.Color color = GeometryFriends.XNAStub.Color.Red;
@@ -406,7 +563,18 @@ namespace GeometryFriendsAgents
 
                 }
             }
-
+            foreach (Platform p in platformList)
+            {
+                foreach (MoveInformation m in p.moveInfoList)
+                {
+                    //ToDO: Parabollas should be drawn only once and not each time Update method is called
+                    if (p.id!=m.landingPlatform.id && m.landingPlatform.id!=-1 && m.x%2==0)//Strict conditions should be imposed because there are to many parabollas to draw
+                    {
+                        VisualDebug.DrawParabola(ref debugInformation, m.x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, m.velocityX, m.isJump ? GameInfo.JUMP_VELOCITYY : 0, GeometryFriends.XNAStub.Color.DarkGreen);
+                        debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(m.xlandPoint * GameInfo.PIXEL_LENGTH, m.landingPlatform.yTop * GameInfo.PIXEL_LENGTH), 10, GeometryFriends.XNAStub.Color.DarkGray));
+                    }
+                }
+            }
         }
 
         private void Change(ref GeometryFriends.XNAStub.Color color)
