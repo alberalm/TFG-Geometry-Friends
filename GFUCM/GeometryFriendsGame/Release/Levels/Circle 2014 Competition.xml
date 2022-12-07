@@ -241,5 +241,8 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="100" />
+    <HighScores>
+      <HighScore name="No Name" value="89" />
+    </HighScores>
   </Level10>
 </Levels>

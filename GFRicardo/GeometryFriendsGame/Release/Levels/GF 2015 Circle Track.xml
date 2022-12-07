@@ -20,6 +20,7 @@
     <TimeLimit value="30" />
     <HighScores>
       <HighScore name="IST Circle" value="11" />
+      <HighScore name="IST Circle" value="12" />
     </HighScores>
   </Level1>
   <Level2>
@@ -41,6 +42,9 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="60" />
+    <HighScores>
+      <HighScore name="IST Circle" value="13" />
+    </HighScores>
   </Level2>
   <Level3>
     <Description />
@@ -63,6 +67,9 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="90" />
+    <HighScores>
+      <HighScore name="IST Circle" value="20" />
+    </HighScores>
   </Level3>
   <Level4>
     <Description />

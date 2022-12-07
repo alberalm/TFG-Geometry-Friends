@@ -96,7 +96,7 @@ namespace GeometryFriendsAgents
             collectiblesInfo = colI;
             uncaughtCollectibles = new List<CollectibleRepresentation>(collectiblesInfo);
             this.area = area;
-            levelMap.CreatelevelMap(colI,oI, cPI);
+            levelMap.CreateLevelMap(colI,oI, cPI);
             //send a message to the rectangle informing that the circle setup is complete and show how to pass an attachment: a pen object
             messages.Add(new AgentMessage("Setup complete, testing to send an object as an attachment.", new Pen(Color.AliceBlue)));
 
@@ -235,8 +235,9 @@ namespace GeometryFriendsAgents
                     //clear any previously passed debug information (information passed to the manager is cumulative unless cleared in this way)
                     newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
                     
+
                     
-                    levelMap.debug(ref newDebugInfo);             
+                    levelMap.Debug(ref newDebugInfo, circleInfo);             
                     //set all the debug information to be read by the agents manager
                     debugInfo = newDebugInfo.ToArray();                    
                 }

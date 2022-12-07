@@ -11,6 +11,10 @@ namespace GeometryFriendsAgents
 {
     class LevelMap
     {
+        public LevelMap()
+        {
+            platformList = new List<Platform>();
+        }
         public enum PixelType
         {
             EMPTY, OBSTACLE, DIAMOND, PLATFORM
@@ -56,6 +60,7 @@ namespace GeometryFriendsAgents
         List<Platform> platformList;
 
         private readonly int[] COLLECTIBLE_SIZE = new int[] { 1, 2, 3, 3, 2, 1 };//Divided by 2
+        private readonly int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3};//Divided by 2
 
         public PixelType[,] levelMap = new PixelType[GameInfo.LEVEL_MAP_WIDTH , GameInfo.LEVEL_MAP_HEIGHT]; //x=i, y=j
 
@@ -110,7 +115,7 @@ namespace GeometryFriendsAgents
             return levelMap;
         }
 
-        public void CreatelevelMap(CollectibleRepresentation[] colI, ObstacleRepresentation[] oI, ObstacleRepresentation[] cPI)
+        public void CreateLevelMap(CollectibleRepresentation[] colI, ObstacleRepresentation[] oI, ObstacleRepresentation[] cPI)
         {
             SetCollectibles(colI);
 
@@ -124,14 +129,13 @@ namespace GeometryFriendsAgents
 
             IdentifyPlatforms(cPI);
 
-            ObstacleRepresentation bottomPlatform = new ObstacleRepresentation(GameInfo.LEVEL_WIDTH / 2, GameInfo.LEVEL_MAP_HEIGHT - 4, GameInfo.LEVEL_WIDTH - 2 * GameInfo.CIRCLE_RADIUS, 1);
-
-            IdentifyPlatforms(new ObstacleRepresentation[] { bottomPlatform });
+            IdentifyDefaultPlatform();
 
             PlatformUnion();
 
             //DEBUG
             String s = "\n";
+            s += platformList.Count.ToString();
             foreach (Platform p in platformList)
             {
    
@@ -142,7 +146,7 @@ namespace GeometryFriendsAgents
             }
             Log.LogInformation(s, true);
         }
-
+        
         private void SetCollectibles(CollectibleRepresentation[] colI)
         {
             foreach (CollectibleRepresentation d in colI)
@@ -220,7 +224,7 @@ namespace GeometryFriendsAgents
 
         private void IdentifyPlatforms(ObstacleRepresentation[] oI)
         {
-            platformList = new List<Platform>();
+            
             bool prevPlatform = false;
             int xleft = 0;
             foreach (ObstacleRepresentation o in oI)
@@ -236,18 +240,9 @@ namespace GeometryFriendsAgents
 
                 for (int x = leftEdge; x <= rightEdge; x++)
                 {
-                    bool flag = false;
-                    //Square=Cirle
-                    for (int i = x-GameInfo.CIRCLE_RADIUS/ GameInfo.PIXEL_LENGTH; i<= x + GameInfo.CIRCLE_RADIUS/ GameInfo.PIXEL_LENGTH; i++)
-                    {
-                        for(int j=yTop-1; j> yTop-2* GameInfo.CIRCLE_RADIUS/ GameInfo.PIXEL_LENGTH; j--)
-                        {
-                            if(levelMap[i,j]==PixelType.OBSTACLE|| levelMap[i, j] == PixelType.PLATFORM)
-                            {
-                                flag = true;
-                            }
-                        }
-                    }
+                    bool flag = CircleIntersectsWithObstacle(x,yTop-GameInfo.CIRCLE_RADIUS/GameInfo.PIXEL_LENGTH);
+                    
+                   
                     if (!flag)
                     {
                         levelMap[x, yTop] = PixelType.PLATFORM;
@@ -273,6 +268,40 @@ namespace GeometryFriendsAgents
             }
         }
 
+        private void IdentifyDefaultPlatform()
+        {
+            //Bottom obstacle
+            bool prevPlatform = false;
+            int xleft = 0;
+            for (int x = GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; x < GameInfo.LEVEL_MAP_WIDTH - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; x++)
+            {
+                int yTop = GameInfo.LEVEL_MAP_HEIGHT - 5;
+                bool flag = CircleIntersectsWithObstacle(x, yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH);
+                if (!flag)
+                {
+                    levelMap[x, yTop] = PixelType.PLATFORM;
+                    if (!prevPlatform)
+                    {
+                        xleft = x;
+                    }
+
+                    prevPlatform = true;
+                }
+                else
+                {
+                    if (prevPlatform)
+                    {
+                        platformList.Add(new Platform(platformList.Count, yTop, xleft, x - 1, new List<MoveInformation>()));
+                    }
+                    prevPlatform = false;
+                }
+
+            }
+            if (prevPlatform)
+            {
+                platformList.Add(new Platform(platformList.Count, GameInfo.LEVEL_MAP_HEIGHT - 5, xleft, GameInfo.LEVEL_MAP_WIDTH - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH - 1, new List<MoveInformation>()));
+            }
+        }
         private void PlatformUnion()
         {
             foreach (Platform p1 in platformList)
@@ -319,7 +348,24 @@ namespace GeometryFriendsAgents
             platformList = newPlatformList;
         }
 
-        public void Debug(ref List<DebugInformation> debugInformation)
+        private bool CircleIntersectsWithObstacle(int x, int y)
+        { 
+
+            for (int i =- GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
+            {
+                for (int j =- CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
+                {
+                    if (levelMap[x+i, y+j] == PixelType.OBSTACLE || levelMap[x+i, y+j] == PixelType.PLATFORM)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+
+            return false;
+        }
+        public void Debug(ref List<DebugInformation> debugInformation, CircleRepresentation circleInfo)
         {
             GeometryFriends.XNAStub.Color color = GeometryFriends.XNAStub.Color.Red;
             for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
@@ -348,6 +394,17 @@ namespace GeometryFriendsAgents
                     }
                 }
 
+            }
+            
+            for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
+            {
+                for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
+                {
+                    int x = (int)(circleInfo.X/GameInfo.PIXEL_LENGTH);
+                    int y = (int)(circleInfo.Y/GameInfo.PIXEL_LENGTH);
+                    debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x+i) * GameInfo.PIXEL_LENGTH, (y+j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen));
+
+                }
             }
 
         }

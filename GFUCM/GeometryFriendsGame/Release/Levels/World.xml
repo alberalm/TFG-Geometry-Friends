@@ -19,7 +19,5 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
-	<TimeLimit value="45" />
-	<HighScores />
   </Level1>
 </Levels>
