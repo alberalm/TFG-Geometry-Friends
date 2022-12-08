@@ -8,6 +8,11 @@ using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace GeometryFriendsAgents
 {
@@ -57,6 +62,8 @@ namespace GeometryFriendsAgents
         //Representation of level
         LevelMap levelMap;
 
+
+
         public CircleAgent()
         {
             //Change flag if agent is not to be used
@@ -99,10 +106,10 @@ namespace GeometryFriendsAgents
             levelMap.CreateLevelMap(colI,oI, cPI);
             //send a message to the rectangle informing that the circle setup is complete and show how to pass an attachment: a pen object
             messages.Add(new AgentMessage("Setup complete, testing to send an object as an attachment.", new Pen(Color.AliceBlue)));
-
+            
             //DebugSensorsInfo();
         }
-
+        
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
         /*WARNING: this method is called independently from the agent update - Update(TimeSpan elapsedGameTime) - so care should be taken when using complex 
          * structures that are modified in both (e.g. see operation on the "remaining" collection)      
@@ -161,10 +168,72 @@ namespace GeometryFriendsAgents
         {
             return currentAction;
         }
+        private void ReachTargetPoint(int x_target)
+        {
+            if (Math.Abs(x_target - circleInfo.X) < 10)
+            {
+                currentAction = Moves.JUMP;
+            }
+            else if (x_target - circleInfo.X > 10)
+            {
+                currentAction = Moves.ROLL_RIGHT;
+            }
+            else if (x_target - circleInfo.X < -10)
+            {
+                currentAction = Moves.ROLL_LEFT;
+            }
+        }
+        private void SelectAction()
+        {
 
+            ReachTargetPoint(1000);
+
+
+        }
+
+        /*private void StoreVelocityData()
+        {
+            string patht = @"D:\TFG Infor\TFG---Geometry-Friends\GFUCM\testt.xls";
+            string pathvx = @"D:\TFG Infor\TFG---Geometry-Friends\GFUCM\testvx.xls";
+            string pathvy = @"D:\TFG Infor\TFG---Geometry-Friends\GFUCM\testvy.xls";
+
+            try
+            {
+                // Create the file, or overwrite if the file exists.
+                using (FileStream fst = File.Create(patht))
+                {
+                    using (FileStream fsvx = File.Create(pathvx))
+                    {
+                        using (FileStream fsvy = File.Create(pathvy))
+                        {
+
+                            foreach (Tuple<float, float, float> tup in velocity_t)
+                            {
+                                byte[] info = new UTF8Encoding(true).GetBytes(tup.Item1.ToString() + "\n");
+                                fst.Write(info, 0, info.Length);
+                                info = new UTF8Encoding(true).GetBytes(tup.Item2.ToString() + "\n");
+                                fsvx.Write(info, 0, info.Length);
+                                info = new UTF8Encoding(true).GetBytes(tup.Item3.ToString() + "\n");
+                                fsvy.Write(info, 0, info.Length);
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Log.LogInformation(ex.ToString(), true);
+                Console.WriteLine(ex.ToString());
+            }
+        }*/
         //implements abstract circle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
+
             //Every second one new action is choosen
             if (lastMoveTime == 60)
                 lastMoveTime = 0;
@@ -181,6 +250,12 @@ namespace GeometryFriendsAgents
                     lastMoveTime = 60;
             }
 
+            //SelectAction();
+            List<DebugInformation> newDebugInfo = new List<DebugInformation>();
+            newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
+            levelMap.Debug(ref newDebugInfo, circleInfo);
+            debugInfo = newDebugInfo.ToArray();
+            /*
             //check if any collectible was caught
             lock (remaining)
             {
@@ -201,47 +276,9 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
-
-            //predict what will happen to the agent given the current state and current action
-            if (predictor != null) //predictions are only possible where the agents manager provided
-            {
-                /*
-                 * 1) simulator can only be properly used when the Circle and Rectangle characters are ready, this must be ensured for smooth simulation
-                 * 2) in this implementation we only wish to simulate a future state when whe have a fresh simulator instance, i.e. the generated debug information is empty
-                */
-                if (predictor.CharactersReady() && predictor.SimulationHistoryDebugInformation.Count == 0)
-                {
-                    List<CollectibleRepresentation> simCaughtCollectibles = new List<CollectibleRepresentation>();
-                    //keep a local reference to the simulator so that it can be updated even whilst we are performing simulations
-                    ActionSimulator toSim = predictor;
-
-                    //prepare the desired debug information (to observe this information during the game press F1)
-                    toSim.DebugInfo = true;
-                    //you can also select the type of debug information generated by the simulator to circle only, rectangle only or both as it is set by default
-                    //toSim.DebugInfoSelected = ActionSimulator.DebugInfoMode.Circle;
-
-                    //setup the current circle action in the simulator
-                    toSim.AddInstruction(currentAction);
-
-                    //register collectibles that are caught during simulation
-                    toSim.SimulatorCollectedEvent += delegate(Object o, CollectibleRepresentation col) { simCaughtCollectibles.Add(col); };
-                    
-                    //simulate 2 seconds (predict what will happen 2 seconds ahead)
-                    toSim.Update(2);
-
-               
-                    //prepare all the debug information to be passed to the agents manager
-                    List<DebugInformation> newDebugInfo = new List<DebugInformation>();
-                    //clear any previously passed debug information (information passed to the manager is cumulative unless cleared in this way)
-                    newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-                    
-
-                    
-                    levelMap.Debug(ref newDebugInfo, circleInfo);             
-                    //set all the debug information to be read by the agents manager
-                    debugInfo = newDebugInfo.ToArray();                    
-                }
-            }
+            */
+            
+            
         }
 
         //typically used console debugging used in previous implementations of GeometryFriends

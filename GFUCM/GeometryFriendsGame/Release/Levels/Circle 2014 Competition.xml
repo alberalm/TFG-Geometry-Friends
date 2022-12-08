@@ -28,7 +28,7 @@
   <Level2>
     <Description />
     <Tips />
-    <BallStartingPosition X="1112" Y="680" />
+    <BallStartingPosition X="88" Y="712" />
     <SquareStartingPosition X="-1000" Y="-1000" />
     <Collectibles>
       <Collectible X="344" Y="264" />
@@ -43,11 +43,6 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
-    <TimeLimit value="45" />
-    <HighScores>
-      <HighScore name="RandCircle" value="20" />
-      <HighScore name="RandCircle" value="45" />
-    </HighScores>
   </Level2>
   <Level3>
     <Description />

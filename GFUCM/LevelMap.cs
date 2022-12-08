@@ -20,7 +20,11 @@ namespace GeometryFriendsAgents
         {
             EMPTY, OBSTACLE, DIAMOND, PLATFORM
         };
-        
+
+        public enum CircleCollisionType
+        {
+            Top, Right, Bottom, Left, Other, None
+        };
         public class Platform
         {
             public int id;
@@ -60,7 +64,6 @@ namespace GeometryFriendsAgents
             public int velocityX;
             public bool isJump;
 
-
             public MoveInformation(Platform landingPlatform, int x, int xlandPoint, int velocityX, bool isJump)
             {
                 this.landingPlatform = landingPlatform;
@@ -82,6 +85,8 @@ namespace GeometryFriendsAgents
         public PixelType[,] levelMap = new PixelType[GameInfo.LEVEL_MAP_WIDTH , GameInfo.LEVEL_MAP_HEIGHT]; //x=i, y=j
 
         public CollectibleRepresentation[] initialCollectiblesInfo;
+
+        List<CircleRepresentation> trajectory = new List<CircleRepresentation>();
 
         public struct MapPoint
         {
@@ -182,7 +187,7 @@ namespace GeometryFriendsAgents
                     i++;
                 }*/
             }
-            Log.LogInformation(s, true);
+            //Log.LogInformation(s, true);
 
             // TODO: graph.SearchAlgorithm();
         }
@@ -279,7 +284,7 @@ namespace GeometryFriendsAgents
 
                 for (int x = leftEdge; x <= rightEdge; x++)
                 {
-                    bool flag = CircleIntersectsWithObstacle(x,yTop-GameInfo.CIRCLE_RADIUS/GameInfo.PIXEL_LENGTH);
+                    bool flag = CircleIntersectsWithObstacle(x,yTop-GameInfo.CIRCLE_RADIUS/GameInfo.PIXEL_LENGTH)!=CircleCollisionType.None;
                     
                     if (!flag)
                     {
@@ -314,7 +319,7 @@ namespace GeometryFriendsAgents
             for (int x = GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; x < GameInfo.LEVEL_MAP_WIDTH - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; x++)
             {
                 int yTop = GameInfo.LEVEL_MAP_HEIGHT - 5;
-                bool flag = CircleIntersectsWithObstacle(x, yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH);
+                bool flag = CircleIntersectsWithObstacle(x, yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) != CircleCollisionType.None;
                 if (!flag)
                 {
                     levelMap[x, yTop] = PixelType.PLATFORM;
@@ -377,22 +382,45 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private bool CircleIntersectsWithObstacle(int x, int y)
-        { 
-
+        //I've changed it. Now it returns a value of type CircleCollision={Top, TopRight, Right, BottomRight, Bottom, BottomLeft, Left, TopLeft, None}
+        private CircleCollisionType CircleIntersectsWithObstacle(int x, int y)
+        {
+            
             for (int i =- GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
             {
                 for (int j =- CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
                 {
-                    if (levelMap[x+i, y+j] == PixelType.OBSTACLE || levelMap[x+i, y+j] == PixelType.PLATFORM)
+                    if ((x+i)>=0 && (y + j)>=0 && (x + i) < levelMap.GetLength(0) && (y + j) < levelMap.GetLength(1))//Check
                     {
-                        return true;
+                        if (levelMap[x + i, y + j] == PixelType.OBSTACLE || levelMap[x + i, y + j] == PixelType.PLATFORM)
+                        {
+                            if (i == -5)
+                            {
+                                return CircleCollisionType.Left;
+                            }
+                            else if (i == 4)
+                            {
+                                return CircleCollisionType.Right;
+                            }
+                            else if (j == -5)
+                            {
+                                return CircleCollisionType.Top;
+                            }
+                            else if (j == 4)
+                            {
+                                return CircleCollisionType.Bottom;
+                            }
+                            else
+                            {
+                                return CircleCollisionType.Other;
+                            }
+                        }
                     }
                 }
             }
 
 
-            return false;
+            return CircleCollisionType.None;
         }
 
         private void GenerateMoveInformation()
@@ -473,20 +501,53 @@ namespace GeometryFriendsAgents
             float t = 0;
             int x_t = (int)(x_0/GameInfo.PIXEL_LENGTH);
             int y_t = (int)(y_0 / GameInfo.PIXEL_LENGTH);
-            while (!CircleIntersectsWithObstacle(x_t,y_t))
+            
+            CircleCollisionType cct = CircleIntersectsWithObstacle(x_t, y_t);
+            while (cct==CircleCollisionType.None)
             {
+                t += 0.01f;
                 x_t = (int)((x_0 + vx_0 * t)/GameInfo.PIXEL_LENGTH);
                 y_t = (int)((y_0 - vy_0 * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2)/GameInfo.PIXEL_LENGTH);
-                
-                t += 0.01f;
+                cct = CircleIntersectsWithObstacle(x_t, y_t);
             }
-            //We asume that the parabola lands in a platform without collinding with any obstacle/roof
 
-            xlandPoint = x_t;
-            landingPlatform = GetPlatform(x_t, y_t);
+            if (cct == CircleCollisionType.Bottom)
+            {
+                xlandPoint = x_t;
+                landingPlatform = GetPlatform(x_t, y_t);
+                
+            }
+            else if (cct == CircleCollisionType.Other)
+            {
+                
+            }
+            else  //Left, Right or Top
+            {
+                Tuple<float, float> new_v = newVelocityAfterCollision(vx_0, (float)(vy_0 - GameInfo.GRAVITY * (t - 0.01f)), cct);
+
+                SimulateMove(x_0 + vx_0 * (t - 0.01f), y_0 - vy_0 * (t - 0.01f) + (float)(GameInfo.GRAVITY * Math.Pow((t - 0.01f), 2) / 2), new_v.Item1, new_v.Item2, ref landingPlatform, ref xlandPoint);
+                
+            }
+            
             
         }
 
+
+        private Tuple<float, float> newVelocityAfterCollision(float vx, float vy, CircleCollisionType cct)//Don't call this function with cct=other, botton or none
+        {
+            if(cct==CircleCollisionType.Left|| cct == CircleCollisionType.Right)
+            {
+                return new Tuple<float, float>(-vx / 3, vy/3); //Adjust constants
+            }
+            else if (cct == CircleCollisionType.Top)
+            {
+                return new Tuple<float, float>(vx * GameInfo.VERTICAL_COLLISION_COEFFICIENT, -vy* GameInfo.VERTICAL_COLLISION_COEFFICIENT); //ToDO Vx coeff
+            }
+            else
+            {
+                return new Tuple<float, float>(0, 0);
+            }
+        }
         private Platform GetPlatform(int x, int y)
         {
             int xcollide = 0;
@@ -502,7 +563,6 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
-            //Log.LogInformation("Colision" + xcollide.ToString()+" "+ ycollide.ToString(), true);
             foreach (Platform p in platformList)
             {
                 if(p.yTop == ycollide && p.leftEdge<= xcollide && xcollide <= p.rightEdge)
@@ -519,9 +579,11 @@ namespace GeometryFriendsAgents
             //TODO
             return true;
         }
-
+ 
         public void Debug(ref List<DebugInformation> debugInformation, CircleRepresentation circleInfo)
         {
+            debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X, circleInfo.Y), 4, GeometryFriends.XNAStub.Color.Red));
+
             GeometryFriends.XNAStub.Color color = GeometryFriends.XNAStub.Color.Red;
             for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
             {
@@ -559,12 +621,40 @@ namespace GeometryFriendsAgents
                     debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x+i) * GameInfo.PIXEL_LENGTH, (y+j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen));
                 }
             }
+            //Trajectory
+            trajectory.Add(circleInfo);
+            int numCollisions = 0;
+            for (int i= 0; i< trajectory.Count; i++)
+            {
+                CircleRepresentation cI = trajectory[i];
+                debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(cI.X, cI.Y), 4, GeometryFriends.XNAStub.Color.Red));
+                if ((cI.VelocityX > 0 && i+1 < trajectory.Count && trajectory[i+1].VelocityX<0) || (cI.VelocityX < 0 && i + 1 < trajectory.Count && trajectory[i + 1].VelocityX > 0) && Math.Abs(cI.VelocityX)>30 && Math.Abs(trajectory[i + 1].VelocityX) > 30)
+                {
+                    string s = "";
+                    s += "\nJusto antes del choque: \n";
+                    s += "  VX=" + cI.VelocityX.ToString() + " VY=" + cI.VelocityY.ToString() + "\n";
+                    s += "\nJusto despues del choque: \n";
+                    s += "  VX=" + trajectory[i + 1].VelocityX.ToString() + " VY=" + trajectory[i + 1].VelocityY.ToString() + "\n";
+
+                    debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(numCollisions*5+200, GameInfo.LEVEL_HEIGHT / 2+30*cI.VelocityX/trajectory[i+1].VelocityX), 4 ,GeometryFriends.XNAStub.Color.Cyan));
+
+                    numCollisions++;
+                }
+
+                debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(i-trajectory.Count+ GameInfo.LEVEL_WIDTH/2, GameInfo.LEVEL_HEIGHT/2-trajectory[i].VelocityX), 4, GeometryFriends.XNAStub.Color.Purple));
+            }
+            debugInformation.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(0, GameInfo.LEVEL_HEIGHT / 2), new PointF(GameInfo.LEVEL_WIDTH, GameInfo.LEVEL_HEIGHT / 2), GeometryFriends.XNAStub.Color.Cyan));
+
+
+            VisualDebug.DrawArrow(ref debugInformation, circleInfo.X, circleInfo.Y,(int)(circleInfo.VelocityX/5), (int)(circleInfo.VelocityY/5), GeometryFriends.XNAStub.Color.Green);
+            debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X, circleInfo.Y), 4, GeometryFriends.XNAStub.Color.Red));
+
             foreach (Platform p in platformList)
             {
                 foreach (MoveInformation m in p.moveInfoList)
                 {
                     //ToDO: Parabollas should be drawn only once and not each time Update method is called
-                    if (p.id!=m.landingPlatform.id && m.landingPlatform.id!=-1 && m.x%2==0) // Strong conditions should be imposed because there are too many parabollas to draw
+                    if (p.id==0 && p.leftEdge+20==m.x && m.velocityX==-100) // Strong conditions should be imposed because there are too many parabollas to draw
                     {
                         VisualDebug.DrawParabola(ref debugInformation, m.x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, m.velocityX, m.isJump ? GameInfo.JUMP_VELOCITYY : 0, GeometryFriends.XNAStub.Color.DarkGreen);
                         debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(m.xlandPoint * GameInfo.PIXEL_LENGTH, m.landingPlatform.yTop * GameInfo.PIXEL_LENGTH), 10, GeometryFriends.XNAStub.Color.DarkGray));
