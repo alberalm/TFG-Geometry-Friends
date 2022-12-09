@@ -62,8 +62,6 @@ namespace GeometryFriendsAgents
         //Representation of level
         LevelMap levelMap;
 
-
-
         public CircleAgent()
         {
             //Change flag if agent is not to be used
