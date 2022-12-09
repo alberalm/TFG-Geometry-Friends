@@ -28,6 +28,6 @@ namespace GeometryFriendsAgents
         public const int LEVEL_WIDTH = 1272;
         public const int LEVEL_HEIGHT = 776;
         public const int PIXEL_LENGTH = 8;
-        public const float VERTICAL_COLLISION_COEFFICIENT = (0.82f * GRAVITY - 0.8f * JUMP_VELOCITYY) / (JUMP_VELOCITYY - 0.8f * GRAVITY);
+        public const float RESTITUTION = 0*75f * (JUMP_VELOCITYY - GRAVITY) / (JUMP_VELOCITYY - 0.72f * GRAVITY);
     }
 }

@@ -23,11 +23,6 @@ namespace GeometryFriendsAgents
                 this.to = to;
                 moves = new List<LevelMap.MoveInformation>() { m };
             }
-
-            public void AddMove(LevelMap.MoveInformation move)
-            {
-                moves.Add(move);
-            }
         }
 
         public Graph(List<LevelMap.Platform> platforms)
@@ -76,7 +71,6 @@ namespace GeometryFriendsAgents
             }
             // There is still no Edge connecting from and to
             adj[from].Add(new Edge(to, move));
-
         }
 
         public bool IsThereEdge(int from, int to)
@@ -100,7 +94,7 @@ namespace GeometryFriendsAgents
             // Does not contain real moves, just reverse adjacent vertices
             Graph g = new Graph(V);
             g.E = E;
-            LevelMap.MoveInformation move = new LevelMap.MoveInformation();
+            LevelMap.MoveInformation move = null;
             for (int i = 0; i < V; i++)
             {
                 foreach (Edge w in adj[i])

@@ -19,6 +19,10 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="IST Circle" value="45" />
+      <HighScore name="IST Circle" value="108" />
+    </HighScores>
   </Level1>
   <Level2>
     <Description />
@@ -41,6 +45,9 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="IST Circle" value="76" />
+    </HighScores>
   </Level2>
   <Level3>
     <Description />

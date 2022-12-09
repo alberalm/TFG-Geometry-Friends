@@ -16,6 +16,7 @@ namespace GeometryFriendsAgents
         {
             platformList = new List<Platform>();
         }
+
         public enum PixelType
         {
             EMPTY, OBSTACLE, DIAMOND, PLATFORM
@@ -23,8 +24,11 @@ namespace GeometryFriendsAgents
 
         public enum CircleCollisionType
         {
-            Top, Right, Bottom, Left, Other, None
+            Top, Right, Bottom, Left, Diamond, Other, None
+            // Note: Diamond only if it does not intersect with other obstacle
+            // TODO: Change this
         };
+
         public class Platform
         {
             public int id;
@@ -56,21 +60,23 @@ namespace GeometryFriendsAgents
             }
         }
        
-        public struct MoveInformation
+        public class MoveInformation
         {
             public Platform landingPlatform;
             public int x;
             public int xlandPoint;
             public int velocityX;
             public bool isJump;
+            public List<int> diamondsCollected;
 
-            public MoveInformation(Platform landingPlatform, int x, int xlandPoint, int velocityX, bool isJump)
+            public MoveInformation(Platform landingPlatform, int x, int xlandPoint, int velocityX, bool isJump, List<int> diamondsCollected)
             {
                 this.landingPlatform = landingPlatform;
                 this.x = x;
                 this.xlandPoint = xlandPoint;
                 this.velocityX = velocityX;
                 this.isJump = isJump;
+                this.diamondsCollected = diamondsCollected;
             }
         }
 
@@ -151,33 +157,39 @@ namespace GeometryFriendsAgents
 
             IdentifyPlatforms(cPI);
 
-            IdentifyDefaultPlatform();
+            IdentifyDefaultPlatforms();
 
             PlatformUnion();
-
-            GenerateMoveInformation();
-
-            // TODO: FilterPlatforms();
-
-            graph = new Graph(platformList);
 
             // DEBUG
             String s = "\n";
             s += "Number of platforms: " + platformList.Count.ToString() + "\n";
-            for (int i = 0; i < graph.V; i++)
+            for (int i = 0; i < platformList.Count; i++)
             {
                 Platform p = platformList[i];
                 s += "Platform id = " + p.id + "\n";
                 s += "      Left edge = " + p.leftEdge + "\n";
                 s += "      Right edge = " + p.rightEdge + "\n";
                 s += "      Ytop = " + p.yTop + "\n";
-                s += "      Connected to platforms: ";
-                foreach(Graph.Edge e in graph.adj[i])
+                /*s += "      Connected to platforms: ";
+                foreach (Graph.Edge e in graph.adj[i])
                 {
                     s += e.to + ", ";
                 }
-                s += "\n";
-                /*int i = 1;
+                s += "\n";*/
+            }
+            Log.LogInformation(s, true);
+
+            GenerateMoveInformation();
+
+            graph = new Graph(platformList);
+
+            // DEBUG
+            /*s = "\n";
+            s += "Number of platforms: " + platformList.Count.ToString() + "\n";
+            for (int i = 0; i < graph.V; i++)
+            {
+                int i = 1;
                 foreach(MoveInformation m in p.moveInfoList)
                 {
                     s += "      Movement " + i.ToString() + "\n";
@@ -185,9 +197,9 @@ namespace GeometryFriendsAgents
                     s += "          X Velocity = " + m.velocityX + "\n";
                     s += "          Land Platf = " + m.landingPlatform.id + "\n";
                     i++;
-                }*/
+                }
             }
-            //Log.LogInformation(s, true);
+            //Log.LogInformation(s, true);*/
 
             // TODO: graph.SearchAlgorithm();
         }
@@ -311,7 +323,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private void IdentifyDefaultPlatform()
+        private void IdentifyDefaultPlatforms()
         {
             //Bottom obstacle
             bool prevPlatform = false;
@@ -354,20 +366,30 @@ namespace GeometryFriendsAgents
                 for(int j = i+1; j < platformList.Count(); j++)
                 {
                     Platform p2 = platformList[j];
+                    bool unir = false;
                     if (p1.yTop == p2.yTop)
                     {
                         if (p1.rightEdge + 2 == p2.leftEdge) //Union is needed
                         {
                             levelMap[p1.rightEdge + 1, p1.yTop] = PixelType.PLATFORM;
-                            p1.rightEdge = p2.rightEdge;
-                            platformList.Remove(p2);
-                            i--;
-                            break;
+                            unir = true;
                         }
-                        if (p2.rightEdge + 2 == p1.leftEdge) //Union is needed
+                        else if (p2.rightEdge + 2 == p1.leftEdge) //Union is needed
                         {
                             levelMap[p2.rightEdge + 1, p1.yTop] = PixelType.PLATFORM;
-                            p1.leftEdge = p2.leftEdge;
+                            unir = true;
+                        }
+                        else if (p1.leftEdge >= p2.leftEdge && p1.leftEdge <= p2.rightEdge){
+                            unir = true;
+                        }
+                        else if(p2.leftEdge >= p1.leftEdge && p2.leftEdge <= p1.rightEdge)
+                        {
+                            unir = true;
+                        }
+                        if (unir)
+                        {
+                            p1.leftEdge = Math.Min(p1.leftEdge, p2.leftEdge);
+                            p1.rightEdge = Math.Max(p1.rightEdge, p2.rightEdge);
                             platformList.Remove(p2);
                             i--;
                             break;
@@ -382,10 +404,9 @@ namespace GeometryFriendsAgents
             }
         }
 
-        //I've changed it. Now it returns a value of type CircleCollision={Top, TopRight, Right, BottomRight, Bottom, BottomLeft, Left, TopLeft, None}
+        //I've changed it. Now it returns a value of type CircleCollision={Top, Right, Bottom, Left, Diamond, None}
         private CircleCollisionType CircleIntersectsWithObstacle(int x, int y)
         {
-            
             for (int i =- GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
             {
                 for (int j =- CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
@@ -418,8 +439,6 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
-
-
             return CircleCollisionType.None;
         }
 
@@ -433,33 +452,30 @@ namespace GeometryFriendsAgents
                     Parallel.For(0, NUM_VELOCITIES, i =>
                     {
                         int vx = i * VELOCITY_STEP;
-
+                        int xlandPoint = 0;
+                        List<int> diamonds = new List<int>();
                         if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
                         {
                             Platform landingPlatform = new Platform();
-                            int xlandPoint=0;
-                            SimulateMove(x*GameInfo.PIXEL_LENGTH, (p.yTop-GameInfo.CIRCLE_RADIUS/GameInfo.PIXEL_LENGTH) *GameInfo.PIXEL_LENGTH, vx, (int) GameInfo.JUMP_VELOCITYY, ref landingPlatform, ref xlandPoint);
-                            MoveInformation m = new MoveInformation(landingPlatform,x,xlandPoint,vx,true);
+                            SimulateMove(x*GameInfo.PIXEL_LENGTH, (p.yTop-GameInfo.CIRCLE_RADIUS/GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, (int) GameInfo.JUMP_VELOCITYY, ref landingPlatform, ref xlandPoint, ref diamonds);
+                            MoveInformation m = new MoveInformation(landingPlatform, x, xlandPoint, vx, true, diamonds);
                             //Check whether move should be added
                             lock (platformList)
                             {
                                 p.moveInfoList.Add(m);
                             }
                         }
-
                         if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, -vx))
                         {
                             Platform landingPlatform = new Platform();
-                            int xlandPoint = 0;
-                            SimulateMove(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, -vx, (int)GameInfo.JUMP_VELOCITYY, ref landingPlatform, ref xlandPoint);
-                            MoveInformation m = new MoveInformation(landingPlatform, x, xlandPoint, -vx, true);
+                            SimulateMove(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, -vx, (int)GameInfo.JUMP_VELOCITYY, ref landingPlatform, ref xlandPoint, ref diamonds);
+                            MoveInformation m = new MoveInformation(landingPlatform, x, xlandPoint, -vx, true, diamonds);
                             //Check whether move should be added
                             lock (platformList)
                             {
                                 p.moveInfoList.Add(m);
                             }
                         }
-  
                     });
 
                 });
@@ -467,25 +483,23 @@ namespace GeometryFriendsAgents
                 Parallel.For(0, NUM_VELOCITIES, i =>
                 {
                     int vx = i * VELOCITY_STEP;
-
+                    int xlandPoint = 0;
+                    List<int> diamonds = new List<int>();
                     if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge, vx))
                     {
                         Platform landingPlatform = new Platform();
-                        int xlandPoint = 0;
-                        SimulateMove(p.rightEdge * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, 0, ref landingPlatform, ref xlandPoint);
-                        MoveInformation m = new MoveInformation(landingPlatform, p.rightEdge, xlandPoint, vx, false);
+                        SimulateMove(p.rightEdge * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, 0, ref landingPlatform, ref xlandPoint, ref diamonds);
+                        MoveInformation m = new MoveInformation(landingPlatform, p.rightEdge, xlandPoint, vx, false, diamonds);
                         lock (platformList)
                         {
                             p.moveInfoList.Add(m);
                         }
                     }
-
                     if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge, -vx))
                     {
                         Platform landingPlatform = new Platform();
-                        int xlandPoint = 0;
-                        SimulateMove(p.leftEdge * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, -vx, 0, ref landingPlatform, ref xlandPoint);
-                        MoveInformation m = new MoveInformation(landingPlatform, p.leftEdge, xlandPoint, -vx, false);
+                        SimulateMove(p.leftEdge * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, -vx, 0, ref landingPlatform, ref xlandPoint, ref diamonds);
+                        MoveInformation m = new MoveInformation(landingPlatform, p.leftEdge, xlandPoint, -vx, false, diamonds);
                         lock (platformList)
                         {
                             p.moveInfoList.Add(m);
@@ -496,25 +510,52 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private void SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref Platform landingPlatform, ref int xlandPoint)
+        private void SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref Platform landingPlatform, ref int xlandPoint, ref List<int> diamonds)
         {
             float t = 0;
             int x_t = (int)(x_0/GameInfo.PIXEL_LENGTH);
             int y_t = (int)(y_0 / GameInfo.PIXEL_LENGTH);
             
             CircleCollisionType cct = CircleIntersectsWithObstacle(x_t, y_t);
-            while (cct==CircleCollisionType.None)
+            while (cct==CircleCollisionType.None || cct == CircleCollisionType.Diamond)
             {
+                if(cct == CircleCollisionType.Diamond)
+                {
+                    int min = 0;
+                    float d = 10;
+                    for (int i = 0; i < initialCollectiblesInfo.Length; i++)
+                    {
+                        CollectibleRepresentation coll = initialCollectiblesInfo[i];
+                        float dist = (float)(Math.Pow(coll.X - x_t, 2) + Math.Pow(coll.Y - y_t, 2)) / GameInfo.PIXEL_LENGTH;
+                        if (dist <= 5 + 3 * Math.Sqrt(2)) // Sufficiently close to be the diamond it collides with
+                        {
+                            min = i;
+                            break;
+                        }
+                        if (dist < d)
+                        {
+                            min = i;
+                            d = dist;
+                        }
+                    }
+                    if (!diamonds.Contains(min))
+                    {
+                        diamonds.Add(min);
+                    }
+                }
                 t += 0.01f;
                 x_t = (int)((x_0 + vx_0 * t)/GameInfo.PIXEL_LENGTH);
                 y_t = (int)((y_0 - vy_0 * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2)/GameInfo.PIXEL_LENGTH);
                 cct = CircleIntersectsWithObstacle(x_t, y_t);
             }
-
             if (cct == CircleCollisionType.Bottom)
             {
                 xlandPoint = x_t;
                 landingPlatform = GetPlatform(x_t, y_t);
+                
+            }
+            else if(cct == CircleCollisionType.Diamond)
+            {
                 
             }
             else if (cct == CircleCollisionType.Other)
@@ -523,31 +564,29 @@ namespace GeometryFriendsAgents
             }
             else  //Left, Right or Top
             {
-                Tuple<float, float> new_v = newVelocityAfterCollision(vx_0, (float)(vy_0 - GameInfo.GRAVITY * (t - 0.01f)), cct);
-
-                SimulateMove(x_0 + vx_0 * (t - 0.01f), y_0 - vy_0 * (t - 0.01f) + (float)(GameInfo.GRAVITY * Math.Pow((t - 0.01f), 2) / 2), new_v.Item1, new_v.Item2, ref landingPlatform, ref xlandPoint);
-                
+                Tuple<float, float> new_v = NewVelocityAfterCollision(vx_0, (float)(vy_0 - GameInfo.GRAVITY * (t - 0.01f)), cct);
+                SimulateMove(x_0 + vx_0 * (t - 0.01f), y_0 - vy_0 * (t - 0.01f) + (float)(GameInfo.GRAVITY * Math.Pow((t - 0.01f), 2) / 2), new_v.Item1, new_v.Item2, ref landingPlatform, ref xlandPoint, ref diamonds);
             }
-            
-            
         }
 
 
-        private Tuple<float, float> newVelocityAfterCollision(float vx, float vy, CircleCollisionType cct)//Don't call this function with cct=other, botton or none
+        private Tuple<float, float> NewVelocityAfterCollision(float vx, float vy, CircleCollisionType cct) // Do not call this function with cct=other, bottom or none
         {
-            if(cct==CircleCollisionType.Left|| cct == CircleCollisionType.Right)
+            // TODO -> Train an AI?
+            if (cct == CircleCollisionType.Left || cct == CircleCollisionType.Right)
             {
-                return new Tuple<float, float>(-vx / 3, vy/3); //Adjust constants
+                return new Tuple<float, float>(-vx / 3, vy / 3);
             }
             else if (cct == CircleCollisionType.Top)
             {
-                return new Tuple<float, float>(vx * GameInfo.VERTICAL_COLLISION_COEFFICIENT, -vy* GameInfo.VERTICAL_COLLISION_COEFFICIENT); //ToDO Vx coeff
+                return new Tuple<float, float>(vx / 3, -vy / 3);
             }
             else
             {
                 return new Tuple<float, float>(0, 0);
             }
         }
+
         private Platform GetPlatform(int x, int y)
         {
             int xcollide = 0;
@@ -579,7 +618,7 @@ namespace GeometryFriendsAgents
             //TODO
             return true;
         }
- 
+
         public void Debug(ref List<DebugInformation> debugInformation, CircleRepresentation circleInfo)
         {
             debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X, circleInfo.Y), 4, GeometryFriends.XNAStub.Color.Red));
@@ -589,12 +628,10 @@ namespace GeometryFriendsAgents
             {
                 for (int y = 0; y < GameInfo.LEVEL_MAP_HEIGHT; y++)
                 {
-
                     if (levelMap[x, y] == PixelType.OBSTACLE)
                     {
                         debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH-4, GameInfo.PIXEL_LENGTH-4), color));
                         Change(ref color);
-
                     }
                     else if (levelMap[x, y] == PixelType.EMPTY)
                     {
@@ -609,9 +646,7 @@ namespace GeometryFriendsAgents
                         debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Chocolate));
                     }
                 }
-
             }
-            
             for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
             {
                 for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
@@ -621,8 +656,8 @@ namespace GeometryFriendsAgents
                     debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x+i) * GameInfo.PIXEL_LENGTH, (y+j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen));
                 }
             }
-            //Trajectory
-            trajectory.Add(circleInfo);
+            // Trajectory
+            /*trajectory.Add(circleInfo);
             int numCollisions = 0;
             for (int i= 0; i< trajectory.Count; i++)
             {
@@ -648,7 +683,7 @@ namespace GeometryFriendsAgents
 
             VisualDebug.DrawArrow(ref debugInformation, circleInfo.X, circleInfo.Y,(int)(circleInfo.VelocityX/5), (int)(circleInfo.VelocityY/5), GeometryFriends.XNAStub.Color.Green);
             debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X, circleInfo.Y), 4, GeometryFriends.XNAStub.Color.Red));
-
+            */
             foreach (Platform p in platformList)
             {
                 foreach (MoveInformation m in p.moveInfoList)
