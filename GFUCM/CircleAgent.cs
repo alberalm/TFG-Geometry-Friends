@@ -34,7 +34,9 @@ namespace GeometryFriendsAgents
         //predictor of actions for the circle
         private ActionSimulator predictor = null;
         private DebugInformation[] debugInfo = null;
-        private int debugCircleSize = 20;
+        private List<DebugInformation> newDebugInfo;
+        
+        //private int debugCircleSize = 20;
 
         //debug agent predictions and history keeping
         private List<CollectibleRepresentation> caughtCollectibles;
@@ -86,6 +88,10 @@ namespace GeometryFriendsAgents
             //messages exchange
             messages = new List<AgentMessage>();
             levelMap = new LevelMap();
+
+            //debug
+            newDebugInfo = new List<DebugInformation>();
+            
         }
 
         //implements abstract circle interface: used to setup the initial information so that the agent has basic knowledge about the level
@@ -102,12 +108,39 @@ namespace GeometryFriendsAgents
             uncaughtCollectibles = new List<CollectibleRepresentation>(collectiblesInfo);
             this.area = area;
             levelMap.CreateLevelMap(colI,oI, cPI);
+
+            
+            newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
+
+            levelMap.Debug(ref newDebugInfo);
+            debugInfo = newDebugInfo.ToArray();
+
             //send a message to the rectangle informing that the circle setup is complete and show how to pass an attachment: a pen object
             messages.Add(new AgentMessage("Setup complete, testing to send an object as an attachment.", new Pen(Color.AliceBlue)));
             
             //DebugSensorsInfo();
         }
-        
+        private void CircleDebug()
+        {
+            
+            /*int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
+            for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
+            {
+                for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
+                {
+                    int x = (int)(circleInfo.X / GameInfo.PIXEL_LENGTH);
+                    int y = (int)(circleInfo.Y / GameInfo.PIXEL_LENGTH);
+                    newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x + i) * GameInfo.PIXEL_LENGTH, (y + j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen));
+                }
+            }*/
+            
+            //newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X, circleInfo.Y), 4, GeometryFriends.XNAStub.Color.Red));
+            
+            //remove it form the list when plot
+            //VisualDebug.DrawVelocityComponents(ref newDebugInfo, circleInfo.X, circleInfo.Y, (int)(circleInfo.VelocityX / 5), (int)(circleInfo.VelocityY / 5), GeometryFriends.XNAStub.Color.Green);
+
+            
+        }
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
         /*WARNING: this method is called independently from the agent update - Update(TimeSpan elapsedGameTime) - so care should be taken when using complex 
          * structures that are modified in both (e.g. see operation on the "remaining" collection)      
@@ -249,9 +282,7 @@ namespace GeometryFriendsAgents
             }
 
             //SelectAction();
-            List<DebugInformation> newDebugInfo = new List<DebugInformation>();
-            newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            levelMap.Debug(ref newDebugInfo, circleInfo);
+            CircleDebug();
             debugInfo = newDebugInfo.ToArray();
             /*
             //check if any collectible was caught
@@ -275,8 +306,8 @@ namespace GeometryFriendsAgents
                 }
             }
             */
-            
-            
+
+
         }
 
         //typically used console debugging used in previous implementations of GeometryFriends

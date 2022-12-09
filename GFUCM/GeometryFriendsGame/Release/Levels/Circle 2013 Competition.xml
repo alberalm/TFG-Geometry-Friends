@@ -41,6 +41,7 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="IST Circle" value="36" />
+      <HighScore name="RandPredictorCircle" value="53" />
     </HighScores>
   </Level2>
   <Level3>

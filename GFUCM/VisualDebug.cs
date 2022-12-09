@@ -23,7 +23,7 @@ namespace GeometryFriendsAgents
                 debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(x_t, y_t), 2, color));
             }
         }
-        public static void DrawArrow(ref List<DebugInformation> debugInformation, float x_0, float y_0, int numX, int numY, GeometryFriends.XNAStub.Color color)
+        public static void DrawVelocityComponents(ref List<DebugInformation> debugInformation, float x_0, float y_0, int numX, int numY, GeometryFriends.XNAStub.Color color)
         {
             //In case it's positive
             for (int i = 0; i < numX*4; i++)
