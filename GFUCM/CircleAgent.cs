@@ -60,7 +60,6 @@ namespace GeometryFriendsAgents
         //Area of the game screen
         private Rectangle area;
 
-
         //Representation of level
         LevelMap levelMap;
 
@@ -107,7 +106,7 @@ namespace GeometryFriendsAgents
             collectiblesInfo = colI;
             uncaughtCollectibles = new List<CollectibleRepresentation>(collectiblesInfo);
             this.area = area;
-            levelMap.CreateLevelMap(colI,oI, cPI);
+            levelMap.CreateLevelMap(colI,oI, rPI);
 
             
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
@@ -197,7 +196,7 @@ namespace GeometryFriendsAgents
         //implements abstract circle interface: GeometryFriends agents manager gets the current action intended to be actuated in the enviroment for this agent
         public override Moves GetAction()
         {
-            return currentAction;
+            return Moves.ROLL_RIGHT;
         }
         private void ReachTargetPoint(int x_target)
         {
@@ -264,7 +263,7 @@ namespace GeometryFriendsAgents
         //implements abstract circle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-
+            
             //Every second one new action is choosen
             if (lastMoveTime == 60)
                 lastMoveTime = 0;

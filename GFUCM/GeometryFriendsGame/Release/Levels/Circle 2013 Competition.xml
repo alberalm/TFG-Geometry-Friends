@@ -135,6 +135,7 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="IST Circle" value="8" />
+      <HighScore name="RandPredictorCircle" value="12" />
     </HighScores>
   </Level6>
   <Level7>
@@ -226,5 +227,9 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="RandPredictorCircle" value="18" />
+      <HighScore name="RandPredictorCircle" value="26" />
+    </HighScores>
   </Level10>
 </Levels>

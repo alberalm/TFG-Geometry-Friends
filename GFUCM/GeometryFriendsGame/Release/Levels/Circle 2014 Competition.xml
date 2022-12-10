@@ -133,6 +133,7 @@
     <TimeLimit value="40" />
     <HighScores>
       <HighScore name="LearningBall" value="20" />
+      <HighScore name="RandPredictorCircle" value="59" />
     </HighScores>
   </Level6>
   <Level7>

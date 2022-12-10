@@ -22,6 +22,11 @@ namespace GeometryFriendsAgents
             EMPTY, OBSTACLE, DIAMOND, PLATFORM
         };
 
+        public enum MoveType
+        {
+            JUMP, FALL, NOMOVE
+        };
+
         public enum CircleCollisionType
         {
             Top, Right, Bottom, Left, Diamond, Other, None
@@ -63,23 +68,25 @@ namespace GeometryFriendsAgents
         public class MoveInformation
         {
             public Platform landingPlatform;
+            public Platform departurePlatform;
             public int x;
             public int xlandPoint;
             public int velocityX;
-            public bool isJump;
+            public MoveType moveType;
             public List<int> diamondsCollected;
-            public List<Tuple<int,int>> path;
+            public List<Tuple<float,float>> path;
             public int distanceToObstacle;
             public int distanceToRollingEdge;
             public int distanceToOtherEdge; // Could be useful if agent learns to roll on mid-air
 
-            public MoveInformation(Platform landingPlatform, int x, int xlandPoint, int velocityX, bool isJump, List<int> diamondsCollected, List<Tuple<int, int>> path, int distanceToObstacle)
+            public MoveInformation(Platform landingPlatform, Platform departurePlatform, int x, int xlandPoint, int velocityX, MoveType moveType, List<int> diamondsCollected, List<Tuple<float, float>> path, int distanceToObstacle)
             {
+                this.departurePlatform = departurePlatform;
                 this.landingPlatform = landingPlatform;
                 this.x = x;
                 this.xlandPoint = xlandPoint;
                 this.velocityX = velocityX;
-                this.isJump = isJump;
+                this.moveType = moveType;
                 this.diamondsCollected = diamondsCollected;
                 this.path = path;
                 this.distanceToObstacle = distanceToObstacle;
@@ -107,6 +114,20 @@ namespace GeometryFriendsAgents
                 // TODO: New filter
                 // If distanceToRollingEdge is very small and all diamonds can be picked by other trajectories (this is not done yet), discard it
                 // We do not take into account velocityX very much because we assume both have checked it is possible to reach that velocity
+                if (moveType == MoveType.NOMOVE && other.diamondsCollected.Count==1 && diamondsCollected[0]==other.diamondsCollected[0] && other.landingPlatform==other.departurePlatform)
+                {
+                    //other is a jump from platform x to platform x and it was only added because it could reach a diamond
+                    //Now we have found that we can reach the same diamond without jumping, which will take us less time
+                    return 1;
+                }else if(other.moveType == MoveType.NOMOVE && diamondsCollected.Count == 1 && diamondsCollected[0] == other.diamondsCollected[0] && landingPlatform == departurePlatform)
+                {
+                    //symmetric
+                    return -1;
+                }
+                if (moveType == MoveType.NOMOVE)//In general, we want to store this moves and they don't really afect other moves
+                {
+                    return 0;
+                }
                 if (diamondsCollected.Count > other.diamondsCollected.Count)
                 {
                     if(distanceToObstacle >= other.distanceToObstacle)
@@ -233,6 +254,10 @@ namespace GeometryFriendsAgents
                 s += "      Right edge = " + p.rightEdge + "\n";
                 s += "      Ytop = " + p.yTop + "\n";
                 s += "      Moves = " + p.moveInfoList.Count+ "\n";
+                foreach(MoveInformation m in p.moveInfoList)
+                {
+                    s+= "           Type = " + m.moveType.ToString() + " X= "+m.x+"\n";
+                }
                 s += "      Connected to platforms: ";
                 foreach (Graph.Edge e in graph.adj[i])
                 {
@@ -474,7 +499,8 @@ namespace GeometryFriendsAgents
         }
 
         //I've changed it. Now it returns a value of type CircleCollision={Top, Right, Bottom, Left, Diamond, None}
-        private CircleCollisionType CircleIntersectsWithObstacle(int x, int y)
+
+        private CircleCollisionType CircleIntersectsWithObstacle(int x, int y) //(x,y) is the denter of the circle given in levelMap coordinates
         {
             bool diamond = false; // Obstacles and platforms have more priority than diamonds
             for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
@@ -532,12 +558,11 @@ namespace GeometryFriendsAgents
                         int vx = i * VELOCITY_STEP;
                         if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
                         {
-                            
-                            AddTrajectory(ref p, vx, true, x);
+                            AddTrajectory(ref p, vx, MoveType.JUMP, x);
                         }
                         if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, -vx))
                         {
-                            AddTrajectory(ref p, -vx, true, x);
+                            AddTrajectory(ref p, -vx, MoveType.JUMP, x);
                         }
                     });
                 });
@@ -547,35 +572,49 @@ namespace GeometryFriendsAgents
                     int vx = i * VELOCITY_STEP;
                     if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge, vx))
                     {
-                        List<int> diamonds = new List<int>();
-                        AddTrajectory(ref p, vx, false, p.rightEdge);
+                        AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge);
                     }
                     if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge, -vx))
                     {
-                        List<int> diamonds = new List<int>();
-                        AddTrajectory(ref p, -vx, false, p.leftEdge);
+                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge);
                     }
                 });
-                // No move?
+
+                Parallel.For(p.leftEdge, p.rightEdge + 1, x =>
+                {
+                    AddTrajectory(ref p, 0, MoveType.NOMOVE, x);
+                });
+                
             }
         }
 
-        private void AddTrajectory(ref Platform p, int vx, bool isJump, int x)
+        private void AddTrajectory(ref Platform p, int vx, MoveType moveType, int x)
         {
             // Any trajectory with distance <= 10 should be safe to not collide (?)
-            MoveInformation m = new MoveInformation(new Platform(-1), x, 0, vx, isJump, new List<int>(), new List<Tuple<int, int>>(), 10);
-            if (isJump)
+            MoveInformation m = new MoveInformation(new Platform(-1), p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
+            if (moveType==MoveType.JUMP)
             {
                 SimulateMove(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, (int)GameInfo.JUMP_VELOCITYY, ref m);
             }
-            else
+            else if(moveType == MoveType.FALL)
             {
                 SimulateMove(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, 0, ref m);
             }
+            else if (moveType == MoveType.NOMOVE)
+            {
+                if(CircleIntersectsWithObstacle(x,p.yTop- GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) == CircleCollisionType.Diamond)
+                {
+                    m.landingPlatform = p;
+                    m.xlandPoint = x;
+                    m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH));
+                    m.diamondsCollected.Add(GetDiamondCollected(x, p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH));
+                }
+            }
+
             lock (platformList)
             {
                 bool addIt = true;
-                if (m.landingPlatform.id != -2 && (m.diamondsCollected.Count > 0 || p.id != m.landingPlatform.id))
+                if (m.landingPlatform.id != -2 && m.landingPlatform.id!=-1 && (m.diamondsCollected.Count > 0 || p.id != m.landingPlatform.id))
                 {
                     for(int i = 0; i < p.moveInfoList.Count; i++)
                     {
@@ -589,6 +628,7 @@ namespace GeometryFriendsAgents
                         {
                             addIt = false;
                             p.moveInfoList[i] = m;
+                            //What if it is estrictly better than more than one current move?
                             break;
                         }
                     }
@@ -600,10 +640,34 @@ namespace GeometryFriendsAgents
             }
         }
 
+        private int GetDiamondCollected(int x, int y)//Check this function. Possible bugs
+        {
+            int min = 0;
+            float d = 10;
+            for (int i = 0; i < initialCollectiblesInfo.Length; i++)
+            {
+                CollectibleRepresentation coll = initialCollectiblesInfo[i];
+                float dist = (float)(Math.Pow(coll.X / GameInfo.PIXEL_LENGTH - x, 2) + Math.Pow(coll.Y / GameInfo.PIXEL_LENGTH - y, 2)) / GameInfo.PIXEL_LENGTH;
+                if (dist <= 5 + 3 / Math.Sqrt(2)) // Sufficiently close to be the diamond it collides with
+                {
+                    min = i;
+                    break;
+                }
+                if (dist < d)
+                {
+                    min = i;
+                    d = dist;
+                }
+            }
+            return min;
+        }
+        
         private void SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m)
         {
             float dt = 0.005f;
             float t = 0;
+            float x_tfloat = x_0;
+            float y_tfloat = y_0;
             int x_t = (int)(x_0 / GameInfo.PIXEL_LENGTH); // Center of the ball
             int y_t = (int)(y_0 / GameInfo.PIXEL_LENGTH); // Center of the ball
 
@@ -612,29 +676,13 @@ namespace GeometryFriendsAgents
             CircleCollisionType cct = CircleIntersectsWithObstacle(x_t, y_t);
             while (cct != CircleCollisionType.Bottom && j <= NUM_REBOUNDS)
             {
-                m.path.Add(new Tuple<int, int>(x_t, y_t));
+                m.path.Add(new Tuple<float, float>(x_tfloat, y_tfloat));
                 if (cct == CircleCollisionType.Diamond)
                 {
-                    int min = 0;
-                    float d = 10;
-                    for (int i = 0; i < initialCollectiblesInfo.Length; i++)
+                    int d = GetDiamondCollected(x_t, y_t);
+                    if (!m.diamondsCollected.Contains(d))
                     {
-                        CollectibleRepresentation coll = initialCollectiblesInfo[i];
-                        float dist = (float)(Math.Pow(coll.X - x_t, 2) + Math.Pow(coll.Y - y_t, 2)) / GameInfo.PIXEL_LENGTH;
-                        if (dist <= 5 + 3 / Math.Sqrt(2)) // Sufficiently close to be the diamond it collides with
-                        {
-                            min = i;
-                            break;
-                        }
-                        if (dist < d)
-                        {
-                            min = i;
-                            d = dist;
-                        }
-                    }
-                    if (!m.diamondsCollected.Contains(min))
-                    {
-                        m.diamondsCollected.Add(min);
+                        m.diamondsCollected.Add(d);
                     }
                 }
                 else if (cct == CircleCollisionType.Other)
@@ -674,8 +722,10 @@ namespace GeometryFriendsAgents
                     }
                 }
                 t += dt;
-                x_t = (int)((x_0 + vx_0 * t) / GameInfo.PIXEL_LENGTH);
-                y_t = (int)((y_0 - vy_0 * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2) / GameInfo.PIXEL_LENGTH);
+                x_tfloat = x_0 + vx_0 * t;
+                y_tfloat = (float)(y_0 - vy_0 * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2);
+                x_t = (int)(x_tfloat / GameInfo.PIXEL_LENGTH);
+                y_t = (int)(y_tfloat / GameInfo.PIXEL_LENGTH);
                 cct = CircleIntersectsWithObstacle(x_t, y_t);
             }
             if (cct != CircleCollisionType.Bottom)
@@ -735,13 +785,22 @@ namespace GeometryFriendsAgents
             int[] z = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
             int aux = z[-1];
             //Bugs when the collision isn't whith the top of an obstacle aka platform 
-            return new Platform(-1);
+            return new Platform(-2);
         }
 
         private bool EnoughSpaceToAccelerate(int leftEdge, int rigthEdge, int x, int vx)
         {
-            //TODO
-            return true;
+            //To reach vx velocity we need vx^2/(2*c) space where c is the constant acceleration. 
+            //c~200 
+            if (vx > 0)
+            {
+                return vx * vx <= 400 * GameInfo.PIXEL_LENGTH * (x - leftEdge);
+            }
+            else
+            {
+                return vx * vx <= 400 * GameInfo.PIXEL_LENGTH * (rigthEdge - x);
+            }
+           
         }
 
         public void Debug(ref List<DebugInformation> debugInformation)
@@ -775,20 +834,25 @@ namespace GeometryFriendsAgents
             {
                 foreach (MoveInformation m in p.moveInfoList)
                 {
-                    //ToDO: Parabollas should be drawn only once and not each time Update method is called
-                    foreach(Tuple<int,int> tup in m.path)
+                    
+                    foreach(Tuple<float,float> tup in m.path)
                     {
+                        if (m.moveType == MoveType.NOMOVE)
+                        {
+                            debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 5, GeometryFriends.XNAStub.Color.LightSeaGreen));
+                            continue;
+                        }
                         if (m.landingPlatform.id > p.id)
                         {
-                            debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(tup.Item1 * GameInfo.PIXEL_LENGTH, tup.Item2 * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.DarkGreen));
+                            debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.DarkGreen));
                         }
                         else if(m.landingPlatform.id < p.id)
                         {
-                            debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(tup.Item1 * GameInfo.PIXEL_LENGTH, tup.Item2 * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.GreenYellow));
+                            debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.GreenYellow));
                         }
                         else
                         {
-                            debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(tup.Item1 * GameInfo.PIXEL_LENGTH, tup.Item2 * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.LightSeaGreen));
+                            debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.LightSeaGreen));
                         }
                     }
                     //VisualDebug.DrawParabola(ref debugInformation, m.x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, m.velocityX, m.isJump ? GameInfo.JUMP_VELOCITYY : 0, GeometryFriends.XNAStub.Color.DarkGreen);
@@ -801,15 +865,15 @@ namespace GeometryFriendsAgents
     
 
         private void Change(ref GeometryFriends.XNAStub.Color color)
-    {
-        if (color == GeometryFriends.XNAStub.Color.Red)
         {
-            color = GeometryFriends.XNAStub.Color.White;
+            if (color == GeometryFriends.XNAStub.Color.Red)
+            {
+                color = GeometryFriends.XNAStub.Color.White;
+            }
+            else
+            {
+                color = GeometryFriends.XNAStub.Color.Red;
+            }
         }
-        else
-        {
-            color = GeometryFriends.XNAStub.Color.Red;
-        }
-    }
     }
 }
