@@ -70,6 +70,8 @@ namespace GeometryFriendsAgents
             public List<int> diamondsCollected;
             public List<Tuple<int,int>> path;
             public int distanceToObstacle;
+            public int distanceToRollingEdge;
+            public int distanceToOtherEdge; // Could be useful if agent learns to roll on mid-air
 
             public MoveInformation(Platform landingPlatform, int x, int xlandPoint, int velocityX, bool isJump, List<int> diamondsCollected, List<Tuple<int, int>> path, int distanceToObstacle)
             {
@@ -81,6 +83,57 @@ namespace GeometryFriendsAgents
                 this.diamondsCollected = diamondsCollected;
                 this.path = path;
                 this.distanceToObstacle = distanceToObstacle;
+                if(velocityX >= 0)
+                {
+                    distanceToRollingEdge = landingPlatform.rightEdge - xlandPoint;
+                    distanceToOtherEdge = xlandPoint - landingPlatform.leftEdge;
+                }
+                else
+                {
+                    distanceToOtherEdge = landingPlatform.rightEdge - xlandPoint;
+                    distanceToRollingEdge = xlandPoint - landingPlatform.leftEdge;
+                }
+            }
+
+            // Returns 1 is this is better, -1 if other is better, 0 if not clear or not comparable
+            // This is now going to be used just as a first filter, not as a definitive one (we need a second one)
+            public int Compare(MoveInformation other)
+            {
+                // Here is where we filter movements
+                if(landingPlatform.id != other.landingPlatform.id)
+                {
+                    return 0;
+                }
+                // TODO: New filter
+                // If distanceToRollingEdge is very small and all diamonds can be picked by other trajectories (this is not done yet), discard it
+                // We do not take into account velocityX very much because we assume both have checked it is possible to reach that velocity
+                if (diamondsCollected.Count > other.diamondsCollected.Count)
+                {
+                    if(distanceToObstacle >= other.distanceToObstacle)
+                    {
+                        // In this case, m is strictly better than other, so we substitute it
+                        return 1;
+                    }
+                    return 0;
+                }
+                else if(diamondsCollected.Count < other.diamondsCollected.Count)
+                {
+                    if (distanceToObstacle <= other.distanceToObstacle)
+                    {
+                        // In this case, other is at least as good as m, so we discard m
+                        return -1;
+                    }
+                    return 0;
+                }
+                else
+                {
+                    // If there is no clear way to decide, we use other characteristics (is it better velocityX? They should be kind of relatede)
+                    if(distanceToOtherEdge > other.distanceToOtherEdge)
+                    {
+                        return 1;
+                    }
+                    return -1;
+                }
             }
         }
 
@@ -521,35 +574,25 @@ namespace GeometryFriendsAgents
             }
             lock (platformList)
             {
-                // TODO: More filters
+                bool addIt = true;
                 if (m.landingPlatform.id != -2 && (m.diamondsCollected.Count > 0 || p.id != m.landingPlatform.id))
                 {
-                    bool add = true;
                     for(int i = 0; i < p.moveInfoList.Count; i++)
                     {
-                        MoveInformation other = p.moveInfoList[i];
-                        if(m.landingPlatform.id == other.landingPlatform.id)
+                        int add = m.Compare(p.moveInfoList[i]);
+                        if(add == -1)
                         {
-                            if (m.distanceToObstacle > other.distanceToObstacle && m.diamondsCollected.Count >= other.diamondsCollected.Count)
-                            {
-                                // In this case, m is strictly better than other, so we substitute it
-                                p.moveInfoList[i] = m;
-                                add = false;
-                                break;
-                            }
-                            if(m.distanceToObstacle <= other.distanceToObstacle && m.diamondsCollected.Count <= other.diamondsCollected.Count)
-                            {
-                                // In this case, other is at least as good as m, so we discard m
-                                add = false;
-                                break;
-                            }
+                            addIt = false;
+                            break;
+                        }
+                        else if(add == 1)
+                        {
+                            addIt = false;
+                            p.moveInfoList[i] = m;
+                            break;
                         }
                     }
-                    // In other case, either:
-                    // - there is yet no movement that goes to the same platform
-                    // - m catches more diamonds or has less minimum distance to every obstacle
-                    // We want to add m to the possible moves.
-                    if (add)
+                    if (addIt)
                     {
                         p.moveInfoList.Add(m);
                     }
@@ -613,12 +656,12 @@ namespace GeometryFriendsAgents
                     t = 0;
                     j++;
                 }
-                // Calculate if distance to obstacle is low, but only if obstacle is not below
+                // Calculate if distance to obstacle is low, but only if obstacle is not below or above
                 if(m.distanceToObstacle > (int)(GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH))
                 {
                     for (int i = -m.distanceToObstacle; i < m.distanceToObstacle; i++)
                     {
-                        for (int k = (int) (GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH); k < m.distanceToObstacle; k++)
+                        for (int k = 1 - (int) (GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH); k < (int)(GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH); k++)
                         {
                             if (levelMap[x_t + i, y_t + j] == PixelType.OBSTACLE || levelMap[x_t + i, y_t + j] == PixelType.PLATFORM)
                             {
@@ -703,7 +746,6 @@ namespace GeometryFriendsAgents
 
         public void Debug(ref List<DebugInformation> debugInformation)
         {
-
             GeometryFriends.XNAStub.Color color = GeometryFriends.XNAStub.Color.Red;
             for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
             {
@@ -734,12 +776,20 @@ namespace GeometryFriendsAgents
                 foreach (MoveInformation m in p.moveInfoList)
                 {
                     //ToDO: Parabollas should be drawn only once and not each time Update method is called
-                    // Strong conditions should be imposed because there are too many parabollas to draw
-                    
                     foreach(Tuple<int,int> tup in m.path)
                     {
-                        debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(tup.Item1* GameInfo.PIXEL_LENGTH, tup.Item2 * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.DarkGreen));
-
+                        if (m.landingPlatform.id > p.id)
+                        {
+                            debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(tup.Item1 * GameInfo.PIXEL_LENGTH, tup.Item2 * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.DarkGreen));
+                        }
+                        else if(m.landingPlatform.id < p.id)
+                        {
+                            debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(tup.Item1 * GameInfo.PIXEL_LENGTH, tup.Item2 * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.GreenYellow));
+                        }
+                        else
+                        {
+                            debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(tup.Item1 * GameInfo.PIXEL_LENGTH, tup.Item2 * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.LightSeaGreen));
+                        }
                     }
                     //VisualDebug.DrawParabola(ref debugInformation, m.x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, m.velocityX, m.isJump ? GameInfo.JUMP_VELOCITYY : 0, GeometryFriends.XNAStub.Color.DarkGreen);
                     //debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(m.xlandPoint * GameInfo.PIXEL_LENGTH, m.landingPlatform.yTop * GameInfo.PIXEL_LENGTH), 10, GeometryFriends.XNAStub.Color.DarkGray));
