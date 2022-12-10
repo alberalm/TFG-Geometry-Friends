@@ -17,6 +17,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="5" />
       <HighScore name="IST Circle" value="94" />
       <HighScore name="IST Circle" value="170" />
     </HighScores>
@@ -135,6 +136,7 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="IST Circle" value="8" />
+      <HighScore name="UCMAgent" value="9" />
       <HighScore name="RandPredictorCircle" value="12" />
     </HighScores>
   </Level6>

@@ -63,6 +63,44 @@ namespace GeometryFriendsAgents
                 this.rightEdge = 0;
                 this.moveInfoList = null;
             }
+
+            public List<int> ReachableCollectiblesLandingInThisPlatform()
+            {
+                List<int> rc = new List<int>();
+                foreach(MoveInformation m in moveInfoList)
+                {
+                    if (m.departurePlatform.id == m.landingPlatform.id)
+                    {
+                        foreach (int d in m.diamondsCollected)
+                        {
+                            if (!rc.Contains(d))
+                            {
+                                rc.Add(d);
+                            }
+                        }
+                    }
+                }
+                return rc;
+            }
+
+            public List<int> ReachableCollectiblesLandingInOtherPlatform()
+            {
+                List<int> rc = new List<int>();
+                foreach (MoveInformation m in moveInfoList)
+                {
+                    if (m.departurePlatform.id != m.landingPlatform.id) 
+                    { 
+                        foreach (int d in m.diamondsCollected)
+                        {
+                            if (!rc.Contains(d))
+                            {
+                                rc.Add(d);
+                            }
+                        }
+                    }
+                }
+                return rc;
+            }
         }
 
         public class MoveInformation
@@ -79,6 +117,7 @@ namespace GeometryFriendsAgents
             public int distanceToRollingEdge;
             public int distanceToOtherEdge; // Could be useful if agent learns to roll on mid-air
 
+            
             public MoveInformation(Platform landingPlatform, Platform departurePlatform, int x, int xlandPoint, int velocityX, MoveType moveType, List<int> diamondsCollected, List<Tuple<float, float>> path, int distanceToObstacle)
             {
                 this.departurePlatform = departurePlatform;
@@ -107,13 +146,15 @@ namespace GeometryFriendsAgents
             public int Compare(MoveInformation other)
             {
                 // Here is where we filter movements
-                if(landingPlatform.id != other.landingPlatform.id)
+                if(landingPlatform.id != other.landingPlatform.id || departurePlatform.id != other.departurePlatform.id)
                 {
                     return 0;
                 }
                 // TODO: New filter
                 // If distanceToRollingEdge is very small and all diamonds can be picked by other trajectories (this is not done yet), discard it
                 // We do not take into account velocityX very much because we assume both have checked it is possible to reach that velocity
+
+
                 if (moveType == MoveType.NOMOVE && other.diamondsCollected.Count==1 && diamondsCollected[0]==other.diamondsCollected[0] && other.landingPlatform==other.departurePlatform)
                 {
                     //other is a jump from platform x to platform x and it was only added because it could reach a diamond
@@ -128,6 +169,40 @@ namespace GeometryFriendsAgents
                 {
                     return 0;
                 }
+               
+                if (Contained(diamondsCollected,other.diamondsCollected) && Contained(other.diamondsCollected,diamondsCollected)) //diamondsCollected=other.diamondsCollected
+                {
+                    if (distanceToObstacle > other.distanceToObstacle)
+                    {
+                        return 1;
+                    }
+                    else if(distanceToObstacle < other.distanceToObstacle)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        if (distanceToOtherEdge > other.distanceToOtherEdge)
+                        {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                }
+                else if (Contained(diamondsCollected, other.diamondsCollected) && !Contained(other.diamondsCollected, diamondsCollected))//diamondsCollected strictly contained in other.diamondsCollected
+                {
+                    return -1;
+                }
+                else if (!Contained(diamondsCollected, other.diamondsCollected) && Contained(other.diamondsCollected, diamondsCollected))//other.diamondsCollected strictly contained in diamondsCollected
+                {
+                    return 1;
+                }
+                else if (!Contained(diamondsCollected, other.diamondsCollected) && !Contained(other.diamondsCollected, diamondsCollected))//Incomparable
+                {
+                    return 0;
+                }
+                return 0;
+                /*
                 if (diamondsCollected.Count > other.diamondsCollected.Count)
                 {
                     if(distanceToObstacle >= other.distanceToObstacle)
@@ -154,12 +229,12 @@ namespace GeometryFriendsAgents
                         return 1;
                     }
                     return -1;
-                }
+                }*/
             }
         }
 
         List<Platform> platformList;
-        Graph graph;
+        
 
         private readonly int[] COLLECTIBLE_SIZE = new int[] { 1, 2, 3, 3, 2, 1 };//Divided by 2
         private readonly int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
@@ -169,8 +244,6 @@ namespace GeometryFriendsAgents
         public PixelType[,] levelMap = new PixelType[GameInfo.LEVEL_MAP_WIDTH, GameInfo.LEVEL_MAP_HEIGHT]; //x=i, y=j
 
         public CollectibleRepresentation[] initialCollectiblesInfo;
-
-        
 
         public struct MapPoint
         {
@@ -194,6 +267,19 @@ namespace GeometryFriendsAgents
                 this.x = x;
                 this.y = y;
             }
+        }
+        
+        private static bool Contained<T>(List<T> l1, List<T> l2) //returns if l1 is contained in l2
+        {
+            foreach(T e in l1)
+            {
+                if (!l2.Contains(e))
+                {
+                    return false;
+                }
+
+            }
+            return true;
         }
 
         public static MapPoint ConvertPointIntoArrayPoint(Point value)
@@ -221,6 +307,23 @@ namespace GeometryFriendsAgents
             return levelMap;
         }
 
+        public List<Platform> GetPlatforms()
+        {
+            return platformList;
+        }
+
+        public Platform CirclePlatform(CircleRepresentation cI)
+        {
+            for(int i=0; i<platformList.Count; i++)
+            {
+                if(cI.Y/GameInfo.PIXEL_LENGTH<platformList[i].yTop && cI.X / GameInfo.PIXEL_LENGTH>= platformList[i].leftEdge && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge)
+                {
+                    return platformList[i];
+                }
+            }
+            return new Platform(-1);
+        }
+
         public void CreateLevelMap(CollectibleRepresentation[] colI, ObstacleRepresentation[] oI, ObstacleRepresentation[] cPI)
         {
             SetCollectibles(colI);
@@ -241,7 +344,6 @@ namespace GeometryFriendsAgents
 
             GenerateMoveInformation();
 
-            graph = new Graph(platformList);
 
             // DEBUG
             String s = "\n";
@@ -256,14 +358,15 @@ namespace GeometryFriendsAgents
                 s += "      Moves = " + p.moveInfoList.Count+ "\n";
                 foreach(MoveInformation m in p.moveInfoList)
                 {
-                    s+= "           Type = " + m.moveType.ToString() + " X= "+m.x+"\n";
+                    s += "           Type = " + m.moveType.ToString() + " X= " + m.x+" Collecitbles caught= ";
+                    foreach (int d in m.diamondsCollected)
+                    {
+                        s += d.ToString() + " ";
+                    }
+                    s += "\n";
                 }
                 s += "      Connected to platforms: ";
-                foreach (Graph.Edge e in graph.adj[i])
-                {
-                    s += e.to + ", ";
-                }
-                s += "\n";
+                
                 foreach (MoveInformation m in p.moveInfoList)
                 {
                     if (p.id == m.landingPlatform.id && m.diamondsCollected.Count==0)
@@ -292,7 +395,12 @@ namespace GeometryFriendsAgents
                 }
             }
             Log.LogInformation(s, true);*/
-
+            /*
+            if (!graph.EveryCollectibleCanBeCollected())
+            {
+                // Advanced movements with collisions are required (TODO)
+            }
+            */
             // TODO: graph.SearchAlgorithm();
         }
 
@@ -628,7 +736,7 @@ namespace GeometryFriendsAgents
                         {
                             addIt = false;
                             p.moveInfoList[i] = m;
-                            //What if it is estrictly better than more than one current move?
+                            //What if it is strictly better than more than one current move?
                             break;
                         }
                     }
@@ -659,6 +767,7 @@ namespace GeometryFriendsAgents
                     d = dist;
                 }
             }
+            
             return min;
         }
         

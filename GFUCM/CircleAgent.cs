@@ -23,7 +23,7 @@ namespace GeometryFriendsAgents
     {
         //agent implementation specificiation
         private bool implementedAgent;
-        private string agentName = "RandPredictorCircle";
+        private string agentName = "UCMAgent";
 
         //auxiliary variables for agent action
         private Moves currentAction;
@@ -53,16 +53,24 @@ namespace GeometryFriendsAgents
         private ObstacleRepresentation[] circlePlatformsInfo;
         private CollectibleRepresentation[] collectiblesInfo;
 
+
+        private Dictionary<CollectibleRepresentation, int> collectibleId;
+
+
         private int nCollectiblesLeft;
 
         private List<AgentMessage> messages;
 
+        private List<LevelMap.MoveInformation> plan;
         //Area of the game screen
         private Rectangle area;
 
         //Representation of level
         LevelMap levelMap;
 
+        Graph graph;
+        ActionSelector actionSelector;
+        
         public CircleAgent()
         {
             //Change flag if agent is not to be used
@@ -86,8 +94,9 @@ namespace GeometryFriendsAgents
 
             //messages exchange
             messages = new List<AgentMessage>();
-            levelMap = new LevelMap();
 
+
+            levelMap = new LevelMap();
             //debug
             newDebugInfo = new List<DebugInformation>();
             
@@ -105,13 +114,22 @@ namespace GeometryFriendsAgents
             circlePlatformsInfo = cPI;
             collectiblesInfo = colI;
             uncaughtCollectibles = new List<CollectibleRepresentation>(collectiblesInfo);
+            collectibleId = new Dictionary<CollectibleRepresentation, int>();
+            for (int i=0; i < colI.Length; i++)
+            {
+                collectibleId[colI[i]] = i;
+            }
+            actionSelector = new ActionSelector(collectibleId);
             this.area = area;
             levelMap.CreateLevelMap(colI,oI, rPI);
 
+            graph = new Graph(levelMap.GetPlatforms(), colI);
             
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
 
             levelMap.Debug(ref newDebugInfo);
+
+            plan = graph.SearchAlgorithm(levelMap.CirclePlatform(cI).id);
             debugInfo = newDebugInfo.ToArray();
 
             //send a message to the rectangle informing that the circle setup is complete and show how to pass an attachment: a pen object
@@ -196,7 +214,7 @@ namespace GeometryFriendsAgents
         //implements abstract circle interface: GeometryFriends agents manager gets the current action intended to be actuated in the enviroment for this agent
         public override Moves GetAction()
         {
-            return Moves.ROLL_RIGHT;
+            return currentAction;
         }
         private void ReachTargetPoint(int x_target)
         {
@@ -213,13 +231,7 @@ namespace GeometryFriendsAgents
                 currentAction = Moves.ROLL_LEFT;
             }
         }
-        private void SelectAction()
-        {
-
-            ReachTargetPoint(1000);
-
-
-        }
+        
 
         /*private void StoreVelocityData()
         {
@@ -265,7 +277,7 @@ namespace GeometryFriendsAgents
         {
             
             //Every second one new action is choosen
-            if (lastMoveTime == 60)
+            /*if (lastMoveTime == 60)
                 lastMoveTime = 0;
 
             if ((lastMoveTime) <= (DateTime.Now.Second) && (lastMoveTime < 60))
@@ -279,8 +291,8 @@ namespace GeometryFriendsAgents
                 else
                     lastMoveTime = 60;
             }
-
-            //SelectAction();
+            */
+            currentAction=actionSelector.nextAction(plan,remaining,circleInfo, levelMap.CirclePlatform(circleInfo));
             CircleDebug();
             debugInfo = newDebugInfo.ToArray();
             /*

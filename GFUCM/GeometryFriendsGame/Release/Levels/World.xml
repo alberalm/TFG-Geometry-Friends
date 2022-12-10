@@ -56,5 +56,8 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="RandPredictorCircle" value="36" />
+    </HighScores>
   </Level3>
 </Levels>
