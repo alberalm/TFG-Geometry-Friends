@@ -92,6 +92,8 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="3" />
+      <HighScore name="UCMAgent" value="3" />
       <HighScore name="IST Circle" value="8" />
     </HighScores>
   </Level4>
@@ -114,7 +116,10 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="15" />
       <HighScore name="IST Circle" value="15" />
+      <HighScore name="UCMAgent" value="15" />
+      <HighScore name="UCMAgent" value="33" />
     </HighScores>
   </Level5>
   <Level6>
@@ -126,16 +131,19 @@
       <Collectible X="1048" Y="232" />
       <Collectible X="136" Y="120" />
       <Collectible X="120" Y="520" />
-      <Collectible X="600" Y="-24" />
     </Collectibles>
     <GreenObstacles />
     <BlackObstacles>
-      <Obstacle X="40" Y="312" centered="false" height="32" width="880" />
+      <Obstacle width="880" height="32" X="40" Y="312" centered="false" />
     </BlackObstacles>
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
-    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="18" />
+      <HighScore name="UCMAgent" value="18" />
+    </HighScores>
   </Level6>
   <Level7>
     <Description />
@@ -171,18 +179,14 @@
     </Collectibles>
     <GreenObstacles />
     <BlackObstacles>
-      <Obstacle X="424" Y="616" centered="false" height="32" width="240" />
-      <Obstacle X="920" Y="232" centered="false" height="576" width="32" />
-      <Obstacle X="40" Y="392" centered="false" height="32" width="288" />
-      <Obstacle X="504" Y="232" centered="false" height="32" width="448" />
+      <Obstacle width="240" height="32" X="424" Y="616" centered="false" />
+      <Obstacle width="288" height="32" X="40" Y="392" centered="false" />
+      <Obstacle width="448" height="32" X="504" Y="232" centered="false" />
+      <Obstacle width="32" height="528" X="920" Y="232" centered="false" />
     </BlackObstacles>
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
-    <TimeLimit value="120" />
-    <HighScores>
-      <HighScore name="IST Circle" value="25" />
-    </HighScores>
   </Level8>
   <Level9>
     <Description />
@@ -206,6 +210,7 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="IST Circle" value="20" />
+      <HighScore name="UCMAgent" value="21" />
     </HighScores>
   </Level9>
   <Level10>

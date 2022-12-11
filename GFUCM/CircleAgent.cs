@@ -33,8 +33,7 @@ namespace GeometryFriendsAgents
 
         //predictor of actions for the circle
         private ActionSimulator predictor = null;
-        private DebugInformation[] debugInfo = null;
-        private List<DebugInformation> newDebugInfo;
+        
         
         //private int debugCircleSize = 20;
 
@@ -61,16 +60,28 @@ namespace GeometryFriendsAgents
 
         private List<AgentMessage> messages;
 
-        private List<LevelMap.MoveInformation> plan;
+        
         //Area of the game screen
         private Rectangle area;
 
         //Representation of level
         LevelMap levelMap;
 
+        //Planning
         Graph graph;
-        ActionSelector actionSelector;
+        private List<LevelMap.MoveInformation> plan;
         
+        //Execution
+        ActionSelector actionSelector;
+        LevelMap.MoveInformation currentJump;
+        LevelMap.Platform currentPlatform;
+
+        //Debug
+        private DebugInformation[] debugInfo = null;
+        private List<DebugInformation> newDebugInfo;
+        private List<CircleRepresentation> trajectory;
+        private List<LevelMap.MoveInformation> fullPlan;
+
         public CircleAgent()
         {
             //Change flag if agent is not to be used
@@ -97,9 +108,11 @@ namespace GeometryFriendsAgents
 
 
             levelMap = new LevelMap();
-            //debug
+
+            //Debug
             newDebugInfo = new List<DebugInformation>();
-            
+            trajectory = new List<CircleRepresentation>();
+
         }
 
         //implements abstract circle interface: used to setup the initial information so that the agent has basic knowledge about the level
@@ -125,39 +138,75 @@ namespace GeometryFriendsAgents
 
             graph = new Graph(levelMap.GetPlatforms(), colI);
             
-            newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-
-            levelMap.Debug(ref newDebugInfo);
-
-            plan = graph.SearchAlgorithm(levelMap.CirclePlatform(cI).id);
-            debugInfo = newDebugInfo.ToArray();
+            
+            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(cI).id);
+            fullPlan = new List<LevelMap.MoveInformation>(plan);
+            //InitialDraw();
+            
 
             //send a message to the rectangle informing that the circle setup is complete and show how to pass an attachment: a pen object
             messages.Add(new AgentMessage("Setup complete, testing to send an object as an attachment.", new Pen(Color.AliceBlue)));
             
             //DebugSensorsInfo();
         }
-        private void CircleDebug()
+        private void InitialDraw()
         {
-            
-            /*int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
+            newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
+            levelMap.DrawLevelMap(ref newDebugInfo);
+            levelMap.DrawConnections(ref newDebugInfo);
+            PlanDebug();
+        }
+
+        private void UpdateDraw()
+        {
+            newDebugInfo.Clear();
+            InitialDraw();
+            CircleDraw();
+            debugInfo = newDebugInfo.ToArray();
+        }
+
+        private void PlanDebug()
+        {
+            int step = 1;
+            foreach (LevelMap.MoveInformation m in fullPlan)
+            {
+                foreach (Tuple<float, float> tup in m.path)
+                {
+                    newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.Red));
+                }
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(m.path[m.path.Count / 2].Item1, m.path[m.path.Count / 2].Item2), step.ToString(), GeometryFriends.XNAStub.Color.Black));
+                step++;
+            }
+        }
+
+        private void CircleDraw()
+        {
+            //Circle Silhouette
+            int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
             for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
             {
                 for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
                 {
                     int x = (int)(circleInfo.X / GameInfo.PIXEL_LENGTH);
                     int y = (int)(circleInfo.Y / GameInfo.PIXEL_LENGTH);
-                    newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x + i) * GameInfo.PIXEL_LENGTH, (y + j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen));
+                    DebugInformation di = DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x + i) * GameInfo.PIXEL_LENGTH, (y + j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen);
+                    newDebugInfo.Add(di);
+                    
                 }
-            }*/
-            
-            //newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X, circleInfo.Y), 4, GeometryFriends.XNAStub.Color.Red));
-            
-            //remove it form the list when plot
-            //VisualDebug.DrawVelocityComponents(ref newDebugInfo, circleInfo.X, circleInfo.Y, (int)(circleInfo.VelocityX / 5), (int)(circleInfo.VelocityY / 5), GeometryFriends.XNAStub.Color.Green);
+            }
 
+            //Circle trajectory
+            trajectory.Add(circleInfo);
+            for (int i = Math.Max(0, trajectory.Count - 200); i < trajectory.Count; i++)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(trajectory[i].X, trajectory[i].Y), 4, GeometryFriends.XNAStub.Color.Orange));
+            }
             
+            //Circle velocity
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X + circleInfo.VelocityX, circleInfo.Y), GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X, circleInfo.Y + circleInfo.VelocityY), GeometryFriends.XNAStub.Color.Silver));
         }
+
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
         /*WARNING: this method is called independently from the agent update - Update(TimeSpan elapsedGameTime) - so care should be taken when using complex 
          * structures that are modified in both (e.g. see operation on the "remaining" collection)      
@@ -216,66 +265,13 @@ namespace GeometryFriendsAgents
         {
             return currentAction;
         }
-        private void ReachTargetPoint(int x_target)
-        {
-            if (Math.Abs(x_target - circleInfo.X) < 10)
-            {
-                currentAction = Moves.JUMP;
-            }
-            else if (x_target - circleInfo.X > 10)
-            {
-                currentAction = Moves.ROLL_RIGHT;
-            }
-            else if (x_target - circleInfo.X < -10)
-            {
-                currentAction = Moves.ROLL_LEFT;
-            }
-        }
         
 
-        /*private void StoreVelocityData()
-        {
-            string patht = @"D:\TFG Infor\TFG---Geometry-Friends\GFUCM\testt.xls";
-            string pathvx = @"D:\TFG Infor\TFG---Geometry-Friends\GFUCM\testvx.xls";
-            string pathvy = @"D:\TFG Infor\TFG---Geometry-Friends\GFUCM\testvy.xls";
-
-            try
-            {
-                // Create the file, or overwrite if the file exists.
-                using (FileStream fst = File.Create(patht))
-                {
-                    using (FileStream fsvx = File.Create(pathvx))
-                    {
-                        using (FileStream fsvy = File.Create(pathvy))
-                        {
-
-                            foreach (Tuple<float, float, float> tup in velocity_t)
-                            {
-                                byte[] info = new UTF8Encoding(true).GetBytes(tup.Item1.ToString() + "\n");
-                                fst.Write(info, 0, info.Length);
-                                info = new UTF8Encoding(true).GetBytes(tup.Item2.ToString() + "\n");
-                                fsvx.Write(info, 0, info.Length);
-                                info = new UTF8Encoding(true).GetBytes(tup.Item3.ToString() + "\n");
-                                fsvy.Write(info, 0, info.Length);
-                            }
-
-                        }
-
-                    }
-
-                }
-            }
-
-            catch (Exception ex)
-            {
-                Log.LogInformation(ex.ToString(), true);
-                Console.WriteLine(ex.ToString());
-            }
-        }*/
+        
         //implements abstract circle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            
+
             //Every second one new action is choosen
             /*if (lastMoveTime == 60)
                 lastMoveTime = 0;
@@ -292,9 +288,45 @@ namespace GeometryFriendsAgents
                     lastMoveTime = 60;
             }
             */
-            currentAction=actionSelector.nextAction(plan,remaining,circleInfo, levelMap.CirclePlatform(circleInfo));
-            CircleDebug();
-            debugInfo = newDebugInfo.ToArray();
+            UpdateDraw();
+            currentPlatform = levelMap.CirclePlatform(circleInfo);
+            if (currentPlatform == null || currentPlatform.id != 2)
+            {
+                currentPlatform = levelMap.CirclePlatform(circleInfo);
+            }
+            if (currentPlatform.id == -1)
+            {
+                
+                if (circleInfo.VelocityX > 0)
+                {
+                    currentAction = Moves.ROLL_LEFT;
+                }
+                else
+                {
+                    currentAction = Moves.ROLL_RIGHT;
+                }
+
+            }
+            else
+            {
+                
+                Tuple<Moves,bool> tup = actionSelector.nextAction(plan, remaining, circleInfo, currentPlatform);
+                currentAction = tup.Item1;
+                if (currentAction == Moves.JUMP && tup.Item2)
+                {
+
+                    currentJump = plan[0];
+                    plan.RemoveAt(0);
+                    //Log.LogInformation("Plan pop", true);
+                }
+                if (currentAction == Moves.ROLL_RIGHT && circleInfo.X<200)
+                {
+                    int z = 0;
+                }
+             
+                
+            }
+            
             /*
             //check if any collectible was caught
             lock (remaining)

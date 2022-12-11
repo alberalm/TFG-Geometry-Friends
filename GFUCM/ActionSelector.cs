@@ -15,7 +15,7 @@ namespace GeometryFriendsAgents
             this.collectibleId = collectibleId;
         }
 
-        public Moves nextAction(List<LevelMap.MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, LevelMap.Platform p)
+        public Tuple<Moves,bool> nextAction(List<LevelMap.MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, LevelMap.Platform p)
         {
             if (plan.Count > 0)
             {
@@ -24,16 +24,18 @@ namespace GeometryFriendsAgents
                 if (nextMoveInThisPlatform!=null)
                 {
                     //Remaining collectibles in this platform
-                    return GoToPosition((int)cI.X/GameInfo.PIXEL_LENGTH, nextMoveInThisPlatform.x,nextMoveInThisPlatform.moveType==LevelMap.MoveType.JUMP);
+                    return new Tuple<Moves, bool>(GoToPositionWithVelocity((int)(cI.X/GameInfo.PIXEL_LENGTH), (int) cI.VelocityX, nextMoveInThisPlatform.x, nextMoveInThisPlatform.velocityX, nextMoveInThisPlatform.moveType==LevelMap.MoveType.JUMP), false);
                 }
                 else{
                     //We have to move To the next platform
-                    return GoToPosition((int)cI.X / GameInfo.PIXEL_LENGTH, nextMoveToAnotherPlatform.x, nextMoveToAnotherPlatform.moveType == LevelMap.MoveType.JUMP);
+                    return new Tuple<Moves, bool>(GoToPositionWithVelocity((int)(cI.X / GameInfo.PIXEL_LENGTH), (int)cI.VelocityX, nextMoveToAnotherPlatform.x, nextMoveToAnotherPlatform.velocityX, nextMoveToAnotherPlatform.moveType == LevelMap.MoveType.JUMP),true);
+
                 }
             }
             LevelMap.MoveInformation nextMove = DiamondsCanBeCollectedFrom(p, remaining);
-            return GoToPosition((int)cI.X / GameInfo.PIXEL_LENGTH, nextMove.x, nextMove.moveType == LevelMap.MoveType.JUMP);
-            
+            return new Tuple<Moves, bool>(GoToPositionWithVelocity((int)(cI.X / GameInfo.PIXEL_LENGTH), (int)cI.VelocityX, nextMove.x, nextMove.velocityX, nextMove.moveType == LevelMap.MoveType.JUMP),false);
+
+
         }
 
         private LevelMap.MoveInformation DiamondsCanBeCollectedFrom(LevelMap.Platform p, List<CollectibleRepresentation> remaining)
@@ -78,15 +80,33 @@ namespace GeometryFriendsAgents
             }
         }
 
-        /*Moves GoToWithVelocity(int currentx, int currentvx, int targetx, int targetvx, bool jump)
+        Moves GoToPositionWithVelocity(int currentx, int currentvx, int targetx, int targetvx, bool jump)
         {
-            if(Math.Abs(currentx-targetx)<=1 && Math.Abs(currentvx - targetvx) <= 1 && jump)
+            if (Math.Abs(currentx - targetx) <= 1 && jump)
             {
+                if (currentvx * targetvx < 0)
+                {
+                    if (currentvx > 0)
+                    {
+                        return Moves.ROLL_RIGHT;
+                    }
+                    else
+                    {
+                        return Moves.ROLL_LEFT;
+                    }
+                }
                 return Moves.JUMP;
             }
-            else if(Math.Abs(currentvx - targetvx) <= 1 )
+            else if (currentx < targetx)
+            {
+                return Moves.ROLL_RIGHT;
+            }
+            else
+            {
+                return Moves.ROLL_LEFT;
+            }
         }
-        */
+        
         
     }
 }

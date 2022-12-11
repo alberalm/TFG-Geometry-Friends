@@ -132,6 +132,8 @@
     <OrangeElevators />
     <TimeLimit value="40" />
     <HighScores>
+      <HighScore name="UCMAgent" value="7" />
+      <HighScore name="UCMAgent" value="7" />
       <HighScore name="LearningBall" value="20" />
       <HighScore name="RandPredictorCircle" value="59" />
     </HighScores>
@@ -203,6 +205,10 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="80" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="26" />
+      <HighScore name="UCMAgent" value="27" />
+    </HighScores>
   </Level9>
   <Level10>
     <Description />
@@ -229,6 +235,7 @@
     <OrangeElevators />
     <TimeLimit value="100" />
     <HighScores>
+      <HighScore name="UCMAgent" value="87" />
       <HighScore name="No Name" value="89" />
       <HighScore name="RandPredictorCircle" value="185" />
     </HighScores>

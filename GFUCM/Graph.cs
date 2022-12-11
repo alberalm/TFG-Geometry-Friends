@@ -183,17 +183,74 @@ namespace GeometryFriendsAgents
 
         public List<LevelMap.MoveInformation> SearchAlgorithm(int src)
         {
-            bool[] caught = new bool[collectibles.Count];
-            for (int i = 0; i < collectibles.Count; i++) // Probably unnecessary
+            
+            List<Node> queue = new List<Node>();
+            List<bool> auxlist = Enumerable.Repeat(false,collectibles.Count).ToList();
+            queue.Add(new Node(new List<LevelMap.MoveInformation> { new LevelMap.MoveInformation(platforms[src]) }, auxlist, 0));
+            while (queue.Count > 0)
             {
-                caught[i] = false;
+                Node n = queue[0];
+                
+                queue.RemoveAt(0);
+                //Process move 
+                LevelMap.MoveInformation move = n.plan[n.plan.Count - 1];
+                foreach (int d in move.diamondsCollected)
+                {
+                    if (!n.caught[d])
+                    {
+                        n.caught[d] = true;
+                        n.numCaught++;
+                    }
+                }
+                //Process platform
+                for (int i = 0; i < collectibles.Count; i++)
+                {
+                    if (!n.caught[i])
+                    {
+                        if(collectibles[i].isAbovePlatform == move.landingPlatform.id)
+                        {
+                            n.caught[i] = true;
+                            n.numCaught++;
+                        }
+                    }
+                }
+                if (n.numCaught == collectibles.Count)
+                {
+                    List<LevelMap.MoveInformation> sol = n.plan;
+                    sol.RemoveAt(0);
+                    return sol;
+                }
+                else
+                {
+                    foreach(LevelMap.MoveInformation m in move.landingPlatform.moveInfoList)
+                    {
+                        if (m.departurePlatform.id != m.landingPlatform.id)
+                        {
+                            List<LevelMap.MoveInformation> newPlan = new List<LevelMap.MoveInformation>(n.plan);
+                            List<bool> newcaught = new List<bool>(n.caught);
+                            newPlan.Add(m);
+                            queue.Add(new Node(newPlan, newcaught, n.numCaught));
+                        }
+                    }
+                }
+                
             }
-            hasFinished = false;
-            List<LevelMap.MoveInformation> sol = AuxSearch(src, caught, null, 0);
-            sol.Reverse();
-            return sol;
+            int []z= {0};
+            int aux=z[-1];
+            return null;
         }
-
+        public class Node
+        {
+            public List<LevelMap.MoveInformation> plan;
+            public List<bool> caught;
+            public int numCaught;
+            public Node(List<LevelMap.MoveInformation> plan, List<bool> caught, int numCaught)
+            {
+                this.plan = plan;
+                this.caught = caught;
+                this.numCaught = numCaught;
+            }
+        }
         public void AddMove(LevelMap.MoveInformation move, int from, int to)
         {
             // Need the "to" vertex for the inverted graph

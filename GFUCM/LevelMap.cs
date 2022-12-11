@@ -127,7 +127,18 @@ namespace GeometryFriendsAgents
             public int distanceToRollingEdge;
             public int distanceToOtherEdge; // Could be useful if agent learns to roll on mid-air
 
-            
+            public MoveInformation(Platform landingPlatform)
+            {
+                this.departurePlatform = null;
+                this.landingPlatform = landingPlatform;
+                this.x = 0;
+                this.xlandPoint = 0;
+                this.velocityX = 0;
+                this.moveType = MoveType.NOMOVE;
+                this.diamondsCollected = new List<int>();
+                this.path = null;
+                this.distanceToObstacle = 0;
+            }
             public MoveInformation(Platform landingPlatform, Platform departurePlatform, int x, int xlandPoint, int velocityX, MoveType moveType, List<int> diamondsCollected, List<Tuple<float, float>> path, int distanceToObstacle)
             {
                 this.departurePlatform = departurePlatform;
@@ -322,11 +333,25 @@ namespace GeometryFriendsAgents
             return platformList;
         }
 
-        public Platform CirclePlatform(CircleRepresentation cI)
+        public Platform PlatformBelowCircle(CircleRepresentation cI)
         {
             for(int i=0; i<platformList.Count; i++)
             {
                 if(cI.Y/GameInfo.PIXEL_LENGTH<platformList[i].yTop && cI.X / GameInfo.PIXEL_LENGTH>= platformList[i].leftEdge && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge)
+                {
+                    return platformList[i];
+                }
+            }
+            return new Platform(-1);
+        }
+
+        public Platform CirclePlatform(CircleRepresentation cI)
+        {
+            for (int i = 0; i < platformList.Count; i++)
+            {
+                if (cI.Y / GameInfo.PIXEL_LENGTH + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH <= platformList[i].yTop+1 && 
+                    cI.Y / GameInfo.PIXEL_LENGTH + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH >= platformList[i].yTop-10 && 
+                    cI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge)
                 {
                     return platformList[i];
                 }
@@ -368,7 +393,7 @@ namespace GeometryFriendsAgents
                 s += "      Moves = " + p.moveInfoList.Count+ "\n";
                 foreach(MoveInformation m in p.moveInfoList)
                 {
-                    s += "           Type = " + m.moveType.ToString() + " X= " + m.x+" Collectibles caught= ";
+                    s += "           Type = " + m.moveType.ToString() + " X= " + m.x+ " VX= " + m.velocityX + " LandingPlatform= " + m.landingPlatform.id + " Collectibles caught= ";
                     foreach (int d in m.diamondsCollected)
                     {
                         s += d.ToString() + " ";
@@ -914,25 +939,30 @@ namespace GeometryFriendsAgents
            
         }
 
-        public void Debug(ref List<DebugInformation> debugInformation)
+        public void DrawLevelMap(ref List<DebugInformation> debugInformation)
         {
-            GeometryFriends.XNAStub.Color color = GeometryFriends.XNAStub.Color.Red;
             for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
             {
                 for (int y = 0; y < GameInfo.LEVEL_MAP_HEIGHT; y++)
                 {
                     if (levelMap[x, y] == PixelType.OBSTACLE)
                     {
-                        debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH - 4, GameInfo.PIXEL_LENGTH - 4), color));
-                        Change(ref color);
+                        if ((x+y)%2==0)
+                        {
+                            debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Red));
+                        }
+                        else{
+                            debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.White));
+                        }
+
                     }
                     else if (levelMap[x, y] == PixelType.EMPTY)
                     {
                         //debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF position, Size size, XNAStub.Color color););
                     }
                     else if (levelMap[x, y] == PixelType.DIAMOND)
-                    {//DIAMOND
-                        debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.ForestGreen));
+                    {
+                        debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Purple));
 
                     } else if (levelMap[x, y] == PixelType.PLATFORM)
                     {
@@ -941,12 +971,16 @@ namespace GeometryFriendsAgents
                 }
             }
 
+        }
+
+        public void DrawConnections(ref List<DebugInformation> debugInformation)
+        {
             foreach (Platform p in platformList)
             {
                 foreach (MoveInformation m in p.moveInfoList)
                 {
-                    
-                    foreach(Tuple<float,float> tup in m.path)
+
+                    foreach (Tuple<float, float> tup in m.path)
                     {
                         if (m.moveType == MoveType.NOMOVE)
                         {
@@ -957,7 +991,7 @@ namespace GeometryFriendsAgents
                         {
                             debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.DarkGreen));
                         }
-                        else if(m.landingPlatform.id < p.id)
+                        else if (m.landingPlatform.id < p.id)
                         {
                             debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.GreenYellow));
                         }
@@ -972,19 +1006,6 @@ namespace GeometryFriendsAgents
                 }
             }
 
-        }
-    
-
-        private void Change(ref GeometryFriends.XNAStub.Color color)
-        {
-            if (color == GeometryFriends.XNAStub.Color.Red)
-            {
-                color = GeometryFriends.XNAStub.Color.White;
-            }
-            else
-            {
-                color = GeometryFriends.XNAStub.Color.Red;
-            }
         }
     }
 }
