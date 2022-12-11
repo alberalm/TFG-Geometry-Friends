@@ -34,7 +34,7 @@ namespace GeometryFriendsAgents
             // TODO: Change this
         };
 
-        public class Platform
+        public class Platform : IComparable<Platform>
         {
             public int id;
             public int yTop;
@@ -100,6 +100,16 @@ namespace GeometryFriendsAgents
                     }
                 }
                 return rc;
+            }
+
+            // Returns 1 if this is less than other, -1 if other is less than this, 0 if equal
+            public int CompareTo(Platform other)
+            {
+                if(this.yTop == other.yTop)
+                {
+                    return this.leftEdge.CompareTo(other.leftEdge);
+                }
+                return yTop.CompareTo(other.yTop);
             }
         }
 
@@ -358,21 +368,12 @@ namespace GeometryFriendsAgents
                 s += "      Moves = " + p.moveInfoList.Count+ "\n";
                 foreach(MoveInformation m in p.moveInfoList)
                 {
-                    s += "           Type = " + m.moveType.ToString() + " X= " + m.x+" Collecitbles caught= ";
+                    s += "           Type = " + m.moveType.ToString() + " X= " + m.x+" Collectibles caught= ";
                     foreach (int d in m.diamondsCollected)
                     {
                         s += d.ToString() + " ";
                     }
                     s += "\n";
-                }
-                s += "      Connected to platforms: ";
-                
-                foreach (MoveInformation m in p.moveInfoList)
-                {
-                    if (p.id == m.landingPlatform.id && m.diamondsCollected.Count==0)
-                    {
-                        Log.LogInformation("Careful", true);
-                    }
                 }
             }
 
@@ -600,6 +601,7 @@ namespace GeometryFriendsAgents
                 }
             }
             // Rename id
+            platformList.Sort();
             for (int i = 0; i < platformList.Count(); i++)
             {
                 platformList[i].id = i;

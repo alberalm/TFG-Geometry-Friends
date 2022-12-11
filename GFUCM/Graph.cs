@@ -124,9 +124,10 @@ namespace GeometryFriendsAgents
             return true;
         }
 
-        private List<LevelMap.MoveInformation> AuxSearch(int source, bool[] areCaught, LevelMap.MoveInformation lastMove)
+        public const int MAX_DEPTH = 10;
+        private List<LevelMap.MoveInformation> AuxSearch(int source, bool[] areCaught, LevelMap.MoveInformation lastMove, int depth)
         {
-            if (hasFinished)
+            if (hasFinished || depth >= MAX_DEPTH)
             {
                 return null;
             }
@@ -154,19 +155,29 @@ namespace GeometryFriendsAgents
                 return new List<LevelMap.MoveInformation>() { lastMove };
             }
             List<LevelMap.MoveInformation> solution = null;
+            List<LevelMap.MoveInformation> [] solutions = new List<LevelMap.MoveInformation>[this.platforms[source].moveInfoList.Count];
             Parallel.For(0, this.platforms[source].moveInfoList.Count, i =>
             {
                 LevelMap.MoveInformation m = this.platforms[source].moveInfoList[i];
-                List<LevelMap.MoveInformation> sol2 = AuxSearch(m.landingPlatform.id, areCaught, m);
-                if (sol2 != null)
-                {
-                    if (lastMove != null)
-                    {
-                        sol2.Add(lastMove);
-                    }
-                    solution = sol2;
-                }
+                solutions[i] = AuxSearch(m.landingPlatform.id, areCaught, m, depth + 1);
             });
+            // We pick the best solution (not needed if not parallel)
+            int min = MAX_DEPTH;
+            int index = -1;
+            for(int i = 0; i < solutions.Length; i++)
+            {
+                if(solutions[i] != null && solutions[i].Count < min)
+                {
+                    min = solutions[i].Count;
+                    index = i;
+                }
+            }
+            if(index == -1)
+            {
+                return null;
+            }
+            solution = solutions[index];
+            solution.Add(lastMove);
             return solution;
         }
 
@@ -178,7 +189,7 @@ namespace GeometryFriendsAgents
                 caught[i] = false;
             }
             hasFinished = false;
-            List<LevelMap.MoveInformation> sol = AuxSearch(src, caught, null);
+            List<LevelMap.MoveInformation> sol = AuxSearch(src, caught, null, 0);
             sol.Reverse();
             return sol;
         }
