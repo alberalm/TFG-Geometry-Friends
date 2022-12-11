@@ -43,12 +43,27 @@ namespace GeometryFriendsAgents
             }
         }
 
+        public class Node
+        {
+            public List<LevelMap.MoveInformation> plan;
+            public List<bool> caught;
+            public int numCaught;
+            public int depth;
+
+            public Node(List<LevelMap.MoveInformation> plan, List<bool> caught, int numCaught, int depth)
+            {
+                this.plan = plan;
+                this.caught = caught;
+                this.numCaught = numCaught;
+                this.depth = depth;
+            }
+        }
+
         public int V;
         public int E;
         public List<List<Edge>> adj;
         public List<Diamond> collectibles;
         public List<LevelMap.Platform> platforms;
-        public bool hasFinished;
 
         public Graph(int V)
         {
@@ -124,75 +139,22 @@ namespace GeometryFriendsAgents
             return true;
         }
 
-        public const int MAX_DEPTH = 10;
-        private List<LevelMap.MoveInformation> AuxSearch(int source, bool[] areCaught, LevelMap.MoveInformation lastMove, int depth)
-        {
-            if (hasFinished || depth >= MAX_DEPTH)
-            {
-                return null;
-            }
-            // Process last move to catch mid-air collectibles
-            if (lastMove != null)
-            {
-                foreach (int id in lastMove.diamondsCollected)
-                {
-                    areCaught[id] = true;
-                }
-            }
-            int toBeCaught = 0;
-            // Process platform
-            for (int i = 0; i < areCaught.Length; i++)
-            {
-                areCaught[i] = areCaught[i] || collectibles[i].isAbovePlatform == source;
-                if (!areCaught[i])
-                {
-                    toBeCaught++;
-                }
-            }
-            if (toBeCaught == 0)
-            {
-                hasFinished = true;
-                return new List<LevelMap.MoveInformation>() { lastMove };
-            }
-            List<LevelMap.MoveInformation> solution = null;
-            List<LevelMap.MoveInformation> [] solutions = new List<LevelMap.MoveInformation>[this.platforms[source].moveInfoList.Count];
-            Parallel.For(0, this.platforms[source].moveInfoList.Count, i =>
-            {
-                LevelMap.MoveInformation m = this.platforms[source].moveInfoList[i];
-                solutions[i] = AuxSearch(m.landingPlatform.id, areCaught, m, depth + 1);
-            });
-            // We pick the best solution (not needed if not parallel)
-            int min = MAX_DEPTH;
-            int index = -1;
-            for(int i = 0; i < solutions.Length; i++)
-            {
-                if(solutions[i] != null && solutions[i].Count < min)
-                {
-                    min = solutions[i].Count;
-                    index = i;
-                }
-            }
-            if(index == -1)
-            {
-                return null;
-            }
-            solution = solutions[index];
-            solution.Add(lastMove);
-            return solution;
-        }
-
         public List<LevelMap.MoveInformation> SearchAlgorithm(int src)
         {
-            
             List<Node> queue = new List<Node>();
+            Node sol = new Node(null, null, 0, 0);
             List<bool> auxlist = Enumerable.Repeat(false,collectibles.Count).ToList();
-            queue.Add(new Node(new List<LevelMap.MoveInformation> { new LevelMap.MoveInformation(platforms[src]) }, auxlist, 0));
+            queue.Add(new Node(new List<LevelMap.MoveInformation> { new LevelMap.MoveInformation(platforms[src]) }, auxlist, 0, 0));
             while (queue.Count > 0)
             {
                 Node n = queue[0];
-                
                 queue.RemoveAt(0);
-                //Process move 
+                // If depth is too high (more than #platforms * #collectibles), we our representation does not have any solution
+                if (n.depth > platforms.Count * collectibles.Count)
+                {
+                    continue;
+                }
+                // Process move
                 LevelMap.MoveInformation move = n.plan[n.plan.Count - 1];
                 foreach (int d in move.diamondsCollected)
                 {
@@ -214,11 +176,15 @@ namespace GeometryFriendsAgents
                         }
                     }
                 }
+                // This is for incomplete solutions
+                if (n.numCaught > sol.numCaught)
+                {
+                    sol = n;
+                }
                 if (n.numCaught == collectibles.Count)
                 {
-                    List<LevelMap.MoveInformation> sol = n.plan;
-                    sol.RemoveAt(0);
-                    return sol;
+                    sol.plan.RemoveAt(0);
+                    return sol.plan;
                 }
                 else
                 {
@@ -229,28 +195,16 @@ namespace GeometryFriendsAgents
                             List<LevelMap.MoveInformation> newPlan = new List<LevelMap.MoveInformation>(n.plan);
                             List<bool> newcaught = new List<bool>(n.caught);
                             newPlan.Add(m);
-                            queue.Add(new Node(newPlan, newcaught, n.numCaught));
+                            queue.Add(new Node(newPlan, newcaught, n.numCaught, n.depth + 1));
                         }
                     }
                 }
-                
             }
-            int []z= {0};
-            int aux=z[-1];
-            return null;
+            // If we find no complete solution, we return the one that catches the most diamonds possible
+            sol.plan.RemoveAt(0);
+            return sol.plan;
         }
-        public class Node
-        {
-            public List<LevelMap.MoveInformation> plan;
-            public List<bool> caught;
-            public int numCaught;
-            public Node(List<LevelMap.MoveInformation> plan, List<bool> caught, int numCaught)
-            {
-                this.plan = plan;
-                this.caught = caught;
-                this.numCaught = numCaught;
-            }
-        }
+        
         public void AddMove(LevelMap.MoveInformation move, int from, int to)
         {
             // Need the "to" vertex for the inverted graph

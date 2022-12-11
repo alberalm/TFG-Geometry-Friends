@@ -138,11 +138,9 @@ namespace GeometryFriendsAgents
 
             graph = new Graph(levelMap.GetPlatforms(), colI);
             
-            
             plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(cI).id);
             fullPlan = new List<LevelMap.MoveInformation>(plan);
             //InitialDraw();
-            
 
             //send a message to the rectangle informing that the circle setup is complete and show how to pass an attachment: a pen object
             messages.Add(new AgentMessage("Setup complete, testing to send an object as an attachment.", new Pen(Color.AliceBlue)));

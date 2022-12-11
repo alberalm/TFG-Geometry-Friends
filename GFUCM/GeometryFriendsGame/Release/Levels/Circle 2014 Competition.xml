@@ -18,11 +18,11 @@
     <OrangeElevators />
     <TimeLimit value="20" />
     <HighScores>
-      <HighScore name="RandCircle" value="5" />
-      <HighScore name="RandCircle" value="5" />
       <HighScore name="RandPredictorCircle" value="5" />
+      <HighScore name="UCMAgent" value="5" />
+      <HighScore name="RandCircle" value="5" />
+      <HighScore name="RandCircle" value="5" />
       <HighScore name="LearningBall" value="6" />
-      <HighScore name="RandPredictorCircle" value="6" />
     </HighScores>
   </Level1>
   <Level2>

@@ -594,27 +594,28 @@ namespace GeometryFriendsAgents
                 for (int j = i + 1; j < platformList.Count(); j++)
                 {
                     Platform p2 = platformList[j];
-                    bool unir = false;
+                    bool join = false;
                     if (p1.yTop == p2.yTop)
                     {
-                        if (p1.rightEdge + 2 == p2.leftEdge) //Union is needed
+                        if (p1.rightEdge + 2 == p2.leftEdge)
                         {
                             levelMap[p1.rightEdge + 1, p1.yTop] = PixelType.PLATFORM;
-                            unir = true;
+                            join = true;
                         }
-                        else if (p2.rightEdge + 2 == p1.leftEdge) //Union is needed
+                        else if (p2.rightEdge + 2 == p1.leftEdge)
                         {
                             levelMap[p2.rightEdge + 1, p1.yTop] = PixelType.PLATFORM;
-                            unir = true;
+                            join = true;
                         }
-                        else if (p1.leftEdge >= p2.leftEdge && p1.leftEdge <= p2.rightEdge) {
-                            unir = true;
+                        else if (p1.leftEdge >= p2.leftEdge && p1.leftEdge <= p2.rightEdge)
+                        {
+                            join = true;
                         }
                         else if (p2.leftEdge >= p1.leftEdge && p2.leftEdge <= p1.rightEdge)
                         {
-                            unir = true;
+                            join = true;
                         }
-                        if (unir)
+                        if (join)
                         {
                             p1.leftEdge = Math.Min(p1.leftEdge, p2.leftEdge);
                             p1.rightEdge = Math.Max(p1.rightEdge, p2.rightEdge);
@@ -633,8 +634,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        //I've changed it. Now it returns a value of type CircleCollision={Top, Right, Bottom, Left, Diamond, None}
-
+        // Returns a value of type CircleCollision={Top, Right, Bottom, Left, Diamond, None}
         private CircleCollisionType CircleIntersectsWithObstacle(int x, int y) //(x,y) is the denter of the circle given in levelMap coordinates
         {
             bool diamond = false; // Obstacles and platforms have more priority than diamonds
@@ -642,7 +642,7 @@ namespace GeometryFriendsAgents
             {
                 for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
                 {
-                    if ((x + i) >= 0 && (y + j) >= 0 && (x + i) < levelMap.GetLength(0) && (y + j) < levelMap.GetLength(1))//Check
+                    if ((x + i) >= 0 && (y + j) >= 0 && (x + i) < levelMap.GetLength(0) && (y + j) < levelMap.GetLength(1)) // Check
                     {
                         if (levelMap[x + i, y + j] == PixelType.OBSTACLE || levelMap[x + i, y + j] == PixelType.PLATFORM)
                         {
