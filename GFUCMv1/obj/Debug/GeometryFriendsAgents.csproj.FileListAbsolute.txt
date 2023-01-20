@@ -1,0 +1,6 @@
+D:\TFG Infor\TFG---Geometry-Friends\GFUCM\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.dll
+D:\TFG Infor\TFG---Geometry-Friends\GFUCM\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.pdb
+D:\TFG Infor\TFG---Geometry-Friends\GFUCM\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
+D:\TFG Infor\TFG---Geometry-Friends\GFUCM\obj\Debug\GeometryFriendsAgents.dll
+D:\TFG Infor\TFG---Geometry-Friends\GFUCM\obj\Debug\GeometryFriendsAgents.pdb
+D:\TFG Infor\TFG---Geometry-Friends\GFUCM\obj\Debug\GeometryFriendsAgents.csproj.AssemblyReference.cache
