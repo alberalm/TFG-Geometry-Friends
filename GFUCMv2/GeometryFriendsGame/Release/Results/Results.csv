@@ -256,3 +256,7 @@ Timestamp;Agent Implementation;World Name ;Level Number;Collectibles Collected;C
 2022-10-09_12:47:13;SubGoalAStarAgents;GF-CoG 2019 - Rectangle Track;8;0;2;0;120,000005699694;120;23,997;0;
 2022-10-09_12:47:42;SubGoalAStarAgents;GF-CoG 2019 - Rectangle Track;9;0;3;0;120,000005699694;120;23,997;0;
 2022-10-09_12:48:09;SubGoalAStarAgents;GF-CoG 2019 - Rectangle Track;10;0;2;0;120,000005699694;120;24,004;0;
+2023-01-21_13:31:02;GeometryFriendsAgents;World;4;0;1;0;55,0000026123598;55;6,612;0;
+2023-01-21_13:33:15;GeometryFriendsAgents;World;4;0;1;0;55,0000026123598;55;6,517;0;
+2023-01-21_13:34:38;GeometryFriendsAgents;World;4;0;1;0;55,0000026123598;55;6,58;0;
+2023-01-21_13:37:03;GeometryFriendsAgents;World;4;0;1;0;55,0000026123598;55;6,577;0;

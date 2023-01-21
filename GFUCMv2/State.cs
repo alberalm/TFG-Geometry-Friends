@@ -13,9 +13,18 @@ namespace GeometryFriendsAgents
 
         public State(int distance, int current_velocity, int target_velocity)
         {
-            this.distance = distance;
-            this.current_velocity = current_velocity;
-            this.target_velocity = target_velocity;
+            if  (distance >= 0)
+            {
+                this.distance = distance;
+                this.current_velocity = current_velocity;
+                this.target_velocity = target_velocity;
+            }
+            else
+            {
+                this.distance = -distance;
+                this.current_velocity = -current_velocity;
+                this.target_velocity = -target_velocity;
+            }
         }
 
         public State(string state)
@@ -30,7 +39,7 @@ namespace GeometryFriendsAgents
 
         public bool IsFinal()
         {
-            return Math.Abs(distance) <= 2 && Math.Abs(current_velocity - target_velocity) <= 2;
+            return distance <= 2 && Math.Abs(current_velocity - target_velocity) <= 2;
         }
 
         public double Reward()
@@ -44,9 +53,10 @@ namespace GeometryFriendsAgents
                 return -1;
             }
         }
-        public string toString()
+        
+        public override string ToString()
         {
-            return distance.ToString() + "," + current_velocity.ToString() + "," + target_velocity.ToString();
+            return distance.ToString() + ";" + current_velocity.ToString() + ";" + target_velocity.ToString();
         }
     }
 }

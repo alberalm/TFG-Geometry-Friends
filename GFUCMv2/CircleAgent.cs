@@ -89,6 +89,9 @@ namespace GeometryFriendsAgents
         private int target_velocity=0;
         private int target_position=GameInfo.LEVEL_MAP_WIDTH/2;
         private double t = 0;
+        private double t_total = 0;
+        private double t_0 = 0;
+        private Learning l; 
 
         public CircleAgent()
         {
@@ -104,7 +107,7 @@ namespace GeometryFriendsAgents
             possibleMoves = new List<Moves>();
             possibleMoves.Add(Moves.ROLL_LEFT);
             possibleMoves.Add(Moves.ROLL_RIGHT);
-            possibleMoves.Add(Moves.JUMP);                
+            //possibleMoves.Add(Moves.JUMP);                
       
             //history keeping
             uncaughtCollectibles = new List<CollectibleRepresentation>();
@@ -121,7 +124,7 @@ namespace GeometryFriendsAgents
             newDebugInfo = new List<DebugInformation>();
             trajectory = new List<CircleRepresentation>();
 
-
+            l = new Learning();
         }
 
         //implements abstract circle interface: used to setup the initial information so that the agent has basic knowledge about the level
@@ -167,8 +170,8 @@ namespace GeometryFriendsAgents
         private void UpdateDraw()
         {
             newDebugInfo.Clear();
-            InitialDraw();
-            CircleDraw();
+            //InitialDraw();
+            CircleDrawbis();
             debugInfo = newDebugInfo.ToArray();
         }
 
@@ -184,6 +187,15 @@ namespace GeometryFriendsAgents
                 newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(m.path[m.path.Count / 2].Item1, m.path[m.path.Count / 2].Item2), step.ToString(), GeometryFriends.XNAStub.Color.Black));
                 step++;
             }
+        }
+        private void CircleDrawbis()
+        {
+            
+
+            //Circle velocity
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(500, 100), "Distancia: "+(circleInfo.X/GameInfo.PIXEL_LENGTH-target_position).ToString(), GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(500, 200), "Velocidad: " + (circleInfo.VelocityX).ToString(), GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF((GameInfo.LEVEL_MAP_WIDTH / 2)* GameInfo.PIXEL_LENGTH, 700), 4, GeometryFriends.XNAStub.Color.Silver));
         }
 
         private void CircleDraw()
@@ -273,24 +285,62 @@ namespace GeometryFriendsAgents
             return currentAction;
         }
         
-
+        private int DiscreetVelocity(float velocity)
+        {
+            if (velocity > 0)
+            {
+                return (int)((velocity + 10) / 20) * 20;
+            }
+            else
+            {
+                return -DiscreetVelocity(-velocity);
+            }
+        }
         
         //implements abstract circle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            t += elapsedGameTime.TotalMilliseconds;
-            if (t < 3000)
+            t += elapsedGameTime.TotalSeconds;
+            t_0+= elapsedGameTime.TotalMilliseconds;
+            t_total += elapsedGameTime.TotalSeconds;
+
+
+            if (t < 5)
             {
-
+                RandomAction();
             }
-            State s= new State(circleInfo.)
+            else
+            {
+                State s = new State((int)circleInfo.X / GameInfo.PIXEL_LENGTH - target_position, DiscreetVelocity(circleInfo.VelocityX),  0);
 
+                if (s.IsFinal())
+                {
+                    l.UpdateTable(s);
+                    l.SaveFile();
+                    t = 0;
+                }
+                else
+                {
 
+                    if (t_0 < 100)
+                    {
+                        return;
+                    }
+                    t_0 = 0;
+                    //UpdateDraw();
+                    currentAction  =  l.ChooseMove(s, (int)circleInfo.X / GameInfo.PIXEL_LENGTH - target_position);
+                }
 
+                if (t > 20)
+                {
 
+                    l.UpdateTable(s);
+                    l.SaveFile();
+                    t = 0;
+                }
+            }
 
-
-
+            
 
 
             //Every second one new action is choosen
@@ -411,6 +461,7 @@ namespace GeometryFriendsAgents
         //implements abstract circle interface: signals the agent the end of the current level
         public override void EndGame(int collectiblesCaught, int timeElapsed)
         {
+            l.SaveFile();
             Log.LogInformation("CIRCLE - Collectibles caught = " + collectiblesCaught + ", Time elapsed - " + timeElapsed);
         }
 

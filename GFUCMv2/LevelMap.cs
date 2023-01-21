@@ -402,7 +402,7 @@ namespace GeometryFriendsAgents
                 }
             }
 
-            Log.LogInformation(s, true);
+            //Log.LogInformation(s, true);
 
             // DEBUG Trajectories
             /*s = "\n";
