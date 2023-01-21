@@ -170,8 +170,9 @@ namespace GeometryFriendsAgents
         private void UpdateDraw()
         {
             newDebugInfo.Clear();
-            //InitialDraw();
-            CircleDrawbis();
+            newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
+           //InitialDraw();
+           CircleDraw();
             debugInfo = newDebugInfo.ToArray();
         }
 
@@ -201,7 +202,7 @@ namespace GeometryFriendsAgents
         private void CircleDraw()
         {
             //Circle Silhouette
-            int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
+            /*int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
             for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
             {
                 for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
@@ -212,18 +213,34 @@ namespace GeometryFriendsAgents
                     newDebugInfo.Add(di);
                     
                 }
-            }
+            }*/
 
             //Circle trajectory
-            trajectory.Add(circleInfo);
+            /*trajectory.Add(circleInfo);
             for (int i = Math.Max(0, trajectory.Count - 200); i < trajectory.Count; i++)
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(trajectory[i].X, trajectory[i].Y), 4, GeometryFriends.XNAStub.Color.Orange));
-            }
+            }*/
             
             //Circle velocity
-            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X + circleInfo.VelocityX, circleInfo.Y), GeometryFriends.XNAStub.Color.Silver));
-            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X, circleInfo.Y + circleInfo.VelocityY), GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X + circleInfo.VelocityX, circleInfo.Y), GeometryFriends.XNAStub.Color.Red));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X, circleInfo.Y + circleInfo.VelocityY), GeometryFriends.XNAStub.Color.Blue));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X + 20, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X - 20, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X + 40, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X - 20, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            State s =new State(((int)(circleInfo.X / GameInfo.PIXEL_LENGTH)) - target_position, DiscreetVelocity(circleInfo.VelocityX), 0);
+            if (s.Reward()>0)
+            {
+                if (s.IsFinal())
+                {
+                    newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(500, 500), 2, GeometryFriends.XNAStub.Color.Green));
+                }
+                else
+                {
+                    newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(500, 500), 2, GeometryFriends.XNAStub.Color.Yellow));
+                }
+            }
         }
 
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
@@ -287,9 +304,9 @@ namespace GeometryFriendsAgents
         
         private int DiscreetVelocity(float velocity)
         {
-            if (velocity > 0)
+            if (velocity >= 0)
             {
-                return (int)((velocity + 10) / 20) * 20;
+                return ((int)((velocity + 10) / 20)) * 20;
             }
             else
             {
@@ -303,44 +320,45 @@ namespace GeometryFriendsAgents
             t += elapsedGameTime.TotalSeconds;
             t_0+= elapsedGameTime.TotalMilliseconds;
             t_total += elapsedGameTime.TotalSeconds;
-
-
-            if (t < 5)
+            UpdateDraw();
+            if (t > 1)
             {
-                RandomAction();
-            }
-            else
-            {
-                State s = new State((int)circleInfo.X / GameInfo.PIXEL_LENGTH - target_position, DiscreetVelocity(circleInfo.VelocityX),  0);
-
-                if (s.IsFinal())
+                if (t < 5)
                 {
-                    l.UpdateTable(s);
-                    l.SaveFile();
-                    t = 0;
+                    RandomAction();
                 }
                 else
                 {
+                    State s = new State(((int)(circleInfo.X / GameInfo.PIXEL_LENGTH)) - target_position, DiscreetVelocity(circleInfo.VelocityX), 0);
 
-                    if (t_0 < 100)
+                    if (s.IsFinal())
                     {
-                        return;
+                        l.UpdateTable(s);
+                        l.SaveFile();
+                        t = 0;
+                        currentAction = Moves.JUMP;
                     }
-                    t_0 = 0;
-                    //UpdateDraw();
-                    currentAction  =  l.ChooseMove(s, (int)circleInfo.X / GameInfo.PIXEL_LENGTH - target_position);
+                    else
+                    {
+                        if (t_0 < 100)
+                        {
+                            return;
+                        }
+                        t_0 = 0;
+
+                        currentAction = l.ChooseMove(s, ((int)(circleInfo.X / GameInfo.PIXEL_LENGTH)) - target_position);
+                    }
+
+                    if (t > 60)
+                    {
+
+                        l.UpdateTable(s);
+                        l.SaveFile();
+                        t = 0;
+                    }
                 }
 
-                if (t > 20)
-                {
-
-                    l.UpdateTable(s);
-                    l.SaveFile();
-                    t = 0;
-                }
             }
-
-            
 
 
             //Every second one new action is choosen

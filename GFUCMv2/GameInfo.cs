@@ -32,8 +32,8 @@ namespace GeometryFriendsAgents
 
 
         public const float ALPHA = 0.1f;//Learning rate
-        public const float GAMMA = 0.9f;//Discount factor
-        public const float EPSILON = 0.1f;
+        public const float GAMMA = 0.95f;//Discount factor
+        public const float EPSILON = 0.2f;
 
 
         public const string Q_PATH = @"Q_table.csv";

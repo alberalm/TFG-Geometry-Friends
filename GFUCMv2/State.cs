@@ -46,12 +46,19 @@ namespace GeometryFriendsAgents
         {
             if (IsFinal())
             {
-                return 100;
+                return 200;
+            }
+            else if(distance <= 2)
+            {
+                return 200/Math.Abs(current_velocity-target_velocity);
             }
             else
             {
                 return -1;
             }
+            
+                
+            
         }
         
         public override string ToString()
