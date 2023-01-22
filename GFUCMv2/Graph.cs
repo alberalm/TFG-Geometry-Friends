@@ -63,6 +63,7 @@ namespace GeometryFriendsAgents
         public int E;
         public List<List<Edge>> adj;
         public List<Diamond> collectibles;
+        public CollectibleRepresentation[] initialCollectibles;
         public List<LevelMap.Platform> platforms;
 
         public Graph(int V)
@@ -79,6 +80,7 @@ namespace GeometryFriendsAgents
         public Graph(List<LevelMap.Platform> platforms, CollectibleRepresentation[] collectibles)
         {
             this.platforms = platforms;
+            this.initialCollectibles = collectibles;
             V = platforms.Count();
             E = 0;
             adj = new List<List<Edge>>();
@@ -139,8 +141,35 @@ namespace GeometryFriendsAgents
             return true;
         }
 
-        public List<LevelMap.MoveInformation> SearchAlgorithm(int src)
+        public int GetDiamondID(CollectibleRepresentation c)
         {
+            for(int i = 0; i < initialCollectibles.Length; i++)
+            {
+                CollectibleRepresentation other = initialCollectibles[i];
+                if(c.X == other.X && c.Y == other.Y)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public List<LevelMap.MoveInformation> SearchAlgorithm(int src, CollectibleRepresentation[] uncaught)
+        {
+            List<Diamond> newList = new List<Diamond>();
+            foreach(CollectibleRepresentation c in uncaught)
+            {
+                int index = GetDiamondID(c);
+                if(index != -1)
+                {
+                    foreach(Diamond d in collectibles) {
+                        if (d.id == index) {
+                            newList.Add(d);
+                        }
+                    }
+                }
+            }
+            collectibles = newList;
             List<Node> queue = new List<Node>();
             Node sol = new Node(null, null, 0, 0);
             List<bool> auxlist = Enumerable.Repeat(false,collectibles.Count).ToList();

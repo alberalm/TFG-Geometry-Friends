@@ -10,32 +10,74 @@ namespace GeometryFriendsAgents
     class ActionSelector
     {
         public Dictionary<CollectibleRepresentation, int> collectibleId;
-        public ActionSelector(Dictionary<CollectibleRepresentation,int> collectibleId)
+        public Learning l;
+        public int target_position = 0;
+        public int target_velocity = 0;
+        public ActionSelector(Dictionary<CollectibleRepresentation,int> collectibleId, Learning l)
         {
             this.collectibleId = collectibleId;
+            this.l = l;
         }
 
-        public Tuple<Moves,bool> nextAction(List<LevelMap.MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, LevelMap.Platform p)
+        public Tuple<Moves,bool> nextAction(ref List<LevelMap.MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, LevelMap.Platform currentPlatform)
         {
-            if (plan.Count > 0)
+            
+            LevelMap.MoveType moveType = LevelMap.MoveType.NOMOVE;
+            LevelMap.MoveInformation nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining);
+            if (nextMoveInThisPlatform != null)
             {
-                LevelMap.MoveInformation nextMoveToAnotherPlatform = plan[0];
-                LevelMap.MoveInformation nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(nextMoveToAnotherPlatform.departurePlatform, remaining);
-                if (nextMoveInThisPlatform!=null)
+                target_position = nextMoveInThisPlatform.x;
+                target_velocity = nextMoveInThisPlatform.velocityX;
+                moveType = nextMoveInThisPlatform.moveType;
+                State s = new State(((int)(cI.X / GameInfo.PIXEL_LENGTH)) - target_position, CircleAgent.DiscreetVelocity(cI.VelocityX), target_velocity);
+                if (s.IsFinal())
                 {
-                    //Remaining collectibles in this platform
-                    return new Tuple<Moves, bool>(GoToPositionWithVelocity((int)(cI.X/GameInfo.PIXEL_LENGTH), (int) cI.VelocityX, nextMoveInThisPlatform.x, nextMoveInThisPlatform.velocityX, nextMoveInThisPlatform.moveType==LevelMap.MoveType.JUMP), false);
+                    if (moveType == LevelMap.MoveType.JUMP)
+                    {
+                        return new Tuple<Moves, bool>(Moves.JUMP, true);
+                    }
+                    else
+                    {
+                        return new Tuple<Moves, bool>(Moves.NO_ACTION, true);
+                    }
                 }
-                else{
-                    //We have to move To the next platform
-                    return new Tuple<Moves, bool>(GoToPositionWithVelocity((int)(cI.X / GameInfo.PIXEL_LENGTH), (int)cI.VelocityX, nextMoveToAnotherPlatform.x, nextMoveToAnotherPlatform.velocityX, nextMoveToAnotherPlatform.moveType == LevelMap.MoveType.JUMP),true);
+                else
+                {
+                    return new Tuple<Moves, bool>(l.ChooseMove(s, ((int)(cI.X / GameInfo.PIXEL_LENGTH)) - target_position), false);
+                }
 
+            }
+            else
+            {
+                if (plan.Count > 0)
+                {
+                    target_position = plan[0].x;
+                    target_velocity = plan[0].velocityX;
+                    moveType = plan[0].moveType;
+                    State s = new State(((int)(cI.X / GameInfo.PIXEL_LENGTH)) - target_position, CircleAgent.DiscreetVelocity(cI.VelocityX), target_velocity);
+                    if (s.IsFinal())
+                    {
+                        plan.RemoveAt(0);
+                        if (moveType == LevelMap.MoveType.JUMP)
+                        {
+                            return new Tuple<Moves, bool>(Moves.JUMP, true);
+                        }
+                        else
+                        {
+                            return new Tuple<Moves, bool>(Moves.NO_ACTION, true);
+                        }
+                    }
+                    else
+                    {
+                        return new Tuple<Moves, bool>(l.ChooseMove(s, ((int)(cI.X / GameInfo.PIXEL_LENGTH)) - target_position), false);
+                    }
+                }
+                else
+                {
+                    //TODO
+                    return null;
                 }
             }
-            LevelMap.MoveInformation nextMove = DiamondsCanBeCollectedFrom(p, remaining);
-            return new Tuple<Moves, bool>(GoToPositionWithVelocity((int)(cI.X / GameInfo.PIXEL_LENGTH), (int)cI.VelocityX, nextMove.x, nextMove.velocityX, nextMove.moveType == LevelMap.MoveType.JUMP),false);
-
-
         }
 
         private LevelMap.MoveInformation DiamondsCanBeCollectedFrom(LevelMap.Platform p, List<CollectibleRepresentation> remaining)
@@ -64,6 +106,7 @@ namespace GeometryFriendsAgents
             }
             return l;
         }
+
         Moves GoToPosition(int currentx, int targetx, bool jump)
         {
             if (Math.Abs(currentx - targetx) <= 1 && jump)
@@ -107,6 +150,7 @@ namespace GeometryFriendsAgents
             }
         }
         
-        
-    }
-}
+      }
+} 
+    
+

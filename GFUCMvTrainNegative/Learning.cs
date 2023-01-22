@@ -50,7 +50,7 @@ namespace GeometryFriendsAgents
                     m = Moves.NO_ACTION;
                 }
                 double v = double.Parse(split[4]);
-                if (s.distance <= GameInfo.MAX_DISTANCE)
+                if (s.distance <= GameInfo.MAX_DISTANCE && Math.Abs(s.target_velocity)<=100)
                 {
                     if (!Q_table.ContainsKey(s.ToString()))
                     {

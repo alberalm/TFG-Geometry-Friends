@@ -322,7 +322,12 @@ namespace GeometryFriendsAgents
                     l.SaveFile();
                     t = 0;
                     currentAction = Moves.JUMP;
-                    target_velocity = -(rnd.Next(GameInfo.NUM_VELOCITIES)+1)*GameInfo.VELOCITY_STEP;
+                    target_velocity = (rnd.Next(5)+1)*GameInfo.VELOCITY_STEP;
+                    if (rnd.Next(2) == 0)
+                    {
+                        target_velocity = -target_velocity;
+                    }
+                    
                 }
                 else
                 {

@@ -192,15 +192,25 @@ namespace GeometryFriendsAgents
 
             // Returns 1 is this is better, -1 if other is better, 0 if not clear or not comparable
             // This is now going to be used just as a first filter, not as a definitive one (we need a second one)
-            public int Compare(MoveInformation other)
+            public int Compare(MoveInformation other, CollectibleRepresentation[] initialCollectiblesInfo)
             {
                 // Here is where we filter movements
                 if(landingPlatform.id != other.landingPlatform.id || departurePlatform.id != other.departurePlatform.id)
                 {
                     return 0;
                 }
-                
-                if (moveType == MoveType.NOMOVE && other.diamondsCollected.Count==1 && diamondsCollected[0]==other.diamondsCollected[0] && other.landingPlatform==other.departurePlatform)
+                if (moveType == MoveType.NOMOVE && other.moveType == MoveType.NOMOVE && diamondsCollected[0] == other.diamondsCollected[0])
+                {
+                    if(Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) < Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
+                    {
+                        return 1;
+                    }
+                    if(Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) > Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
+                    {
+                        return -1;
+                    }
+                }
+                if (moveType == MoveType.NOMOVE && other.diamondsCollected.Count==1 && diamondsCollected[0] == other.diamondsCollected[0] && other.landingPlatform==other.departurePlatform)
                 {
                     //other is a jump from platform x to platform x and it was only added because it could reach a diamond
                     //Now we have found that we can reach the same diamond without jumping, which will take us less time
@@ -763,7 +773,7 @@ namespace GeometryFriendsAgents
                 {
                     for(int i = 0; i < p.moveInfoList.Count; i++)
                     {
-                        int add = m.Compare(p.moveInfoList[i]);
+                        int add = m.Compare(p.moveInfoList[i],initialCollectiblesInfo);
                         if(add == -1)
                         {
                             addIt = false;
