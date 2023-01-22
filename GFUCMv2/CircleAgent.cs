@@ -159,7 +159,7 @@ namespace GeometryFriendsAgents
         {
             newDebugInfo.Clear();
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            //InitialDraw();
+            InitialDraw();
             CircleDraw();
             debugInfo = newDebugInfo.ToArray();
         }
@@ -177,20 +177,11 @@ namespace GeometryFriendsAgents
                 step++;
             }
         }
-        private void CircleDrawbis()
-        {
-            
-
-            //Circle velocity
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(500, 100), "Distancia: "+(circleInfo.X/GameInfo.PIXEL_LENGTH-target_position).ToString(), GeometryFriends.XNAStub.Color.Silver));
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(500, 200), "Velocidad: " + (circleInfo.VelocityX).ToString(), GeometryFriends.XNAStub.Color.Silver));
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF((GameInfo.LEVEL_MAP_WIDTH / 2)* GameInfo.PIXEL_LENGTH, 700), 4, GeometryFriends.XNAStub.Color.Silver));
-        }
 
         private void CircleDraw()
         {
             //Circle Silhouette
-            /*int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
+            int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
             for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
             {
                 for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
@@ -201,15 +192,15 @@ namespace GeometryFriendsAgents
                     newDebugInfo.Add(di);
                     
                 }
-            }*/
+            }
 
             //Circle trajectory
-            /*trajectory.Add(circleInfo);
+            trajectory.Add(circleInfo);
             for (int i = Math.Max(0, trajectory.Count - 200); i < trajectory.Count; i++)
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(trajectory[i].X, trajectory[i].Y), 4, GeometryFriends.XNAStub.Color.Orange));
-            }*/
-            
+            }
+           
             //Circle velocity
             newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X + circleInfo.VelocityX, circleInfo.Y), GeometryFriends.XNAStub.Color.Red));
             newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X, circleInfo.Y + circleInfo.VelocityY), GeometryFriends.XNAStub.Color.Blue));
@@ -306,7 +297,7 @@ namespace GeometryFriendsAgents
         //implements abstract circle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            t += elapsedGameTime.TotalSeconds;
+            /*t += elapsedGameTime.TotalSeconds;
             t_0+= elapsedGameTime.TotalMilliseconds;
             UpdateDraw();
             if (t > 1)
@@ -339,7 +330,7 @@ namespace GeometryFriendsAgents
                 }
             }
 
-
+            */
             //Every second one new action is choosen
             /*if (lastMoveTime == 60)
                 lastMoveTime = 0;
@@ -360,7 +351,7 @@ namespace GeometryFriendsAgents
 
 
             //Previusly worked
-            /*UpdateDraw();
+            UpdateDraw();
             currentPlatform = levelMap.CirclePlatform(circleInfo);
             if (currentPlatform == null || currentPlatform.id != 2)
             {
@@ -397,7 +388,7 @@ namespace GeometryFriendsAgents
                 }
              
                 
-            }*/
+            }
             
             /*
             //check if any collectible was caught
