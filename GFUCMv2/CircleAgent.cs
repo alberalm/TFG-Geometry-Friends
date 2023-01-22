@@ -8,11 +8,6 @@ using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace GeometryFriendsAgents
 {
@@ -34,7 +29,6 @@ namespace GeometryFriendsAgents
         //predictor of actions for the circle
         private ActionSimulator predictor = null;
         
-        
         //private int debugCircleSize = 20;
 
         //debug agent predictions and history keeping
@@ -52,15 +46,12 @@ namespace GeometryFriendsAgents
         private ObstacleRepresentation[] circlePlatformsInfo;
         private CollectibleRepresentation[] collectiblesInfo;
 
-
         private Dictionary<CollectibleRepresentation, int> collectibleId;
-
 
         private int nCollectiblesLeft;
 
         private List<AgentMessage> messages;
 
-        
         //Area of the game screen
         private Rectangle area;
 
@@ -82,14 +73,11 @@ namespace GeometryFriendsAgents
         private List<CircleRepresentation> trajectory;
         private List<LevelMap.MoveInformation> fullPlan;
 
-
-
         //Learning
 
         private int target_velocity=0;
         private int target_position=GameInfo.LEVEL_MAP_WIDTH/2;
         private double t = 0;
-        private double t_total = 0;
         private double t_0 = 0;
         private Learning l; 
 
@@ -171,8 +159,8 @@ namespace GeometryFriendsAgents
         {
             newDebugInfo.Clear();
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-           //InitialDraw();
-           CircleDraw();
+            //InitialDraw();
+            CircleDraw();
             debugInfo = newDebugInfo.ToArray();
         }
 
@@ -241,6 +229,7 @@ namespace GeometryFriendsAgents
                     newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(500, 500), 2, GeometryFriends.XNAStub.Color.Yellow));
                 }
             }
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(target_position*GameInfo.PIXEL_LENGTH, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Orange));
         }
 
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
@@ -319,45 +308,35 @@ namespace GeometryFriendsAgents
         {
             t += elapsedGameTime.TotalSeconds;
             t_0+= elapsedGameTime.TotalMilliseconds;
-            t_total += elapsedGameTime.TotalSeconds;
             UpdateDraw();
             if (t > 1)
             {
-                if (t < 5)
+                State s = new State(((int)(circleInfo.X / GameInfo.PIXEL_LENGTH)) - target_position, DiscreetVelocity(circleInfo.VelocityX), 0);
+
+                if (s.IsFinal())
                 {
-                    RandomAction();
+                    l.UpdateTable(s);
+                    l.SaveFile();
+                    t = 0;
+                    currentAction = Moves.JUMP;
+                    target_position = 25 + rnd.Next(GameInfo.LEVEL_MAP_WIDTH - 50);
                 }
                 else
                 {
-                    State s = new State(((int)(circleInfo.X / GameInfo.PIXEL_LENGTH)) - target_position, DiscreetVelocity(circleInfo.VelocityX), 0);
-
-                    if (s.IsFinal())
+                    if (t_0 < 100)
                     {
-                        l.UpdateTable(s);
-                        l.SaveFile();
-                        t = 0;
-                        currentAction = Moves.JUMP;
+                        return;
                     }
-                    else
-                    {
-                        if (t_0 < 100)
-                        {
-                            return;
-                        }
-                        t_0 = 0;
+                    t_0 = 0;
 
-                        currentAction = l.ChooseMove(s, ((int)(circleInfo.X / GameInfo.PIXEL_LENGTH)) - target_position);
-                    }
-
-                    if (t > 60)
-                    {
-
-                        l.UpdateTable(s);
-                        l.SaveFile();
-                        t = 0;
-                    }
+                    currentAction = l.ChooseMove(s, ((int)(circleInfo.X / GameInfo.PIXEL_LENGTH)) - target_position);
                 }
-
+                if (t > 10)
+                {
+                    l.UpdateTable(s);
+                    l.SaveFile();
+                    t = 0;
+                }
             }
 
 

@@ -30,7 +30,7 @@ namespace GeometryFriendsAgents
         
         public void LoadFile()
         {
-            System.IO.StreamReader archivo = new System.IO.StreamReader(GameInfo.Q_PATH);
+            StreamReader archivo = new StreamReader(GameInfo.Q_PATH);
             string line = archivo.ReadLine();
             while ((line = archivo.ReadLine()) != null && line != "")
             {
@@ -50,10 +50,14 @@ namespace GeometryFriendsAgents
                     m = Moves.NO_ACTION;
                 }
                 double v = double.Parse(split[4]);
-                if (!Q_table.ContainsKey(s.ToString())){
-                    Q_table.Add(s.ToString(), new Dictionary<Moves, double>());
+                if (s.distance <= GameInfo.MAX_DISTANCE)
+                {
+                    if (!Q_table.ContainsKey(s.ToString()))
+                    {
+                        Q_table.Add(s.ToString(), new Dictionary<Moves, double>());
+                    }
+                    Q_table[s.ToString()].Add(m, v);
                 }
-                Q_table[s.ToString()].Add(m, v);
             }
             archivo.Close();
         }
@@ -77,6 +81,18 @@ namespace GeometryFriendsAgents
         public Moves ChooseMove(State current, int d)
         {
             Moves action;
+
+            if(current.distance > GameInfo.MAX_DISTANCE)
+            {
+                if(d > 0)
+                {
+                    return Moves.ROLL_LEFT;
+                }
+                else
+                {
+                    return Moves.ROLL_RIGHT;
+                }
+            }
 
             if (!Q_table.ContainsKey(current.ToString()))
             {
@@ -147,7 +163,8 @@ namespace GeometryFriendsAgents
                         next_max = Q_table[states[i+1].ToString()][mov];
                     }
                 }
-                Q_table[s.ToString()][m] = (1 - GameInfo.ALPHA) * old_value + GameInfo.ALPHA * (states[i+1].Reward() + GameInfo.GAMMA * next_max);
+
+                Q_table[s.ToString()][m] = (1 - GameInfo.ALPHA) * old_value + GameInfo.ALPHA * (states[i + 1].Reward() + GameInfo.GAMMA * next_max);
             }
 
             moves = new List<Moves>();

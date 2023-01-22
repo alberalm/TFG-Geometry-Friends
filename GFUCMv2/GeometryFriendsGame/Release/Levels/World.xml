@@ -69,18 +69,16 @@
     <BallStartingPosition X="200" Y="696" />
     <SquareStartingPosition X="-1000" Y="-1000" />
     <Collectibles>
-      <Collectible X="1048" Y="456" />
+      <Collectible X="56" Y="424" />
+      <Collectible X="1224" Y="424" />
     </Collectibles>
     <GreenObstacles />
     <BlackObstacles />
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
-    <TimeLimit value="7200" />
     <HighScores>
-      <HighScore name="UCMAgent" value="55" />
-      <HighScore name="UCMAgent" value="55" />
-      <HighScore name="UCMAgent" value="55" />
+      <HighScore name="UCMAgent" value="1702" />
     </HighScores>
   </Level4>
 </Levels>

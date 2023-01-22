@@ -36,7 +36,6 @@ namespace GeometryFriendsAgents
             target_velocity = int.Parse(array[2]);
         }
 
-
         public bool IsFinal()
         {
             return distance <= 2 && Math.Abs(current_velocity - target_velocity) <= 2;
@@ -46,19 +45,12 @@ namespace GeometryFriendsAgents
         {
             if (IsFinal())
             {
-                return 200;
-            }
-            else if(distance <= 2)
-            {
-                return 200/Math.Abs(current_velocity-target_velocity);
+                return 500;
             }
             else
             {
                 return -1;
             }
-            
-                
-            
         }
         
         public override string ToString()
