@@ -165,6 +165,7 @@ namespace GeometryFriendsAgents
                             levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                             if (m.landingPlatform.id == plan[0].landingPlatform.id)
                             {
+                                plan.RemoveAt(0);
                                 return new Tuple<Moves, bool>(Moves.JUMP, true);
                             }
                             return new Tuple<Moves, bool>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), false);
@@ -176,9 +177,15 @@ namespace GeometryFriendsAgents
                     }
                 }
                 else
-                {
-                    //TODO
-                    return null;
+                {//TODO
+                    Random rnd = new Random();
+                    List<Moves> possibleMoves = new List<Moves>();
+                    possibleMoves.Add(Moves.ROLL_LEFT);
+                    possibleMoves.Add(Moves.ROLL_RIGHT);
+                    possibleMoves.Add(Moves.NO_ACTION);
+                    possibleMoves.Add(Moves.JUMP);
+
+                    return new Tuple<Moves, bool>(possibleMoves[rnd.Next(possibleMoves.Count)], false);
                 }
             }
         }
@@ -197,10 +204,6 @@ namespace GeometryFriendsAgents
                                 {
                                     if (diamond.isAbovePlatform == p.id)
                                     {
-                                        /*if (d != 1)
-                                        {
-                                            int a = 0;
-                                        }*/
                                         return m;
                                     }
                                     break;

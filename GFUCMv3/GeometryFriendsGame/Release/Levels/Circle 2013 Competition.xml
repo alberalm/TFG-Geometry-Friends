@@ -43,8 +43,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="13" />
+      <HighScore name="UCMAgent" value="16" />
+      <HighScore name="UCMAgent" value="16" />
+      <HighScore name="UCMAgent" value="18" />
       <HighScore name="IST Circle" value="36" />
-      <HighScore name="RandPredictorCircle" value="53" />
     </HighScores>
   </Level2>
   <Level3>
@@ -69,7 +72,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
-      <HighScore name="UCMAgent" value="20" />
+      <HighScore name="UCMAgent" value="15" />
+      <HighScore name="UCMAgent" value="15" />
+      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="17" />
     </HighScores>
   </Level3>
   <Level4>
@@ -95,11 +102,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
-      <HighScore name="UCMAgent" value="16" />
-      <HighScore name="IST Circle" value="24" />
-      <HighScore name="UCMAgent" value="25" />
-      <HighScore name="UCMAgent" value="25" />
-      <HighScore name="IST Circle" value="138" />
+      <HighScore name="UCMAgent" value="13" />
+      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="15" />
+      <HighScore name="UCMAgent" value="15" />
     </HighScores>
   </Level4>
   <Level5>
@@ -122,7 +129,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
-      <HighScore name="IST Circle" value="254" />
+      <HighScore name="UCMAgent" value="16" />
+      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="No Name" value="18" />
+      <HighScore name="UCMAgent" value="18" />
     </HighScores>
   </Level5>
   <Level6>
@@ -172,6 +183,7 @@
     <HighScores>
       <HighScore name="IST Circle" value="40" />
       <HighScore name="UCMAgent" value="74" />
+      <HighScore name="UCMAgent" value="89" />
     </HighScores>
   </Level7>
   <Level8>
@@ -200,7 +212,7 @@
       <HighScore name="UCMAgent" value="31" />
       <HighScore name="UCMAgent" value="31" />
       <HighScore name="UCMAgent" value="31" />
-      <HighScore name="IST Circle" value="38" />
+      <HighScore name="UCMAgent" value="31" />
     </HighScores>
   </Level8>
   <Level9>
@@ -227,7 +239,9 @@
     <HighScores>
       <HighScore name="UCMAgent" value="37" />
       <HighScore name="UCMAgent" value="41" />
+      <HighScore name="UCMAgent" value="45" />
       <HighScore name="UCMAgent" value="51" />
+      <HighScore name="UCMAgent" value="70" />
     </HighScores>
   </Level9>
   <Level10>
@@ -249,6 +263,8 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="17" />
       <HighScore name="RandPredictorCircle" value="18" />
       <HighScore name="UCMAgent" value="26" />
       <HighScore name="RandPredictorCircle" value="26" />

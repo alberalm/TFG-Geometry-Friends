@@ -231,6 +231,11 @@ namespace GeometryFriendsAgents
             else {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X - actionSelector.brake_distance, circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Gray));
             }
+            
+            //Platform
+            currentPlatform=levelMap.CirclePlatform(circleInfo);
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(circleInfo.X, circleInfo.Y), currentPlatform.id.ToString(), GeometryFriends.XNAStub.Color.Black));
+
         }
 
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
@@ -319,6 +324,7 @@ namespace GeometryFriendsAgents
 
             if (currentPlatform.id == -1) // Ball is in the air
             {
+                
                 if (circleInfo.VelocityX > 0)
                 {
                     currentAction = Moves.ROLL_LEFT;
@@ -330,10 +336,11 @@ namespace GeometryFriendsAgents
             }
             else
             {
-                if (plan.Count > 0 && plan[0].departurePlatform != currentPlatform)//Check when circle in last platform
+                if (plan.Count == 0 || plan[0].departurePlatform != currentPlatform)//CIRCLE IN LAST PLATFORM
                 {
                     
                     plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id,collectiblesInfo);
+
                     fullPlan = new List<LevelMap.MoveInformation>(plan);
                 }
                 

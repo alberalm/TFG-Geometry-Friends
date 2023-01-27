@@ -276,7 +276,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        List<Platform> platformList;
+        public List<Platform> platformList;
         
 
         private readonly int[] COLLECTIBLE_SIZE = new int[] { 1, 2, 3, 3, 2, 1 };//Divided by 2
@@ -1004,6 +1004,16 @@ namespace GeometryFriendsAgents
                 }
             }
 
+            foreach (Platform p in platformList)
+            {
+                debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2, p.yTop * GameInfo.PIXEL_LENGTH), p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
+            }
+            int count = 0;
+            foreach(CollectibleRepresentation c in initialCollectiblesInfo)
+            {
+                debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(c.X, c.Y), count.ToString(), GeometryFriends.XNAStub.Color.Black));
+                count++;
+            }
         }
 
         public void DrawConnections(ref List<DebugInformation> debugInformation)

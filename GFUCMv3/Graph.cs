@@ -156,7 +156,9 @@ namespace GeometryFriendsAgents
 
         public List<LevelMap.MoveInformation> SearchAlgorithm(int src, CollectibleRepresentation[] uncaught)
         {
+            Dictionary<int, int> diamonds = new Dictionary<int, int>();
             List<Diamond> newList = new List<Diamond>();
+            int count = 0;
             foreach(CollectibleRepresentation c in uncaught)
             {
                 int index = GetDiamondID(c);
@@ -165,6 +167,8 @@ namespace GeometryFriendsAgents
                     foreach(Diamond d in collectibles) {
                         if (d.id == index) {
                             newList.Add(d);
+                            diamonds[index] = count;
+                            count++;
                         }
                     }
                 }
@@ -187,9 +191,10 @@ namespace GeometryFriendsAgents
                 LevelMap.MoveInformation move = n.plan[n.plan.Count - 1];
                 foreach (int d in move.diamondsCollected)
                 {
-                    if (!n.caught[d])
+                    //Arreglado?
+                    if (!n.caught[diamonds[d]])
                     {
-                        n.caught[d] = true;
+                        n.caught[diamonds[d]] = true;
                         n.numCaught++;
                     }
                 }
@@ -198,7 +203,7 @@ namespace GeometryFriendsAgents
                 {
                     if (!n.caught[i])
                     {
-                        if(collectibles[i].isAbovePlatform == move.landingPlatform.id)
+                        if (collectibles[i].isAbovePlatform == move.landingPlatform.id)
                         {
                             n.caught[i] = true;
                             n.numCaught++;
@@ -230,8 +235,18 @@ namespace GeometryFriendsAgents
                 }
             }
             // If we find no complete solution, we return the one that catches the most diamonds possible
+
+            //ALBERTO MIRALO sol.plan nunca se inicializa
+            //Estaba así
+
+            /*
             sol.plan.RemoveAt(0);
             return sol.plan;
+            */
+
+            //Y devuelvo una lista vacía
+
+            return new List<LevelMap.MoveInformation>();
         }
         
         public void AddMove(LevelMap.MoveInformation move, int from, int to)
