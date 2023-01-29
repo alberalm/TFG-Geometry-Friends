@@ -3,6 +3,48 @@
   <Level1>
     <Description />
     <Tips />
+    <BallStartingPosition X="200" Y="696" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="680" Y="440" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles />
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="5" />
+      <HighScore name="UCMAgent" value="14" />
+    </HighScores>
+  </Level1>
+  <Level2>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="1000" Y="696" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="664" Y="424" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles />
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent" value="3" />
+      <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="5" />
+      <HighScore name="UCMAgent" value="7" />
+    </HighScores>
+  </Level2>
+  <Level3>
+    <Description />
+    <Tips />
     <BallStartingPosition X="88" Y="712" />
     <SquareStartingPosition X="-1000" Y="-1000" />
     <Collectibles>
@@ -21,9 +63,10 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="17" />
     </HighScores>
-  </Level1>
-  <Level2>
+  </Level3>
+  <Level4>
     <Description />
     <Tips />
     <BallStartingPosition X="1160" Y="696" />
@@ -44,8 +87,8 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
-  </Level2>
-  <Level3>
+  </Level4>
+  <Level5>
     <Description />
     <Tips />
     <BallStartingPosition X="104" Y="680" />
@@ -62,5 +105,5 @@
     <HighScores>
       <HighScore name="RandPredictorCircle" value="36" />
     </HighScores>
-  </Level3>
+  </Level5>
 </Levels>

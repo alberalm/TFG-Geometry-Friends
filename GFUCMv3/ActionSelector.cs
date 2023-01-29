@@ -30,7 +30,7 @@ namespace GeometryFriendsAgents
         {
             
             LevelMap.MoveType moveType = LevelMap.MoveType.NOMOVE;
-            LevelMap.MoveInformation nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining);
+            LevelMap.MoveInformation nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int) (cI.X / GameInfo.PIXEL_LENGTH));
             if (nextMoveInThisPlatform != null)
             {
                 target_position = nextMoveInThisPlatform.x;
@@ -90,7 +90,7 @@ namespace GeometryFriendsAgents
         public Tuple<Moves, bool> nextActionPhisics(ref List<LevelMap.MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, LevelMap.Platform currentPlatform)
         {
             LevelMap.MoveType moveType = LevelMap.MoveType.NOMOVE;
-            LevelMap.MoveInformation nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining);
+            LevelMap.MoveInformation nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int) (cI.X / GameInfo.PIXEL_LENGTH));
             if (nextMoveInThisPlatform != null)
             {
                 target_position = nextMoveInThisPlatform.x;
@@ -189,8 +189,11 @@ namespace GeometryFriendsAgents
                 }
             }
         }
-        private LevelMap.MoveInformation DiamondsCanBeCollectedFrom(LevelMap.Platform p, List<CollectibleRepresentation> remaining)
+
+        private LevelMap.MoveInformation DiamondsCanBeCollectedFrom(LevelMap.Platform p, List<CollectibleRepresentation> remaining, int circleX)
         {
+            int mindistance = 4000;
+            LevelMap.MoveInformation move = null;
             foreach (LevelMap.MoveInformation m in p.moveInfoList)
             {
                 if (m.landingPlatform.id == p.id){
@@ -204,16 +207,19 @@ namespace GeometryFriendsAgents
                                 {
                                     if (diamond.isAbovePlatform == p.id)
                                     {
-                                        return m;
+                                        if (Math.Abs(m.x - circleX) < mindistance)
+                                        {
+                                            move = m;
+                                            mindistance = Math.Abs(m.x - circleX);
+                                        }
                                     }
-                                    break;
                                 }
                             }
                         }
                     }
                 }
             }
-            return null;
+            return move;
         }
 
         private List<int> CollectiblesIds(List<CollectibleRepresentation> colI)
@@ -242,13 +248,13 @@ namespace GeometryFriendsAgents
                         {
                             return Moves.ROLL_LEFT;
                         }
-                        else if (current_position + brake_distance  < target_position + acceleration_distance + GameInfo.TARGET_POINT_ERROR*GameInfo.PIXEL_LENGTH)
+                        else if (current_position + brake_distance < target_position + acceleration_distance + GameInfo.TARGET_POINT_ERROR*GameInfo.PIXEL_LENGTH)
                         {
                             return Moves.ROLL_RIGHT;
                         }
                         else
                         {
-                            return Moves.NO_ACTION;
+                            return Moves.ROLL_LEFT;
                         }
                     }
                 }
@@ -266,7 +272,7 @@ namespace GeometryFriendsAgents
                         }
                         else
                         {
-                            return Moves.NO_ACTION;
+                            return Moves.ROLL_RIGHT;
                         }
                     }
                     else
@@ -299,7 +305,8 @@ namespace GeometryFriendsAgents
                 if (m == Moves.ROLL_LEFT)
                 {
                     return Moves.ROLL_RIGHT;
-                }else if (m == Moves.ROLL_RIGHT)
+                }
+                else if (m == Moves.ROLL_RIGHT)
                 {
                     return Moves.ROLL_LEFT;
                 }
@@ -309,8 +316,6 @@ namespace GeometryFriendsAgents
                 }
             }
         }
-
-
 
         Moves GoToPosition(int currentx, int targetx, bool jump)
         {

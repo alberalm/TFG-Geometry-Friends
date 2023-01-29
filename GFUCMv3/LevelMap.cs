@@ -191,40 +191,39 @@ namespace GeometryFriendsAgents
             }
 
             // Returns 1 is this is better, -1 if other is better, 0 if not clear or not comparable
-            // This is now going to be used just as a first filter, not as a definitive one (we need a second one)
             public int Compare(MoveInformation other, CollectibleRepresentation[] initialCollectiblesInfo)
             {
                 // Here is where we filter movements
-                if(landingPlatform.id != other.landingPlatform.id || departurePlatform.id != other.departurePlatform.id)
+                if (landingPlatform.id != other.landingPlatform.id || departurePlatform.id != other.departurePlatform.id)
                 {
                     return 0;
                 }
                 if (moveType == MoveType.NOMOVE && other.moveType == MoveType.NOMOVE && diamondsCollected[0] == other.diamondsCollected[0])
                 {
-                    if(Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) < Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
+                    if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) < Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
                     {
                         return 1;
                     }
-                    if(Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) > Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
+                    if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) > Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
                     {
                         return -1;
                     }
                 }
                 if (moveType == MoveType.NOMOVE && other.diamondsCollected.Count==1 && diamondsCollected[0] == other.diamondsCollected[0] && other.landingPlatform==other.departurePlatform)
                 {
-                    //other is a jump from platform x to platform x and it was only added because it could reach a diamond
-                    //Now we have found that we can reach the same diamond without jumping, which will take us less time
+                    // Other is a jump from platform x to platform x and it was only added because it could reach a diamond
+                    // Now we have found that we can reach the same diamond without jumping, which will take us less time
                     return 1;
-                }else if(other.moveType == MoveType.NOMOVE && diamondsCollected.Count == 1 && diamondsCollected[0] == other.diamondsCollected[0] && landingPlatform == departurePlatform)
+                }
+                else if(other.moveType == MoveType.NOMOVE && diamondsCollected.Count == 1 && diamondsCollected[0] == other.diamondsCollected[0] && landingPlatform == departurePlatform)
                 {
-                    //symmetric
+                    // Symmetric
                     return -1;
                 }
-                if (moveType == MoveType.NOMOVE)//In general, we want to store this moves and they don't really afect other moves
+                if (moveType == MoveType.NOMOVE) // In general, we want to store these moves, since they don't really afect other moves
                 {
                     return 0;
                 }
-
                 if (Contained(diamondsCollected,other.diamondsCollected) && Contained(other.diamondsCollected,diamondsCollected)) //diamondsCollected=other.diamondsCollected
                 {
                     int m = GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH;
@@ -357,7 +356,7 @@ namespace GeometryFriendsAgents
         {
             for(int i=0; i<platformList.Count; i++)
             {
-                if(cI.Y/GameInfo.PIXEL_LENGTH<platformList[i].yTop && cI.X / GameInfo.PIXEL_LENGTH>= platformList[i].leftEdge && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge)
+                if (cI.Y / GameInfo.PIXEL_LENGTH < platformList[i].yTop && cI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge)
                 {
                     return platformList[i];
                 }
@@ -399,7 +398,6 @@ namespace GeometryFriendsAgents
 
             GenerateMoveInformation();
 
-
             // DEBUG
             String s = "\n";
             s += "Number of platforms: " + platformList.Count.ToString() + "\n";
@@ -422,7 +420,7 @@ namespace GeometryFriendsAgents
                 }
             }
 
-            //Log.LogInformation(s, true);
+            Log.LogInformation(s, true);
 
             // DEBUG Trajectories
             /*s = "\n";
@@ -463,8 +461,11 @@ namespace GeometryFriendsAgents
                     int i = x - xMap + 3;
                     for (int k = -COLLECTIBLE_SIZE[i]; k < COLLECTIBLE_SIZE[i]; k++)
                     {
-                        levelMap[x, yMap + k] = PixelType.DIAMOND;
-
+                        if(x < GameInfo.LEVEL_MAP_WIDTH && x >= 0 && yMap + k < GameInfo.LEVEL_MAP_HEIGHT && yMap + k >= 0)
+                        {
+                            levelMap[x, yMap + k] = PixelType.DIAMOND;
+                        }
+                        
                     }
                 }
             }
@@ -519,8 +520,10 @@ namespace GeometryFriendsAgents
                 {
                     for (int y = yMap - height / 2; y < (yMap + height / 2); y++)
                     {
-                        levelMap[x, y] = PixelType.OBSTACLE;
-
+                        if (x < GameInfo.LEVEL_MAP_WIDTH && x >= 0 && y < GameInfo.LEVEL_MAP_HEIGHT && y >= 0)
+                        {
+                            levelMap[x, y] = PixelType.OBSTACLE;
+                        }
                     }
                 }
             }
@@ -536,7 +539,7 @@ namespace GeometryFriendsAgents
                 int yMap = (int)(o.Y / GameInfo.PIXEL_LENGTH);
                 int height = (int)(o.Height / GameInfo.PIXEL_LENGTH);
                 int width = (int)(o.Width / GameInfo.PIXEL_LENGTH);
-                int leftEdge = xMap - width / 2 + 1;
+                int leftEdge = xMap - width / 2;
                 int rightEdge = xMap + width / 2 - 1;
                 int yTop = yMap - height / 2;
                 prevPlatform = false;
@@ -617,12 +620,12 @@ namespace GeometryFriendsAgents
                     bool join = false;
                     if (p1.yTop == p2.yTop)
                     {
-                        if (p1.rightEdge + 2 == p2.leftEdge)
+                        if (p1.rightEdge + 1 == p2.leftEdge)
                         {
                             levelMap[p1.rightEdge + 1, p1.yTop] = PixelType.PLATFORM;
                             join = true;
                         }
-                        else if (p2.rightEdge + 2 == p1.leftEdge)
+                        else if (p2.rightEdge + 1 == p1.leftEdge)
                         {
                             levelMap[p2.rightEdge + 1, p1.yTop] = PixelType.PLATFORM;
                             join = true;
@@ -705,8 +708,24 @@ namespace GeometryFriendsAgents
         {
             for (int k = 0; k < platformList.Count; k++) {
                 Platform p = platformList[k];
+
+                // Parabolic FALLS
+                //Parallel.For(0, GameInfo.NUM_VELOCITIES, i =>
+                for(int i = 0; i < GameInfo.NUM_VELOCITIES; i++)
+                {
+                    int vx = (i + 1) * GameInfo.VELOCITY_STEP;
+                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge+GameInfo.CIRCLE_RADIUS/GameInfo.PIXEL_LENGTH, vx))
+                    {
+                        AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH);
+                    }
+                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge- GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH, -vx))
+                    {
+                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge- GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH);
+                    }
+                }
+
                 // Parabolic JUMPS
-                Parallel.For(p.leftEdge, p.rightEdge + 1, x =>
+                Parallel.For(p.leftEdge + 1, p.rightEdge, x =>
                 {
                     Parallel.For(0, GameInfo.NUM_VELOCITIES+1, i =>
                     {
@@ -720,19 +739,6 @@ namespace GeometryFriendsAgents
                             AddTrajectory(ref p, -vx, MoveType.JUMP, x);
                         }
                     });
-                });
-                // Parabolic FALLS
-                Parallel.For(0, GameInfo.NUM_VELOCITIES + 1, i =>
-                {
-                    int vx = i * GameInfo.VELOCITY_STEP;
-                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge, vx))
-                    {
-                        AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge);
-                    }
-                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge, -vx))
-                    {
-                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge);
-                    }
                 });
 
                 Parallel.For(p.leftEdge, p.rightEdge + 1, x =>
@@ -873,7 +879,7 @@ namespace GeometryFriendsAgents
                     {
                         for (int k = 1 - (int) (GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH); k < (int)(GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH); k++)
                         {
-                            if (levelMap[x_t + i, y_t + k] == PixelType.OBSTACLE || levelMap[x_t + i, y_t + k] == PixelType.PLATFORM)
+                            if (x_t + i >=0 && x_t + i< GameInfo.LEVEL_MAP_WIDTH && (levelMap[x_t + i, y_t + k] == PixelType.OBSTACLE || levelMap[x_t + i, y_t + k] == PixelType.PLATFORM))
                             {
                                 if ((int)(i * i + k * k) < m.distanceToObstacle * m.distanceToObstacle)
                                 {
@@ -954,7 +960,7 @@ namespace GeometryFriendsAgents
             }
             //This point shouldn't be reachable. If it is, we can debug it
             int[] z = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
-            int aux = z[-1];
+            //int aux = z[-1];
             //Bugs when the collision isn't whith the top of an obstacle aka platform 
             return new Platform(-2);
         }

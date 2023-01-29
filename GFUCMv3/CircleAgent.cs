@@ -137,9 +137,7 @@ namespace GeometryFriendsAgents
             plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(cI).id, colI);
             fullPlan = new List<LevelMap.MoveInformation>(plan);
 
-
             actionSelector = new ActionSelector(collectibleId, l, levelMap, graph);
-
 
             //InitialDraw();
 
@@ -200,7 +198,7 @@ namespace GeometryFriendsAgents
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(trajectory[i].X, trajectory[i].Y), 4, GeometryFriends.XNAStub.Color.Orange));
             }
-           
+
             //Circle velocity
             newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X + circleInfo.VelocityX, circleInfo.Y), GeometryFriends.XNAStub.Color.Red));
             newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X, circleInfo.Y + circleInfo.VelocityY), GeometryFriends.XNAStub.Color.Blue));
@@ -209,7 +207,6 @@ namespace GeometryFriendsAgents
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X + 40, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X - 20, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
             
-
             //Circle velocity
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelector.target_position * GameInfo.PIXEL_LENGTH, circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Black));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + circleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
@@ -236,6 +233,23 @@ namespace GeometryFriendsAgents
             currentPlatform=levelMap.CirclePlatform(circleInfo);
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(circleInfo.X, circleInfo.Y), currentPlatform.id.ToString(), GeometryFriends.XNAStub.Color.Black));
 
+            //Current Action
+            if (currentAction == Moves.NO_ACTION)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 300), 10, GeometryFriends.XNAStub.Color.Blue));
+            }
+            else if (currentAction == Moves.ROLL_LEFT)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(550, 300), 10, GeometryFriends.XNAStub.Color.Green));
+            }
+            else if (currentAction == Moves.ROLL_RIGHT)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(650, 300), 10, GeometryFriends.XNAStub.Color.Purple));
+            }
+            else if (currentAction == Moves.JUMP)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 250), 10, GeometryFriends.XNAStub.Color.Yellow));
+            }
         }
 
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
@@ -338,7 +352,6 @@ namespace GeometryFriendsAgents
             {
                 if (plan.Count == 0 || plan[0].departurePlatform != currentPlatform)//CIRCLE IN LAST PLATFORM
                 {
-                    
                     plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id,collectiblesInfo);
 
                     fullPlan = new List<LevelMap.MoveInformation>(plan);

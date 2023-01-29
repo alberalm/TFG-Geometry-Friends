@@ -16,6 +16,7 @@
     <OrangeElevators />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="RandRect" value="13" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level1>
@@ -36,6 +37,7 @@
     <OrangeElevators />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="RandRect" value="5" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level2>
@@ -120,6 +122,7 @@
     <OrangeElevators />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="RandRect" value="8" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level6>

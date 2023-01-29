@@ -178,12 +178,20 @@ namespace GeometryFriendsAgents
             Node sol = new Node(null, null, 0, 0);
             List<bool> auxlist = Enumerable.Repeat(false,collectibles.Count).ToList();
             queue.Add(new Node(new List<LevelMap.MoveInformation> { new LevelMap.MoveInformation(platforms[src]) }, auxlist, 0, 0));
+            int limit = collectibles.Count;
+            foreach(Diamond d in collectibles)
+            {
+                if(d.isAbovePlatform != -1)
+                {
+                    limit--;
+                }
+            }
             while (queue.Count > 0)
             {
                 Node n = queue[0];
                 queue.RemoveAt(0);
                 // If depth is too high (more than #platforms * #collectibles), we our representation does not have any solution
-                if (n.depth > platforms.Count * collectibles.Count)
+                if (n.depth > platforms.Count * Math.Max(limit, 1))
                 {
                     continue;
                 }
@@ -192,7 +200,7 @@ namespace GeometryFriendsAgents
                 foreach (int d in move.diamondsCollected)
                 {
                     //Arreglado?
-                    if (!n.caught[diamonds[d]])
+                    if (diamonds.ContainsKey(d) && !n.caught[diamonds[d]])
                     {
                         n.caught[diamonds[d]] = true;
                         n.numCaught++;
@@ -236,17 +244,16 @@ namespace GeometryFriendsAgents
             }
             // If we find no complete solution, we return the one that catches the most diamonds possible
 
-            //ALBERTO MIRALO sol.plan nunca se inicializa
-            //Estaba así
-
-            /*
-            sol.plan.RemoveAt(0);
-            return sol.plan;
-            */
-
-            //Y devuelvo una lista vacía
-
-            return new List<LevelMap.MoveInformation>();
+            if (sol.plan == null ||sol.plan.Count==0)
+            {
+                return new List<LevelMap.MoveInformation>();
+            }
+            else
+            {
+                sol.plan.RemoveAt(0);
+                return sol.plan;
+            }
+            
         }
         
         public void AddMove(LevelMap.MoveInformation move, int from, int to)
