@@ -309,7 +309,7 @@ namespace GeometryFriendsAgents
             }
         }
         
-        private static bool Contained<T>(List<T> l1, List<T> l2) //returns if l1 is contained in l2
+        public static bool Contained<T>(List<T> l1, List<T> l2) //returns if l1 is contained in l2
         {
             foreach(T e in l1)
             {
@@ -370,7 +370,7 @@ namespace GeometryFriendsAgents
             {
                 if (cI.Y / GameInfo.PIXEL_LENGTH + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH <= platformList[i].yTop+1 && 
                     cI.Y / GameInfo.PIXEL_LENGTH + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH >= platformList[i].yTop-10 && 
-                    cI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge)
+                    cI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge-1 && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge+1)
                 {
                     return platformList[i];
                 }
@@ -420,7 +420,7 @@ namespace GeometryFriendsAgents
                 }
             }
 
-            Log.LogInformation(s, true);
+            //Log.LogInformation(s, true);
 
             // DEBUG Trajectories
             /*s = "\n";

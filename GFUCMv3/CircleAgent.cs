@@ -64,8 +64,8 @@ namespace GeometryFriendsAgents
         
         //Execution
         ActionSelector actionSelector;
-        LevelMap.MoveInformation currentJump;
         LevelMap.Platform currentPlatform;
+        bool flag = false;
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -338,14 +338,27 @@ namespace GeometryFriendsAgents
 
             if (currentPlatform.id == -1) // Ball is in the air
             {
-                
-                if (circleInfo.VelocityX > 0)
+                if (!flag)
                 {
-                    currentAction = Moves.ROLL_LEFT;
+                    if (circleInfo.VelocityX > 0)
+                    {
+                        currentAction = Moves.ROLL_LEFT;
+                    }
+                    else
+                    {
+                        currentAction = Moves.ROLL_RIGHT;
+                    }
                 }
                 else
                 {
-                    currentAction = Moves.ROLL_RIGHT;
+                    if (circleInfo.VelocityX > 0)
+                    {
+                        currentAction = Moves.ROLL_RIGHT;
+                    }
+                    else
+                    {
+                        currentAction = Moves.ROLL_LEFT;
+                    }
                 }
             }
             else
@@ -357,13 +370,15 @@ namespace GeometryFriendsAgents
                     fullPlan = new List<LevelMap.MoveInformation>(plan);
                 }
                 
-                Tuple<Moves, bool> tup = actionSelector.nextActionPhisics(ref plan,remaining,circleInfo,currentPlatform);
+                Tuple<Moves, Tuple<bool,bool>> tup = actionSelector.nextActionPhisics(ref plan,remaining,circleInfo,currentPlatform);
                 currentAction = tup.Item1;
-                if (tup.Item2)
+                if (tup.Item2.Item1)
                 {
                     t = 0;
                 }
-                    
+                flag = tup.Item2.Item2;
+
+
             }
         }
 
