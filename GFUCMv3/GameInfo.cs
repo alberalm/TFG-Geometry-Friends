@@ -40,7 +40,8 @@ namespace GeometryFriendsAgents
         public const int VELOCITY_STEP = 15;
         public const string Q_PATH = @"Q_table.csv";
 
-        public const int TARGET_POINT_ERROR = 2;
+        public const int TARGET_POINT_ERROR = 2;//Cambiado
+        public const int ERROR = 1;//Cambiado
     }
 }
 

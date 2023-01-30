@@ -252,24 +252,56 @@ namespace GeometryFriendsAgents
                     }
                     else
                     {
+                        if(Math.Abs(current_position + brake_distance- target_position - acceleration_distance)<= GameInfo.ERROR)
+                        {
+                            return Moves.ROLL_RIGHT;
+                        }
+                        else
+                        {
+                            if(current_position + brake_distance > target_position + acceleration_distance)
+                            {
+                                return Moves.ROLL_LEFT;
+                            }
+                            else
+                            {
+                                return Moves.ROLL_RIGHT;
+                            }
+                        }
+                        /*
                         if(current_position+ brake_distance + GameInfo.TARGET_POINT_ERROR > target_position + acceleration_distance)
                         {
                             return Moves.ROLL_LEFT;
                         }
-                        else if (current_position + brake_distance < target_position + acceleration_distance + GameInfo.TARGET_POINT_ERROR*GameInfo.PIXEL_LENGTH)
+                        else if (current_position + brake_distance < target_position + acceleration_distance + GameInfo.TARGET_POINT_ERROR * GameInfo.PIXEL_LENGTH)
                         {
                             return Moves.ROLL_RIGHT;
                         }
                         else
                         {
                             return Moves.ROLL_LEFT;
-                        }
+                        }*/
                     }
                 }
                 else
                 {
                     if (target_velocity >= 0)
                     {
+                        if(Math.Abs(current_position - brake_distance- target_position + acceleration_distance) <= GameInfo.ERROR * GameInfo.PIXEL_LENGTH)
+                        {
+                            return Moves.ROLL_RIGHT;
+                        }
+                        else
+                        {
+                            if (current_position - brake_distance > target_position - acceleration_distance)
+                            {
+                                return Moves.ROLL_LEFT;
+                            }
+                            else
+                            {
+                                return Moves.ROLL_RIGHT;
+                            }
+                        }
+                        /*
                         if (current_position - brake_distance  > target_position - acceleration_distance + GameInfo.TARGET_POINT_ERROR * GameInfo.PIXEL_LENGTH)
                         {
                             return Moves.ROLL_LEFT;
@@ -281,7 +313,7 @@ namespace GeometryFriendsAgents
                         else
                         {
                             return Moves.ROLL_RIGHT;
-                        }
+                        }*/
                     }
                     else
                     {

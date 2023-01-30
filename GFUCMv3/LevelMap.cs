@@ -969,11 +969,11 @@ namespace GeometryFriendsAgents
         {
             if (vx > 0)
             {
-                return vx * vx <= 2*GameInfo.ACCELERATION * GameInfo.PIXEL_LENGTH * (x - leftEdge);
+                return vx * vx <= 2*GameInfo.ACCELERATION * GameInfo.PIXEL_LENGTH * (x - leftEdge-1);//Más conservador que como estaba
             }
             else
             {
-                return vx * vx <= 2 * GameInfo.ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge - x);
+                return vx * vx <= 2 * GameInfo.ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge-1 - x);//Más conservador que como estaba
             }
            
         }

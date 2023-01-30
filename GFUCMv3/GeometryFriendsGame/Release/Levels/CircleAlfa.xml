@@ -189,11 +189,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="LearningBall&amp;LearningSquare" value="8" />
+      <HighScore name="UCMAgent" value="8" />
+      <HighScore name="UCMAgent" value="8" />
       <HighScore name="No Name" value="8" />
       <HighScore name="UCMAgent" value="8" />
-      <HighScore name="UCMAgent" value="8" />
-      <HighScore name="LearningBall&amp;LearningSquare" value="8" />
-      <HighScore name="LearningBall&amp;LearningSquare" value="9" />
     </HighScores>
   </Level8>
   <Level9>
