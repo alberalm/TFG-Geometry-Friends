@@ -1,1 +1,0 @@
-The GeometryFriendsAgents.sln must be introduced in the GFUCM folder, it is not done for it to be ignored by the .gitignore, since it has to be adapted to each computer.
