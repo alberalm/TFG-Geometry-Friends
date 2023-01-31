@@ -381,7 +381,7 @@ namespace GeometryFriendsAgents
                 }
                 else if (reset_counter < (GameInfo.TIMEJUMPING_MS + GameInfo.TIMEROLLING_MS) / GameInfo.UPDATE_FRECUENCY_MS)
                 {
-                    currentAction = Moves.ROLL_LEFT;
+                    currentAction = Moves.ROLL_RIGHT;
                 }
                 else
                 {

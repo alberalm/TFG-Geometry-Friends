@@ -39,15 +39,17 @@ namespace GeometryFriendsAgents
         public const int NUM_VELOCITIES = 10;
         public const int VELOCITY_STEP = 20;
 
-        public const int LEARNING_VELOCITY = 100;
-        public const string Q_PATH = @"Q_table_100.csv";
+        public const int LEARNING_VELOCITY = 20;
+        public const string Q_PATH = @"Q_table_20.csv";
 
-        public const int UPDATE_FRECUENCY_MS = 150;
+        public const int UPDATE_FRECUENCY_MS = 100;
         public const int TIMEJUMPING_MS = 250;
         public const int TIMEROLLING_MS = 5500;
         public const int SIMULATION_SPEED = 1;
         public const int UPDATE_TABLE_MS = 60000;
         public const int TARGET_POINT_ERROR = 1;
+
+        public const int ERROR = 1;
     }
 }
 

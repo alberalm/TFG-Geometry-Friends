@@ -195,7 +195,7 @@ namespace GeometryFriendsAgents
             int acceleration_distance = (int) (s.target_velocity * s.target_velocity / (2 * GameInfo.ACCELERATION * GameInfo.PIXEL_LENGTH));
             if (s.current_velocity >= 0)
             {
-                if (s.target_velocity > 0)
+                if (s.target_velocity >= 0)
                 {
                     if(s.distance > GameInfo.TARGET_POINT_ERROR)
                     {
@@ -204,44 +204,46 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    if (s.distance + brake_distance > acceleration_distance + GameInfo.TARGET_POINT_ERROR)
+                    if (Math.Abs(s.distance + brake_distance - acceleration_distance) <= GameInfo.ERROR)
                     {
-                        r = new int[] { 10, -100, -100 };
-                    }
-                    else if (s.distance + brake_distance < acceleration_distance + GameInfo.TARGET_POINT_ERROR)
-                    {
-                        r = new int[] { -100, -100, 10 };
+                        //Learn
                     }
                     else
                     {
-                        r = new int[] { -100, 10, -100 };
+                        if (s.distance + brake_distance > acceleration_distance)
+                        {
+                            r = new int[] { 10, -100, -100 };
+                        }
+                        else
+                        {
+                            r = new int[] { -100, -100, 10 };
+                        }
                     }
                 }
             }
-            else if(s.current_velocity < 0)
+            else
             {
                 if (s.target_velocity > 0)
                 {
-                    if (s.distance > brake_distance - acceleration_distance + GameInfo.TARGET_POINT_ERROR)
+                    if (Math.Abs(s.distance - brake_distance + acceleration_distance) <= GameInfo.ERROR)
                     {
-                        r = new int[] { 10, -100, -100 };
-                    }
-                    else if (s.distance < brake_distance - acceleration_distance + GameInfo.TARGET_POINT_ERROR)
-                    {
-                        r = new int[] { -100, -100, 10 };
+                        //Learn
                     }
                     else
                     {
-                        r = new int[] { -100, 10, -100 };
+                        if (s.distance - brake_distance >  - acceleration_distance)
+                        {
+                            r = new int[] { 10, -100, -100 };
+                        }
+                        else
+                        {
+                            r = new int[] { -100, -100, 10 };
+                        }
                     }
                 }
                 else
                 {
-                    if (s.distance + brake_distance < acceleration_distance + GameInfo.TARGET_POINT_ERROR)
-                    {
-                        r = new int[] { -100, -100, 10 };
-                    }
-                    // else: learn
+                    //Learn
                 }
             }
 
@@ -257,5 +259,6 @@ namespace GeometryFriendsAgents
                     return -3;
             }
         }
+
     }
 }
