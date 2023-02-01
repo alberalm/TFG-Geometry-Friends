@@ -322,8 +322,6 @@ namespace GeometryFriendsAgents
                 return -DiscreetVelocity(-velocity, velocity_step);
             }
         }
-
-
         
         //implements abstract circle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
@@ -335,53 +333,52 @@ namespace GeometryFriendsAgents
             {
                 return;
             }
-
             currentPlatform = levelMap.CirclePlatform(circleInfo);
-
-            if (currentPlatform.id == -1) // Ball is in the air
+            if (!levelMap.AtBorder(circleInfo, currentPlatform, ref currentAction))
             {
-                if (!flag)
+                if (currentPlatform.id == -1) // Ball is in the air
                 {
-                    if (circleInfo.VelocityX > 0)
+                    if (!flag)
                     {
-                        currentAction = Moves.ROLL_LEFT;
+                        if (circleInfo.VelocityX > 0)
+                        {
+                            currentAction = Moves.ROLL_LEFT;
+                        }
+                        else
+                        {
+                            currentAction = Moves.ROLL_RIGHT;
+                        }
                     }
                     else
                     {
-                        currentAction = Moves.ROLL_RIGHT;
+                        if (circleInfo.VelocityX > 0)
+                        {
+                            currentAction = Moves.ROLL_RIGHT;
+                        }
+                        else
+                        {
+                            currentAction = Moves.ROLL_LEFT;
+                        }
                     }
                 }
                 else
                 {
-                    if (circleInfo.VelocityX > 0)
+                    if (plan.Count == 0 || plan[0].departurePlatform != currentPlatform)//CIRCLE IN LAST PLATFORM
                     {
-                        currentAction = Moves.ROLL_RIGHT;
+                        plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo);
+
+                        fullPlan = new List<LevelMap.MoveInformation>(plan);
                     }
-                    else
+
+                    //Tuple<Moves, Tuple<bool, bool>> tup = actionSelector.nextActionPhisics(ref plan,remaining,circleInfo,currentPlatform); //PHISICS
+                    Tuple<Moves, Tuple<bool, bool>> tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform); //QLEARNING
+                    currentAction = tup.Item1;
+                    if (tup.Item2.Item1)
                     {
-                        currentAction = Moves.ROLL_LEFT;
+                        t = 0;
                     }
+                    flag = tup.Item2.Item2;
                 }
-            }
-            else
-            {
-                if (plan.Count == 0 || plan[0].departurePlatform != currentPlatform)//CIRCLE IN LAST PLATFORM
-                {
-                    plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id,collectiblesInfo);
-
-                    fullPlan = new List<LevelMap.MoveInformation>(plan);
-                }
-                
-                //Tuple<Moves, Tuple<bool, bool>> tup = actionSelector.nextActionPhisics(ref plan,remaining,circleInfo,currentPlatform); //PHISICS
-                Tuple<Moves, Tuple<bool, bool>> tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform); //QLEARNING
-                currentAction = tup.Item1;
-                if (tup.Item2.Item1)
-                {
-                    t = 0;
-                }
-                flag = tup.Item2.Item2;
-
-
             }
         }
 

@@ -41,7 +41,6 @@ namespace GeometryFriendsAgents
                 acceleration_distance = target_velocity * target_velocity / (2 * GameInfo.ACCELERATION);//Not needed, just for visual debug
                 State s = new State(((int)(cI.X / GameInfo.PIXEL_LENGTH)) - target_position, CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_QLEARNING), target_velocity);
 
-
                 if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= GameInfo.TARGET_POINT_ERROR * GameInfo.PIXEL_LENGTH)
                 {
                     if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_QLEARNING) == target_velocity)
@@ -230,7 +229,8 @@ namespace GeometryFriendsAgents
                     }
                 }
                 else
-                {//TODO
+                {
+                    //TODO
                     Random rnd = new Random();
                     List<Moves> possibleMoves = new List<Moves>();
                     possibleMoves.Add(Moves.ROLL_LEFT);

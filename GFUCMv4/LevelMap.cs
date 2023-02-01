@@ -1,4 +1,5 @@
 ﻿using GeometryFriends;
+using GeometryFriends.AI;
 using GeometryFriends.AI.Debug;
 using GeometryFriends.AI.Perceptions.Information;
 using System;
@@ -276,7 +277,6 @@ namespace GeometryFriendsAgents
         }
 
         public List<Platform> platformList;
-        
 
         private readonly int[] COLLECTIBLE_SIZE = new int[] { 1, 2, 3, 3, 2, 1 };//Divided by 2
         private readonly int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
@@ -342,11 +342,6 @@ namespace GeometryFriendsAgents
             return arrayValue * GameInfo.PIXEL_LENGTH;
         }
 
-        public PixelType[,] GetlevelMap()
-        {
-            return levelMap;
-        }
-
         public List<Platform> GetPlatforms()
         {
             return platformList;
@@ -376,6 +371,41 @@ namespace GeometryFriendsAgents
                 }
             }
             return new Platform(-1);
+        }
+
+        public bool AtBorder(CircleRepresentation cI, Platform p, ref Moves currentAction)
+        {
+            if(p.id != -1)
+            {
+                if(Math.Abs(p.rightEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1) // Ball at right edge
+                {
+                    currentAction = Moves.ROLL_LEFT;
+                    return true;
+                }
+                else if(Math.Abs(p.leftEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1) // Ball at left edge
+                {
+                    currentAction = Moves.ROLL_RIGHT;
+                    return true;
+                }
+            }
+            else
+            {
+                CircleRepresentation cI2 = new CircleRepresentation();
+                cI2.X = cI.X - GameInfo.PIXEL_LENGTH;
+                cI2.Y = cI.Y;
+                if (CirclePlatform(cI2).id != -1) // Ball at right edge
+                {
+                    currentAction = Moves.ROLL_LEFT;
+                    return true;
+                }
+                cI2.X = cI.X + GameInfo.PIXEL_LENGTH;
+                if (CirclePlatform(cI2).id != -1) // Ball at left edge
+                {
+                    currentAction = Moves.ROLL_RIGHT;
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void CreateLevelMap(CollectibleRepresentation[] colI, ObstacleRepresentation[] oI, ObstacleRepresentation[] cPI, bool phisics)
