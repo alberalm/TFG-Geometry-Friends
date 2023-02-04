@@ -25,13 +25,21 @@ namespace GeometryFriendsAgents
             this.levelMap = levelMap;
             this.graph = graph;
         }
-
-        public Tuple<Moves, Tuple<bool, bool>> nextActionQTable(ref List<LevelMap.MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, LevelMap.Platform currentPlatform)
+       
+        public Tuple<Moves, Tuple<bool, bool>> nextActionQTable(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, Platform currentPlatform)
         {
             //returns the next move, a first boolean indicating whether the move will lead to an air situation (Jump or fall) and a second boolean indicating whether the ball has to rotate in the
             //same direction of the velocity or in the oposite (in general will be oposite unless the jump lands near the vertix of the parabolla)
-            LevelMap.MoveType moveType = LevelMap.MoveType.NOMOVE;
-            LevelMap.MoveInformation nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH));
+            MoveType moveType = MoveType.NOMOVE;
+            MoveInformation nextMoveInThisPlatform;
+            if  (plan.Count > 0)
+            {
+                nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH),  plan[0]);
+            }
+            else
+            {
+                nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH), null);
+            }
             if (nextMoveInThisPlatform != null)
             {
                 target_position = nextMoveInThisPlatform.x;
@@ -45,7 +53,7 @@ namespace GeometryFriendsAgents
                 {
                     if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_QLEARNING) == target_velocity)
                     {
-                        if (moveType == LevelMap.MoveType.JUMP)
+                        if (moveType == MoveType.JUMP)
                         {
                             return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(nextMoveInThisPlatform)));
                         }
@@ -56,13 +64,13 @@ namespace GeometryFriendsAgents
                     }
                     else
                     {
-                        if (moveType == LevelMap.MoveType.NOMOVE)
+                        if (moveType == MoveType.NOMOVE)
                         {
                             return new Tuple<Moves, Tuple<bool, bool>>(l.ChooseMove(s, ((int)(cI.X / GameInfo.PIXEL_LENGTH)) - target_position), new Tuple<bool, bool>(false, false));
                         }
-                        LevelMap.MoveInformation m = new LevelMap.MoveInformation(new LevelMap.Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
+                        MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
                         levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
-                        if (m.landingPlatform.id == currentPlatform.id && LevelMap.Contained(nextMoveInThisPlatform.diamondsCollected, m.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO
+                        if (m.landingPlatform.id == currentPlatform.id && LevelMap.Contained(nextMoveInThisPlatform.diamondsCollected, m.diamondsCollected))
                         {
                             return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
                         }
@@ -78,7 +86,7 @@ namespace GeometryFriendsAgents
             {
                 if (plan.Count > 0)
                 {
-                    LevelMap.MoveInformation aux_move = plan[0];
+                    MoveInformation aux_move = plan[0];
                     target_position = plan[0].x;
                     target_velocity = plan[0].velocityX;
                     moveType = plan[0].moveType;
@@ -91,7 +99,7 @@ namespace GeometryFriendsAgents
                         {
 
                             plan.RemoveAt(0);
-                            if (moveType == LevelMap.MoveType.JUMP)
+                            if (moveType == MoveType.JUMP)
                             {
                                 return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(aux_move)));
                             }
@@ -102,13 +110,13 @@ namespace GeometryFriendsAgents
                         }
                         else
                         {
-                            if (moveType == LevelMap.MoveType.FALL)
+                            if (moveType == MoveType.FALL)
                             {
                                 return new Tuple<Moves, Tuple<bool, bool>>(l.ChooseMove(s, ((int)(cI.X / GameInfo.PIXEL_LENGTH)) - target_position), new Tuple<bool, bool>(false, false));
                             }
-                            LevelMap.MoveInformation m = new LevelMap.MoveInformation(new LevelMap.Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
+                            MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
                             levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
-                            if (m.landingPlatform.id == plan[0].landingPlatform.id && LevelMap.Contained(aux_move.diamondsCollected, m.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO
+                            if (m.landingPlatform.id == plan[0].landingPlatform.id && LevelMap.Contained(aux_move.diamondsCollected, m.diamondsCollected))
                             {
                                 plan.RemoveAt(0);
                                 return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
@@ -122,7 +130,7 @@ namespace GeometryFriendsAgents
                     }
                 }
                 else
-                {//TODO
+                {
                     Random rnd = new Random();
                     List<Moves> possibleMoves = new List<Moves>();
                     possibleMoves.Add(Moves.ROLL_LEFT);
@@ -135,12 +143,20 @@ namespace GeometryFriendsAgents
             }
         }
 
-        public Tuple<Moves, Tuple<bool, bool>> nextActionPhisics(ref List<LevelMap.MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, LevelMap.Platform currentPlatform)
+        public Tuple<Moves, Tuple<bool, bool>> nextActionPhisics(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, Platform currentPlatform)
         {
             //returns the next move, a first boolean indicating whether the move will lead to an air situation (Jump or fall) and a second boolean indicating whether the ball has to rotate in the
             //same direction of the velocity or in the oposite (in general will be oposite unless the jump lands near the vertix of the parabolla)
-            LevelMap.MoveType moveType = LevelMap.MoveType.NOMOVE;
-            LevelMap.MoveInformation nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int) (cI.X / GameInfo.PIXEL_LENGTH));
+            MoveType moveType = MoveType.NOMOVE;
+            MoveInformation nextMoveInThisPlatform;
+            if (plan.Count > 0)
+            {
+                nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH), plan[0]);
+            }
+            else
+            {
+                nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH), null);
+            }
             if (nextMoveInThisPlatform != null)
             {
                 target_position = nextMoveInThisPlatform.x;
@@ -152,7 +168,7 @@ namespace GeometryFriendsAgents
                 {
                     if (CircleAgent.DiscreetVelocity(cI.VelocityX,GameInfo.VELOCITY_STEP_PHISICS) == target_velocity)
                     {
-                        if (moveType == LevelMap.MoveType.JUMP)
+                        if (moveType == MoveType.JUMP)
                         {
                             return new Tuple<Moves, Tuple<bool,bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(nextMoveInThisPlatform)));
                         }
@@ -163,13 +179,13 @@ namespace GeometryFriendsAgents
                     }
                     else
                     {
-                        if (moveType == LevelMap.MoveType.NOMOVE)
+                        if (moveType == MoveType.NOMOVE)
                         {
                             return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false,false));
                         }
-                        LevelMap.MoveInformation m = new LevelMap.MoveInformation(new LevelMap.Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
+                        MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
                         levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
-                        if (m.landingPlatform.id == currentPlatform.id && LevelMap.Contained(nextMoveInThisPlatform.diamondsCollected,m.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO
+                        if (m.landingPlatform.id == currentPlatform.id && LevelMap.Contained(nextMoveInThisPlatform.diamondsCollected,m.diamondsCollected))
                         {
                             return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
                         }
@@ -185,7 +201,7 @@ namespace GeometryFriendsAgents
             {
                 if (plan.Count > 0)
                 {
-                    LevelMap.MoveInformation aux_move = plan[0];
+                    MoveInformation aux_move = plan[0];
                     target_position = plan[0].x;
                     target_velocity = plan[0].velocityX;
                     moveType = plan[0].moveType;
@@ -198,7 +214,7 @@ namespace GeometryFriendsAgents
                         {
                             
                             plan.RemoveAt(0);
-                            if (moveType == LevelMap.MoveType.JUMP)
+                            if (moveType == MoveType.JUMP)
                             {
                                 return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(aux_move)));
                             }
@@ -209,11 +225,11 @@ namespace GeometryFriendsAgents
                         }
                         else
                         {
-                            if (moveType == LevelMap.MoveType.FALL)
+                            if (moveType == MoveType.FALL)
                             {
                                 return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                             }
-                            LevelMap.MoveInformation m = new LevelMap.MoveInformation(new LevelMap.Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
+                            MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
                             levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                             if (m.landingPlatform.id == plan[0].landingPlatform.id && LevelMap.Contained(aux_move.diamondsCollected, m.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO
                             {
@@ -229,8 +245,7 @@ namespace GeometryFriendsAgents
                     }
                 }
                 else
-                {
-                    //TODO
+                { 
                     Random rnd = new Random();
                     List<Moves> possibleMoves = new List<Moves>();
                     possibleMoves.Add(Moves.ROLL_LEFT);
@@ -243,15 +258,16 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private bool JumpNeedsAngularMomentum(LevelMap.MoveInformation m)
+        private bool JumpNeedsAngularMomentum(MoveInformation m)
         {
             return Math.Abs(m.landingPlatform.yTop+ GameInfo.JUMP_VELOCITYY* GameInfo.JUMP_VELOCITYY /(2*GameInfo.GRAVITY*GameInfo.PIXEL_LENGTH) - m.departurePlatform.yTop)<= 5;
         }
-        private LevelMap.MoveInformation DiamondsCanBeCollectedFrom(LevelMap.Platform p, List<CollectibleRepresentation> remaining, int circleX)
+
+        private MoveInformation DiamondsCanBeCollectedFrom(Platform p, List<CollectibleRepresentation> remaining, int circleX, MoveInformation next_move)
         {
             int mindistance = 4000;
-            LevelMap.MoveInformation move = null;
-            foreach (LevelMap.MoveInformation m in p.moveInfoList)
+            MoveInformation move = null;
+            foreach (MoveInformation m in p.moveInfoList)
             {
                 if (m.landingPlatform.id == p.id){
                     foreach(int d in m.diamondsCollected)
@@ -264,7 +280,7 @@ namespace GeometryFriendsAgents
                                 {
                                     if (diamond.isAbovePlatform == p.id)
                                     {
-                                        if (Math.Abs(m.x - circleX) < mindistance)
+                                        if (Math.Abs(m.x - circleX) < mindistance && (next_move == null || !next_move.diamondsCollected.Contains(d)))
                                         {
                                             move = m;
                                             mindistance = Math.Abs(m.x - circleX);

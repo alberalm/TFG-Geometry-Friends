@@ -60,18 +60,18 @@ namespace GeometryFriendsAgents
 
         //Planning
         Graph graph;
-        private List<LevelMap.MoveInformation> plan;
+        private List<MoveInformation> plan;
         
         //Execution
         ActionSelector actionSelector;
-        LevelMap.Platform currentPlatform;
+        Platform currentPlatform;
         bool flag = false;
 
         //Debug
         private DebugInformation[] debugInfo = null;
         private List<DebugInformation> newDebugInfo;
         private List<CircleRepresentation> trajectory;
-        private List<LevelMap.MoveInformation> fullPlan;
+        private List<MoveInformation> fullPlan;
 
         //Learning
         private double t = 0;
@@ -130,12 +130,11 @@ namespace GeometryFriendsAgents
             }
 
             this.area = area;
-            //levelMap.CreateLevelMap(colI, oI, rPI, true); //PHISICS
-            levelMap.CreateLevelMap(colI, oI, rPI, false); //QLEARNING
+            levelMap.CreateLevelMap(colI, oI, rPI); 
             graph = new Graph(levelMap.GetPlatforms(),colI);
             
-            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(cI).id, colI);
-            fullPlan = new List<LevelMap.MoveInformation>(plan);
+            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(cI).id, colI,null);
+            fullPlan = new List<MoveInformation>(plan);
 
             actionSelector = new ActionSelector(collectibleId, l, levelMap, graph);
 
@@ -146,6 +145,7 @@ namespace GeometryFriendsAgents
             
             //DebugSensorsInfo();
         }
+
         private void InitialDraw()
         {
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
@@ -166,7 +166,7 @@ namespace GeometryFriendsAgents
         private void PlanDebug()
         {
             int step = 1;
-            foreach (LevelMap.MoveInformation m in fullPlan)
+            foreach (MoveInformation m in fullPlan)
             {
                 foreach (Tuple<float, float> tup in m.path)
                 {
@@ -334,7 +334,7 @@ namespace GeometryFriendsAgents
                 return;
             }
             currentPlatform = levelMap.CirclePlatform(circleInfo);
-            if (!levelMap.AtBorder(circleInfo, currentPlatform, ref currentAction))
+            if (!levelMap.AtBorder(circleInfo, currentPlatform, ref currentAction,plan))
             {
                 if (currentPlatform.id == -1) // Ball is in the air
                 {
@@ -363,15 +363,28 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    if (plan.Count == 0 || plan[0].departurePlatform != currentPlatform)//CIRCLE IN LAST PLATFORM
+                    if (plan.Count == 0 || plan[0].departurePlatform != currentPlatform) //CIRCLE IN LAST PLATFORM
                     {
-                        plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo);
+                        if  (fullPlan.Count - plan.Count - 1 >= 0)
+                        {
+                            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
+                        }
+                        else
+                        {
+                            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo, null);
+                        }
 
-                        fullPlan = new List<LevelMap.MoveInformation>(plan);
+                        fullPlan = new List<MoveInformation>(plan);
                     }
-
-                    //Tuple<Moves, Tuple<bool, bool>> tup = actionSelector.nextActionPhisics(ref plan,remaining,circleInfo,currentPlatform); //PHISICS
-                    Tuple<Moves, Tuple<bool, bool>> tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform); //QLEARNING
+                    Tuple<Moves, Tuple<bool, bool>> tup;
+                    if (GameInfo.PHYSICS)
+                    {
+                        tup = actionSelector.nextActionPhisics(ref plan, remaining, circleInfo, currentPlatform);
+                    }
+                    else
+                    {
+                        tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
+                    }
                     currentAction = tup.Item1;
                     if (tup.Item2.Item1)
                     {

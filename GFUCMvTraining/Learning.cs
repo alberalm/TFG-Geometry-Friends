@@ -27,39 +27,44 @@ namespace GeometryFriendsAgents
             random = new Random();
             LoadFile();
         }
-        
+
         public void LoadFile()
         {
-            StreamReader archivo = new StreamReader(GameInfo.Q_PATH);
-            string line = archivo.ReadLine();
-            while ((line = archivo.ReadLine()) != null && line != "")
+            for (int i = 0; i <= 10; i++)
             {
-                string[] split = line.Split(';');
-                State s = new State(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]));
-                Moves m;
-                if(split[3] == "ROLL_RIGHT")
+                StreamReader archivo = new StreamReader(@"Q_table_" + (20 * i).ToString() + ".csv");
+                string line = archivo.ReadLine();
+                int count = 0;
+                while ((line = archivo.ReadLine()) != null && line != "")
                 {
-                    m = Moves.ROLL_RIGHT;
-                }
-                else if(split[3] == "ROLL_LEFT")
-                {
-                    m = Moves.ROLL_LEFT;
-                }
-                else
-                {
-                    m = Moves.NO_ACTION;
-                }
-                double v = double.Parse(split[4]);
-                if (s.distance <= GameInfo.MAX_DISTANCE)
-                {
-                    if (!Q_table.ContainsKey(s.ToString()))
+                    string[] split = line.Split(';');
+                    State s = new State(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]));
+                    Moves m;
+                    if (split[3] == "ROLL_RIGHT")
                     {
-                        Q_table.Add(s.ToString(), new Dictionary<Moves, double>());
+                        m = Moves.ROLL_RIGHT;
                     }
-                    Q_table[s.ToString()].Add(m, v);
+                    else if (split[3] == "ROLL_LEFT")
+                    {
+                        m = Moves.ROLL_LEFT;
+                    }
+                    else
+                    {
+                        m = Moves.NO_ACTION;
+                    }
+                    double v = double.Parse(split[4]);
+                    if (s.distance <= GameInfo.MAX_DISTANCE && Math.Abs(s.target_velocity) == 20 * i)
+                    {
+                        if (!Q_table.ContainsKey(s.ToString()))
+                        {
+                            Q_table.Add(s.ToString(), new Dictionary<Moves, double>());
+                        }
+                        Q_table[s.ToString()].Add(m, v);
+                    }
+                    count++;
                 }
+                archivo.Close();
             }
-            archivo.Close();
         }
 
 
@@ -120,8 +125,11 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
-            moves.Add(action);
-            states.Add(current);
+            if (current.target_velocity != 0)
+            {
+                moves.Add(action);
+                states.Add(current);
+            }
             if  (d < 0)//Adjustment due to working with positive distance only
             {
                 if (action == Moves.ROLL_RIGHT)

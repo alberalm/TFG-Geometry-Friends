@@ -88,7 +88,6 @@ namespace GeometryFriendsAgents
         int update_counter = 0;
         bool jump = false;
 
-
         public CircleAgent()
         {
             //Change flag if agent is not to be used
@@ -338,7 +337,7 @@ namespace GeometryFriendsAgents
             {
                 update_table_counter++;
             }
-            else
+            else if (target_velocity != 0)
             {
                 State s = new State(((int)(circleInfo.X / GameInfo.PIXEL_LENGTH)) - target_position, CircleAgent.DiscreetVelocity(circleInfo.VelocityX), target_velocity);
                 l.UpdateTable(s);
@@ -362,30 +361,42 @@ namespace GeometryFriendsAgents
                 {
                     l.UpdateTable(s);
                     l.SaveFile();
-                    currentAction = Moves.JUMP;
-                    jump = true;
-                    reset_counter = 0;
+                    if (target_velocity == 0)
+                    {
+                        target_velocity = GameInfo.LEARNING_VELOCITY;
+                        target_position = GameInfo.LEVEL_MAP_WIDTH / 2;
+                    }
+                    else{
+                        currentAction = Moves.JUMP;
+                        jump = true;
+                        reset_counter = 0;
 
+                    }
+                    
+                     
                 }
-                else
+                else 
                 {
                     currentAction = l.ChooseMove(s, ((int)(circleInfo.X / GameInfo.PIXEL_LENGTH)) - target_position);
-                }
+                } 
             }
             else
-            {
-
+            { 
                 if (reset_counter < GameInfo.TIMEJUMPING_MS / GameInfo.UPDATE_FRECUENCY_MS)
                 {
                     currentAction = Moves.JUMP;
                 }
-                else if (reset_counter < (GameInfo.TIMEJUMPING_MS + GameInfo.TIMEROLLING_MS) / GameInfo.UPDATE_FRECUENCY_MS)
-                {
-                    currentAction = Moves.ROLL_RIGHT;
-                }
                 else
                 {
-                    jump = false;
+                    jump = false; 
+                    if(target_velocity == 0) {
+                        target_velocity = GameInfo.LEARNING_VELOCITY;
+                        target_position = GameInfo.LEVEL_MAP_WIDTH / 2;
+                    }
+                    else {
+                        target_velocity = 0;
+                        target_position = 16 + rnd.Next(GameInfo.LEVEL_MAP_WIDTH - 32);
+                    }
                 }
                 reset_counter++;
             }

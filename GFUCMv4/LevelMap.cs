@@ -23,11 +23,6 @@ namespace GeometryFriendsAgents
             EMPTY, OBSTACLE, DIAMOND, PLATFORM
         };
 
-        public enum MoveType
-        {
-            JUMP, FALL, NOMOVE
-        };
-
         public enum CircleCollisionType
         {
             Top, Right, Bottom, Left, Diamond, Other, None
@@ -35,252 +30,11 @@ namespace GeometryFriendsAgents
             // TODO: Change this
         };
 
-        public class Platform : IComparable<Platform>
-        {
-            public int id;
-            public int yTop;
-            public int leftEdge;
-            public int rightEdge;
-            public List<MoveInformation> moveInfoList;
-
-            public Platform()
-            {
-            }
-
-            public Platform(int id, int yTop, int leftEdge, int rightEdge, List<MoveInformation> moveInfoList)
-            {
-                this.id = id;
-                this.yTop = yTop;
-                this.leftEdge = leftEdge;
-                this.rightEdge = rightEdge;
-                this.moveInfoList = moveInfoList;
-            }
-
-            public Platform(int id)
-            {
-                this.id = id;
-                this.yTop = 0;
-                this.leftEdge = 0;
-                this.rightEdge = 0;
-                this.moveInfoList = null;
-            }
-
-            public List<int> ReachableCollectiblesLandingInThisPlatform()
-            {
-                List<int> rc = new List<int>();
-                foreach(MoveInformation m in moveInfoList)
-                {
-                    if (m.departurePlatform.id == m.landingPlatform.id)
-                    {
-                        foreach (int d in m.diamondsCollected)
-                        {
-                            if (!rc.Contains(d))
-                            {
-                                rc.Add(d);
-                            }
-                        }
-                    }
-                }
-                return rc;
-            }
-
-            public List<int> ReachableCollectiblesLandingInOtherPlatform()
-            {
-                List<int> rc = new List<int>();
-                foreach (MoveInformation m in moveInfoList)
-                {
-                    if (m.departurePlatform.id != m.landingPlatform.id) 
-                    { 
-                        foreach (int d in m.diamondsCollected)
-                        {
-                            if (!rc.Contains(d))
-                            {
-                                rc.Add(d);
-                            }
-                        }
-                    }
-                }
-                return rc;
-            }
-
-            // Returns 1 if this is less than other, -1 if other is less than this, 0 if equal
-            public int CompareTo(Platform other)
-            {
-                if(this.yTop == other.yTop)
-                {
-                    return this.leftEdge.CompareTo(other.leftEdge);
-                }
-                return yTop.CompareTo(other.yTop);
-            }
-        }
-
-        public class MoveInformation
-        {
-            public Platform landingPlatform;
-            public Platform departurePlatform;
-            public int x;
-            public int xlandPoint;
-            public int velocityX;
-            public MoveType moveType;
-            public List<int> diamondsCollected;
-            public List<Tuple<float,float>> path;
-            public int distanceToObstacle;
-           
-            public MoveInformation(Platform landingPlatform)
-            {
-                this.departurePlatform = null;
-                this.landingPlatform = landingPlatform;
-                this.x = 0;
-                this.xlandPoint = 0;
-                this.velocityX = 0;
-                this.moveType = MoveType.NOMOVE;
-                this.diamondsCollected = new List<int>();
-                this.path = null;
-                this.distanceToObstacle = 0;
-            }
-
-            public MoveInformation(Platform landingPlatform, Platform departurePlatform, int x, int xlandPoint, int velocityX, MoveType moveType, List<int> diamondsCollected, List<Tuple<float, float>> path, int distanceToObstacle)
-            {
-                this.departurePlatform = departurePlatform;
-                this.landingPlatform = landingPlatform;
-                this.x = x;
-                this.xlandPoint = xlandPoint;
-                this.velocityX = velocityX;
-                this.moveType = moveType;
-                this.diamondsCollected = diamondsCollected;
-                this.path = path;
-                this.distanceToObstacle = distanceToObstacle;
-            }
-
-            public int DistanceToRollingEdge()
-            {
-                if  (velocityX >= 0)
-                {
-                    return landingPlatform.rightEdge - xlandPoint;
-                }
-                else
-                {
-                    return xlandPoint - landingPlatform.leftEdge;
-                }
-            }
-
-            public int DistanceToOtherEdge()
-            {
-                if (velocityX >= 0)
-                {
-                    return xlandPoint - landingPlatform.leftEdge;
-                }
-                else
-                {
-                    return landingPlatform.rightEdge - xlandPoint;
-                }
-            }
-
-            private float Value()
-            {
-                int quarterPointLeft = (3 * landingPlatform.leftEdge + landingPlatform.rightEdge) / 4;
-                int quarterPointRight = (landingPlatform.leftEdge + 3 * landingPlatform.rightEdge) / 4;
-                int middleDeparture = (departurePlatform.leftEdge + departurePlatform.rightEdge) / 2;
-                if (velocityX >= 0)
-                {
-                    return Math.Abs(xlandPoint - quarterPointLeft) / 3 + Math.Abs(velocityX) / 10 - distanceToObstacle + Math.Abs(x - middleDeparture) / 10;
-                }
-                else
-                {
-                    return Math.Abs(xlandPoint - quarterPointRight) / 3 + Math.Abs(velocityX) / 10 - distanceToObstacle + Math.Abs(x - middleDeparture) / 10;
-                }
-            }
-
-            // Returns 1 is this is better, -1 if other is better, 0 if not clear or not comparable
-            public int Compare(MoveInformation other, CollectibleRepresentation[] initialCollectiblesInfo)
-            {
-                // Here is where we filter movements
-                if (landingPlatform.id != other.landingPlatform.id || departurePlatform.id != other.departurePlatform.id)
-                {
-                    return 0;
-                }
-                if (moveType == MoveType.NOMOVE && other.moveType == MoveType.NOMOVE && diamondsCollected[0] == other.diamondsCollected[0])
-                {
-                    if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) < Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
-                    {
-                        return 1;
-                    }
-                    if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) > Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
-                    {
-                        return -1;
-                    }
-                }
-                if (moveType == MoveType.NOMOVE && other.diamondsCollected.Count==1 && diamondsCollected[0] == other.diamondsCollected[0] && other.landingPlatform==other.departurePlatform)
-                {
-                    // Other is a jump from platform x to platform x and it was only added because it could reach a diamond
-                    // Now we have found that we can reach the same diamond without jumping, which will take us less time
-                    return 1;
-                }
-                else if(other.moveType == MoveType.NOMOVE && diamondsCollected.Count == 1 && diamondsCollected[0] == other.diamondsCollected[0] && landingPlatform == departurePlatform)
-                {
-                    // Symmetric
-                    return -1;
-                }
-                if (moveType == MoveType.NOMOVE) // In general, we want to store these moves, since they don't really afect other moves
-                {
-                    return 0;
-                }
-                if (Contained(diamondsCollected,other.diamondsCollected) && Contained(other.diamondsCollected,diamondsCollected)) //diamondsCollected=other.diamondsCollected
-                {
-                    int m = GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH;
-                    /*if(other.landingPlatform.id == 4 && other.departurePlatform.id == 5)
-                    {
-                        int a = 1;
-                    }*/
-                    if(other.DistanceToOtherEdge()>m && other.DistanceToRollingEdge() > m && (DistanceToOtherEdge() <= m || DistanceToRollingEdge() <= m))
-                    {
-                        return -1;
-                    }
-                    if(other.DistanceToOtherEdge() <= m && DistanceToOtherEdge() <= m)
-                    {
-                        if(other.DistanceToOtherEdge() > DistanceToOtherEdge())
-                        {
-                            return -1;
-                        }
-                        else
-                        {
-                            return 1;
-                        }
-                    }
-                    if (DistanceToOtherEdge() > m && DistanceToRollingEdge() > m && (other.DistanceToOtherEdge() <= m || other.DistanceToRollingEdge() <= m))
-                    {
-                        return 1;
-                    }
-                    if (this.Value() < other.Value())
-                    {
-                        return 1;
-                    }
-                    else
-                    {
-                        return -1;
-                    }
-                }
-                else if (Contained(diamondsCollected, other.diamondsCollected) && !Contained(other.diamondsCollected, diamondsCollected))//diamondsCollected strictly contained in other.diamondsCollected
-                {
-                    return -1;
-                }
-                else if (!Contained(diamondsCollected, other.diamondsCollected) && Contained(other.diamondsCollected, diamondsCollected))//other.diamondsCollected strictly contained in diamondsCollected
-                {
-                    return 1;
-                }
-                else if (!Contained(diamondsCollected, other.diamondsCollected) && !Contained(other.diamondsCollected, diamondsCollected))//Incomparable
-                {
-                    return 0;
-                }
-                return 0;
-            }
-        }
-
         public List<Platform> platformList;
-
         private readonly int[] COLLECTIBLE_SIZE = new int[] { 1, 2, 3, 3, 2, 1 };//Divided by 2
         private readonly int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
 
+        public List<MoveInformation> lista = new List<MoveInformation>();
         public PixelType[,] levelMap = new PixelType[GameInfo.LEVEL_MAP_WIDTH, GameInfo.LEVEL_MAP_HEIGHT]; //x=i, y=j
 
         public CollectibleRepresentation[] initialCollectiblesInfo;
@@ -373,11 +127,15 @@ namespace GeometryFriendsAgents
             return new Platform(-1);
         }
 
-        public bool AtBorder(CircleRepresentation cI, Platform p, ref Moves currentAction)
+        public bool AtBorder(CircleRepresentation cI, Platform p, ref Moves currentAction, List<MoveInformation> plan)
         {
-            if(p.id != -1)
+            if (p.id != -1)
             {
-                if(Math.Abs(p.rightEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1) // Ball at right edge
+                if (!GameInfo.PHYSICS && plan.Count > 0 && plan[0].moveType == MoveType.FALL)
+                {
+                    return false;
+                }
+                if (Math.Abs(p.rightEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1) // Ball at right edge
                 {
                     currentAction = Moves.ROLL_LEFT;
                     return true;
@@ -408,7 +166,7 @@ namespace GeometryFriendsAgents
             return false;
         }
 
-        public void CreateLevelMap(CollectibleRepresentation[] colI, ObstacleRepresentation[] oI, ObstacleRepresentation[] cPI, bool phisics)
+        public void CreateLevelMap(CollectibleRepresentation[] colI, ObstacleRepresentation[] oI, ObstacleRepresentation[] cPI)
         {
             SetCollectibles(colI);
 
@@ -426,7 +184,7 @@ namespace GeometryFriendsAgents
 
             PlatformUnion();
 
-            GenerateMoveInformation(phisics);
+            GenerateMoveInformation();
 
             // DEBUG
             String s = "\n";
@@ -734,10 +492,10 @@ namespace GeometryFriendsAgents
             return CircleCollisionType.None;
         }
 
-        private void GenerateMoveInformation(bool phisics)
+        private void GenerateMoveInformation()
         {
             int num_velocities, velocity_step;
-            if (phisics)
+            if (GameInfo.PHYSICS)
             {
                 num_velocities = GameInfo.NUM_VELOCITIES_PHISICS;
                 velocity_step = GameInfo.VELOCITY_STEP_PHISICS;
@@ -755,13 +513,13 @@ namespace GeometryFriendsAgents
                 Parallel.For(0, num_velocities, i =>
                 {
                     int vx = (i + 1) * velocity_step;
-                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH, vx))
+                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge + Math.Max(0, 8 - i), vx))
                     {
-                        AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH);
+                        AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + Math.Max(0, 8 - i));
                     }
-                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH, -vx))
+                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge - Math.Max(0, 8 - i), -vx))
                     {
-                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH);
+                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(0, 8 - i));
                     }
                 });
 
@@ -769,6 +527,7 @@ namespace GeometryFriendsAgents
                 Parallel.For(p.leftEdge + 1, p.rightEdge, x =>
                 {
                     Parallel.For(0, num_velocities + 1, i =>
+
                     {
                         int vx = i * velocity_step;
                         if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
@@ -794,17 +553,18 @@ namespace GeometryFriendsAgents
         {
             // Any trajectory with distance <= 10 should be safe to not collide (?)
             MoveInformation m = new MoveInformation(new Platform(-1), p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
-            if (moveType==MoveType.JUMP)
+            
+            if (moveType == MoveType.JUMP)
             {
                 SimulateMove(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, (int)GameInfo.JUMP_VELOCITYY, ref m);
             }
-            else if(moveType == MoveType.FALL)
+            else if (moveType == MoveType.FALL)
             {
                 SimulateMove(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, 0, ref m);
             }
             else if (moveType == MoveType.NOMOVE)
             {
-                if(CircleIntersectsWithObstacle(x,p.yTop- GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) == CircleCollisionType.Diamond)
+                if (CircleIntersectsWithObstacle(x, p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) == CircleCollisionType.Diamond)
                 {
                     m.landingPlatform = p;
                     m.xlandPoint = x;
@@ -812,7 +572,11 @@ namespace GeometryFriendsAgents
                     m.diamondsCollected.Add(GetDiamondCollected(x, p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH));
                 }
             }
-
+            if(p.id == 1 && moveType == MoveType.FALL)
+            {
+                lista.Add(m);
+            }
+            
             lock (platformList)
             {
                 bool addIt = true;
@@ -937,6 +701,7 @@ namespace GeometryFriendsAgents
                 y_t = (int)(y_tfloat / GameInfo.PIXEL_LENGTH);
                 cct = CircleIntersectsWithObstacle(x_t, y_t);
             }
+
             if (cct != CircleCollisionType.Bottom)
             {
                 m.landingPlatform = new Platform(-2);
@@ -952,7 +717,6 @@ namespace GeometryFriendsAgents
                     i--;
                 }
             }
- 
         }
 
         private Tuple<float, float> NewVelocityAfterCollision(float vx, float vy, CircleCollisionType cct) // Do not call this function with cct=other, bottom or none
@@ -990,8 +754,8 @@ namespace GeometryFriendsAgents
                     xcollide = x + i;
                     ycollide = y + j;
                 }
-
             }
+            
             foreach (Platform p in platformList)
             {
                 if (p.yTop == ycollide && p.leftEdge <= xcollide && xcollide <= p.rightEdge)
@@ -1016,7 +780,6 @@ namespace GeometryFriendsAgents
             {
                 return vx * vx <= 2 * GameInfo.ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge-1 - x);//Más conservador que como estaba
             }
-           
         }
 
         public void DrawLevelMap(ref List<DebugInformation> debugInformation)
@@ -1031,10 +794,10 @@ namespace GeometryFriendsAgents
                         {
                             debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Red));
                         }
-                        else{
+                        else
+                        {
                             debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.White));
                         }
-
                     }
                     else if (levelMap[x, y] == PixelType.EMPTY)
                     {
@@ -1044,7 +807,8 @@ namespace GeometryFriendsAgents
                     {
                         debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Purple));
 
-                    } else if (levelMap[x, y] == PixelType.PLATFORM)
+                    }
+                    else if (levelMap[x, y] == PixelType.PLATFORM)
                     {
                         debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, y * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Chocolate));
                     }
@@ -1096,6 +860,7 @@ namespace GeometryFriendsAgents
                 }
             }
 
+            
         }
     }
 }

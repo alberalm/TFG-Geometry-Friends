@@ -24,6 +24,7 @@
       <HighScore name="UCMAgent" value="12" />
       <HighScore name="UCMAgent" value="12" />
       <HighScore name="UCMAgent" value="18" />
+      <HighScore name="UCMAgent" value="60" />
     </HighScores>
   </Level1>
   <Level2>
@@ -79,7 +80,7 @@
       <HighScore name="UCMAgent" value="20" />
       <HighScore name="UCMAgent" value="20" />
       <HighScore name="UCMAgent" value="20" />
-      <HighScore name="UCMAgent" value="21" />
+      <HighScore name="UCMAgent" value="20" />
     </HighScores>
   </Level3>
   <Level4>
@@ -215,6 +216,7 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="19" />
       <HighScore name="UCMAgent" value="34" />
       <HighScore name="UCMAgent" value="34" />
       <HighScore name="UCMAgent" value="36" />
@@ -247,10 +249,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="31" />
+      <HighScore name="UCMAgent" value="31" />
       <HighScore name="UCMAgent" value="32" />
       <HighScore name="UCMAgent" value="32" />
       <HighScore name="UCMAgent" value="45" />
-      <HighScore name="UCMAgent" value="48" />
     </HighScores>
   </Level9>
   <Level10>

@@ -33,14 +33,14 @@ namespace GeometryFriendsAgents
 
         public const float ALPHA = 0.1f;//Learning rate
         public const float GAMMA = 0.95f;//Discount factor
-        public const float EPSILON = 0f;
+        public const float EPSILON = 0;
 
         public const int MAX_DISTANCE = 25;
         public const int NUM_VELOCITIES = 10;
         public const int VELOCITY_STEP = 20;
 
-        public const int LEARNING_VELOCITY = 20;
-        public const string Q_PATH = @"Q_table_20.csv";
+        public const int LEARNING_VELOCITY = 160;
+        public const string Q_PATH = @"Q_table_160.csv";
 
         public const int UPDATE_FRECUENCY_MS = 100;
         public const int TIMEJUMPING_MS = 250;

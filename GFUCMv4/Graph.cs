@@ -1,5 +1,6 @@
 ﻿using GeometryFriends.AI.Perceptions.Information;
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,18 +13,18 @@ namespace GeometryFriendsAgents
         public class Edge
         {
             public int to;
-            public List<LevelMap.MoveInformation> moves;
+            public List<MoveInformation> moves;
 
             public Edge(int to)
             {
                 this.to = to;
-                moves = new List<LevelMap.MoveInformation>();
+                moves = new List<MoveInformation>();
             }
 
-            public Edge(int to, LevelMap.MoveInformation m)
+            public Edge(int to, MoveInformation m)
             {
                 this.to = to;
-                moves = new List<LevelMap.MoveInformation>() { m };
+                moves = new List<MoveInformation>() { m };
             }
         }
 
@@ -31,26 +32,26 @@ namespace GeometryFriendsAgents
         {
             public int id;
             public int isAbovePlatform; // -1 means there is no platform, if there are several platforms, we pick the highest one
-            public List<LevelMap.MoveInformation> moves;
-            public List<LevelMap.Platform> platforms;
+            public List<MoveInformation> moves;
+            public List<Platform> platforms;
 
             public Diamond(int id)
             {
                 this.id = id;
-                this.moves = new List<LevelMap.MoveInformation>();
-                this.platforms = new List<LevelMap.Platform>();
+                this.moves = new List<MoveInformation>();
+                this.platforms = new List<Platform>();
                 this.isAbovePlatform = -1;
             }
         }
 
         public class Node
         {
-            public List<LevelMap.MoveInformation> plan;
+            public List<MoveInformation> plan;
             public List<bool> caught;
             public int numCaught;
             public int depth;
 
-            public Node(List<LevelMap.MoveInformation> plan, List<bool> caught, int numCaught, int depth)
+            public Node(List<MoveInformation> plan, List<bool> caught, int numCaught, int depth)
             {
                 this.plan = plan;
                 this.caught = caught;
@@ -64,10 +65,12 @@ namespace GeometryFriendsAgents
         public List<List<Edge>> adj;
         public List<Diamond> collectibles;
         public CollectibleRepresentation[] initialCollectibles;
-        public List<LevelMap.Platform> platforms;
+        public List<Platform> platforms;
+        public Stopwatch sw;
 
         public Graph(int V)
         {
+            sw = new Stopwatch();
             this.V = V;
             E = 0;
             adj = new List<List<Edge>>();
@@ -77,8 +80,9 @@ namespace GeometryFriendsAgents
             }
         }
 
-        public Graph(List<LevelMap.Platform> platforms, CollectibleRepresentation[] collectibles)
+        public Graph(List<Platform> platforms, CollectibleRepresentation[] collectibles)
         {
+            sw = new Stopwatch();
             this.platforms = platforms;
             this.initialCollectibles = collectibles;
             V = platforms.Count();
@@ -100,7 +104,7 @@ namespace GeometryFriendsAgents
                         this.collectibles[d].isAbovePlatform = i;
                     }
                 }
-                foreach (LevelMap.MoveInformation m in platforms[i].moveInfoList)
+                foreach (MoveInformation m in platforms[i].moveInfoList)
                 {
                     E++;
                     AddMove(m, i, m.landingPlatform.id);
@@ -117,7 +121,7 @@ namespace GeometryFriendsAgents
                 {
                     for(int i = 0; i < d.moves.Count; i++)
                     {
-                        LevelMap.MoveInformation m = d.moves[i];
+                        MoveInformation m = d.moves[i];
                         if(m.landingPlatform.id != d.isAbovePlatform || m.departurePlatform.id != d.isAbovePlatform)
                         {
                             d.moves.Remove(m);
@@ -154,11 +158,12 @@ namespace GeometryFriendsAgents
             return -1;
         }
 
-        public List<LevelMap.MoveInformation> SearchAlgorithm(int src, CollectibleRepresentation[] uncaught)
+        public List<MoveInformation> SearchAlgorithm(int src, CollectibleRepresentation[] uncaught, MoveInformation previous_move)
         {
             Dictionary<int, int> diamonds = new Dictionary<int, int>();
             List<Diamond> newList = new List<Diamond>();
             int count = 0;
+            List<MoveInformation> reserve_plan = null;
             foreach(CollectibleRepresentation c in uncaught)
             {
                 int index = GetDiamondID(c);
@@ -177,7 +182,7 @@ namespace GeometryFriendsAgents
             List<Node> queue = new List<Node>();
             Node sol = new Node(null, null, 0, 0);
             List<bool> auxlist = Enumerable.Repeat(false,collectibles.Count).ToList();
-            queue.Add(new Node(new List<LevelMap.MoveInformation> { new LevelMap.MoveInformation(platforms[src]) }, auxlist, 0, 0));
+            queue.Add(new Node(new List<MoveInformation> { new MoveInformation(platforms[src]) }, auxlist, 0, 0));
             int limit = collectibles.Count;
             foreach(Diamond d in collectibles)
             {
@@ -186,17 +191,18 @@ namespace GeometryFriendsAgents
                     limit--;
                 }
             }
+            sw.Restart();
             while (queue.Count > 0)
             {
                 Node n = queue[0];
                 queue.RemoveAt(0);
                 // If depth is too high (more than #platforms * #collectibles), we our representation does not have any solution
-                if (n.depth > platforms.Count * Math.Max(limit, 1))
+                if (n.depth > platforms.Count * Math.Max(limit, 1) /*|| sw.ElapsedMilliseconds >= 500*/)
                 {
                     continue;
                 }
                 // Process move
-                LevelMap.MoveInformation move = n.plan[n.plan.Count - 1];
+                MoveInformation move = n.plan[n.plan.Count - 1];
                 foreach (int d in move.diamondsCollected)
                 {
                     //Arreglado?
@@ -225,16 +231,33 @@ namespace GeometryFriendsAgents
                 }
                 if (n.numCaught == collectibles.Count)
                 {
-                    sol.plan.RemoveAt(0);
-                    return sol.plan;
+                    n.plan.RemoveAt(0);
+                    if (previous_move == null)
+                    {
+                        return n.plan;
+                    }
+                    else
+                    {
+                        if (n.plan.ElementAt(0).IsEqual(previous_move))
+                        {
+                            if (reserve_plan == null)
+                            {
+                                reserve_plan = n.plan;
+                            }
+                        }
+                        else
+                        {
+                            return n.plan;
+                        }
+                    }
                 }
                 else
                 {
-                    foreach(LevelMap.MoveInformation m in move.landingPlatform.moveInfoList)
+                    foreach(MoveInformation m in move.landingPlatform.moveInfoList)
                     {
                         if (m.departurePlatform.id != m.landingPlatform.id)
                         {
-                            List<LevelMap.MoveInformation> newPlan = new List<LevelMap.MoveInformation>(n.plan);
+                            List<MoveInformation> newPlan = new List<MoveInformation>(n.plan);
                             List<bool> newcaught = new List<bool>(n.caught);
                             newPlan.Add(m);
                             queue.Add(new Node(newPlan, newcaught, n.numCaught, n.depth + 1));
@@ -243,20 +266,22 @@ namespace GeometryFriendsAgents
                 }
             }
             // If we find no complete solution, we return the one that catches the most diamonds possible
-
-            if (sol.plan == null ||sol.plan.Count==0)
+            if (reserve_plan != null)
             {
-                return new List<LevelMap.MoveInformation>();
+                return reserve_plan;
+            }
+            if (sol.plan == null || sol.plan.Count==0)
+            {
+                return new List<MoveInformation>();
             }
             else
             {
                 sol.plan.RemoveAt(0);
                 return sol.plan;
             }
-            
         }
         
-        public void AddMove(LevelMap.MoveInformation move, int from, int to)
+        public void AddMove(MoveInformation move, int from, int to)
         {
             // Need the "to" vertex for the inverted graph
             foreach(Edge e in adj[from])
@@ -292,7 +317,7 @@ namespace GeometryFriendsAgents
             // Does not contain real moves, just reverse adjacent vertices
             Graph g = new Graph(V);
             g.E = E;
-            LevelMap.MoveInformation move = null;
+            MoveInformation move = null;
             for (int i = 0; i < V; i++)
             {
                 foreach (Edge w in adj[i])
