@@ -360,7 +360,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        public override void SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m)
+        public void SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m)
         {
             float dt = 0.005f;
             float t = 0;

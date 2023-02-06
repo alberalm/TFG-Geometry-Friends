@@ -134,4 +134,39 @@
     <GreenElevators />
     <OrangeElevators />
   </Level6>
+  <Level7>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="-1000" Y="-1000" />
+    <SquareStartingPosition X="120" Y="664" />
+    <Collectibles>
+      <Collectible X="1128" Y="200" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="1008" height="32" X="232" Y="712" centered="false" />
+      <Obstacle width="816" height="64" X="424" Y="648" centered="false" />
+      <Obstacle width="608" height="80" X="632" Y="568" centered="false" />
+      <Obstacle width="304" height="96" X="936" Y="474" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+  </Level7>
+  <Level8>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="-1000" Y="-1000" />
+    <SquareStartingPosition X="104" Y="184" />
+    <Collectibles>
+      <Collectible X="88" Y="408" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="416" height="32" X="40" Y="232" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+  </Level8>
 </Levels>

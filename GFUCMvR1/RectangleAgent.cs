@@ -143,6 +143,8 @@ namespace GeometryFriendsAgents
         private void InitialDraw()
         {
             levelMap.DrawLevelMap(ref newDebugInfo);
+            //levelMap.DrawConnections(ref newDebugInfo);
+            levelMap.DrawConnectionsVertex(ref newDebugInfo);
             //PlanDebug();
         }
 
@@ -174,7 +176,7 @@ namespace GeometryFriendsAgents
 
             //Rectangle velocity
             
-            //newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + rectangleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + rectangleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
             //newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 150), "Velocidad objetivo: " + actionSelector.target_velocity, GeometryFriends.XNAStub.Color.Orange));
             //newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 200), "Distancia: " + Math.Abs(circleInfo.X / GameInfo.PIXEL_LENGTH - actionSelector.target_position), GeometryFriends.XNAStub.Color.Orange));
 
@@ -264,6 +266,15 @@ namespace GeometryFriendsAgents
         public override void Update(TimeSpan elapsedGameTime)
         {
             UpdateDraw();
+            if (rectangleInfo.VelocityX > 400)
+            {
+                currentAction = Moves.NO_ACTION;
+            }
+            else
+            {
+                currentAction = Moves.MOVE_RIGHT;
+            }
+            
         }
 
         //implements abstract rectangle interface: signals the agent the end of the current level

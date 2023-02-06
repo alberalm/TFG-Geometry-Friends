@@ -181,8 +181,6 @@ namespace GeometryFriendsAgents
                 && platform.leftEdge <= d.X / GameInfo.PIXEL_LENGTH && platform.rightEdge >= d.X / GameInfo.PIXEL_LENGTH;
         }
 
-        public abstract void SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m);
-
         public abstract Platform GetPlatform(int x, int y);
 
         protected abstract bool EnoughSpaceToAccelerate(int leftEdge, int rigthEdge, int x, int vx);
@@ -311,8 +309,6 @@ namespace GeometryFriendsAgents
                     //debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(m.xlandPoint * GameInfo.PIXEL_LENGTH, m.landingPlatform.yTop * GameInfo.PIXEL_LENGTH), 10, GeometryFriends.XNAStub.Color.DarkGray));
                 }
             }
-
-            
         }
     }
 }

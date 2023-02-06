@@ -39,5 +39,33 @@ namespace GeometryFriendsAgents
             }
             return 0;
         }
+
+        public static float fheight(Shape shape)
+        {
+            switch (shape)
+            {
+                case Shape.SQUARE:
+                    return GameInfo.SQUARE_HEIGHT;
+                case Shape.HORIZONTAL:
+                    return GameInfo.HORIZONTAL_RECTANGLE_HEIGHT;
+                case Shape.VERTICAL:
+                    return GameInfo.VERTICAL_RECTANGLE_HEIGHT;
+            }
+            return 0;
+        }
+
+        public static float fwidth(Shape shape)
+        {
+            switch (shape)
+            {
+                case Shape.SQUARE:
+                    return GameInfo.SQUARE_HEIGHT;
+                case Shape.HORIZONTAL:
+                    return GameInfo.VERTICAL_RECTANGLE_HEIGHT;
+                case Shape.VERTICAL:
+                    return GameInfo.HORIZONTAL_RECTANGLE_HEIGHT;
+            }
+            return 0;
+        }
     }
 }

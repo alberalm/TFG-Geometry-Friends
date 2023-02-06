@@ -16,9 +16,9 @@ namespace GeometryFriendsAgents
         public float brake_distance = 0;
         public float acceleration_distance = 0;
         public Graph graph;
-        public LevelMap levelMap;
+        public LevelMapCircle levelMap;
 
-        public ActionSelector(Dictionary<CollectibleRepresentation,int> collectibleId, Learning l, LevelMap levelMap, Graph graph)
+        public ActionSelector(Dictionary<CollectibleRepresentation,int> collectibleId, Learning l, LevelMapCircle levelMap, Graph graph)
         {
             this.collectibleId = collectibleId;
             this.l = l;
