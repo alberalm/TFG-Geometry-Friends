@@ -338,7 +338,7 @@ namespace GeometryFriendsAgents
                 {
                     for (int i = 0; i < p.moveInfoList.Count; i++)
                     {
-                        int add = m.Compare(p.moveInfoList[i], initialCollectiblesInfo);
+                        int add = m.CompareCircle(p.moveInfoList[i], initialCollectiblesInfo);
                         if (add == -1)
                         {
                             addIt = false;

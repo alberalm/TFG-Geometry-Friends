@@ -208,21 +208,11 @@ namespace GeometryFriendsAgents
             // if vx_0 = 200 -> return 0.5
             // if vx_0 = 100 -> return 1.25
             // if vx_0 = 300 -> return 0.3125
-            if(vx_0 == 100)
-            {
-                return 0.5;
-            }
-            else if(vx_0 == 200)
-            {
-                return 1.25;
-            }
-            else if(vx_0 == 300)
-            {
-                return 0.3125;
-            }
+            // if vx_0 = 400 -> return 0.28
+            
             if (vx_0>=0)
             {
-                return 100 / (vx_0 + 100);
+                return 204.35f / Math.Pow(vx_0, 1.12);
             }
             else
             {
@@ -284,13 +274,13 @@ namespace GeometryFriendsAgents
                     bottom_left = new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI + shape_angle + angle), y_t - radius * Math.Sin(Math.PI + shape_angle + angle));
                     bottom_right = new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle));
                     
-                    if (vx_0 == 400 && s==RectangleShape.Shape.SQUARE)
+                    /*if (vx_0 == GameInfo.TESTING_VELOCITY && s==RectangleShape.Shape.SQUARE)
                     {
                         list_top_left.Add(new Tuple<float, float>((float)top_left.Item1, (float)top_left.Item2));
                         list_top_right.Add(new Tuple<float, float>((float)top_right.Item1, (float)top_right.Item2));
                         list_bottom_left.Add(new Tuple<float, float>((float)bottom_left.Item1, (float)bottom_left.Item2));
                         list_bottom_right.Add(new Tuple<float, float>((float)bottom_right.Item1, (float)bottom_right.Item2));
-                    }
+                    }*/
                 }
                 else
                 {
@@ -345,8 +335,14 @@ namespace GeometryFriendsAgents
 
         protected override bool EnoughSpaceToAccelerate(int leftEdge, int rigthEdge, int x, int vx)
         {
-            //TODO
-            return true;
+            if (vx > 0)
+            {
+                return vx * vx <= 2 * GameInfo.RECTANGLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (x - leftEdge - 1);
+            }
+            else
+            {
+                return vx * vx <= 2 * GameInfo.RECTANGLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge - 1 - x);
+            }
         }
 
         private void AddTrajectory(ref Platform p, int vx, MoveType moveType, int x, RectangleShape.Shape s, Platform landing)
@@ -420,17 +416,12 @@ namespace GeometryFriendsAgents
             }
             lock (platformList)
             {
-                if (m.landingPlatform.id != -2 && m.landingPlatform.id != -1)
-                { 
-                    p.moveInfoList.Add(m); 
-                }
-            }
-                /*bool addIt = true;
+                bool addIt = true;
                 if (m.landingPlatform.id != -2 && m.landingPlatform.id != -1 && (m.diamondsCollected.Count > 0 || p.id != m.landingPlatform.id))
                 {
                     for (int i = 0; i < p.moveInfoList.Count; i++)
                     {
-                        int add = m.Compare(p.moveInfoList[i], initialCollectiblesInfo);
+                        int add = m.CompareRectangle(p.moveInfoList[i], initialCollectiblesInfo);
                         if (add == -1)
                         {
                             addIt = false;
@@ -448,8 +439,8 @@ namespace GeometryFriendsAgents
                     {
                         p.moveInfoList.Add(m);
                     }
-                */
-            
+                }
+            }
         }
 
         protected override void GenerateMoveInformation()

@@ -71,19 +71,22 @@ namespace GeometryFriendsAgents
                 s += "      Left edge = " + p.leftEdge + "\n";
                 s += "      Right edge = " + p.rightEdge + "\n";
                 s += "      Ytop = " + p.yTop + "\n";
-               // s += "      Moves = " + p.moveInfoList.Count+ "\n";
-                /*foreach(MoveInformation m in p.moveInfoList)
+                s += "      Moves = " + p.moveInfoList.Count+ "\n";
+                foreach(MoveInformation m in p.moveInfoList)
                 {
-                    s += "           Type = " + m.moveType.ToString() + " X= " + m.x+ " VX= " + m.velocityX + " LandingPlatform= " + m.landingPlatform.id + " Collectibles caught= ";
-                    foreach (int d in m.diamondsCollected)
+                    if (m.path.Count > 1)
                     {
-                        s += d.ToString() + " ";
+                        s += "           Type = " + m.moveType.ToString() + " X= " + m.x + " VX= " + m.velocityX + " LandingPlatform= " + m.landingPlatform.id + " Shape=" + m.shape.ToString() + " Collectibles caught= ";
+                        foreach (int d in m.diamondsCollected)
+                        {
+                            s += d.ToString() + " ";
+                        }
+                        s += "\n";
                     }
-                    s += "\n";
-                }*/
+                }
             }
 
-            //Log.LogInformation(s, true);
+            Log.LogInformation(s, true);
         }
 
         protected void SetCollectibles(CollectibleRepresentation[] colI)
@@ -284,7 +287,6 @@ namespace GeometryFriendsAgents
             {
                 foreach (MoveInformation m in p.moveInfoList)
                 {
-
                     foreach (Tuple<float, float> tup in m.path)
                     {
                         if (m.moveType == MoveType.NOMOVE)

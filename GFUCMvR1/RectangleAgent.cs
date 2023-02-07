@@ -143,8 +143,8 @@ namespace GeometryFriendsAgents
         private void InitialDraw()
         {
             levelMap.DrawLevelMap(ref newDebugInfo);
-            //levelMap.DrawConnections(ref newDebugInfo);
-            levelMap.DrawConnectionsVertex(ref newDebugInfo);
+            levelMap.DrawConnections(ref newDebugInfo);
+            //levelMap.DrawConnectionsVertex(ref newDebugInfo);
             //PlanDebug();
         }
 
@@ -266,7 +266,7 @@ namespace GeometryFriendsAgents
         public override void Update(TimeSpan elapsedGameTime)
         {
             UpdateDraw();
-            if (rectangleInfo.VelocityX > 400)
+            if (rectangleInfo.VelocityX > GameInfo.TESTING_VELOCITY)
             {
                 currentAction = Moves.NO_ACTION;
             }
