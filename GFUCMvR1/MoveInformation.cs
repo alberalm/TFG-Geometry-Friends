@@ -19,6 +19,7 @@ namespace GeometryFriendsAgents
         public List<Tuple<float, float>> path;
         public int distanceToObstacle;
         public RectangleShape.Shape shape;
+        public bool RightEdgeIsDangerous;
 
         public MoveInformation(Platform landingPlatform)
         {
@@ -44,11 +45,19 @@ namespace GeometryFriendsAgents
             this.diamondsCollected = diamondsCollected;
             this.path = path;
             this.distanceToObstacle = distanceToObstacle;
+            if(velocityX > 0)
+            {
+                RightEdgeIsDangerous = true;
+            }
+            else
+            {
+                RightEdgeIsDangerous = false;
+            }
         }
 
         public int DistanceToRollingEdge()
         {
-            if (velocityX >= 0)
+            if (RightEdgeIsDangerous)
             {
                 return landingPlatform.rightEdge - xlandPoint;
             }
@@ -60,7 +69,7 @@ namespace GeometryFriendsAgents
 
         public int DistanceToOtherEdge()
         {
-            if (velocityX >= 0)
+            if (RightEdgeIsDangerous)
             {
                 return xlandPoint - landingPlatform.leftEdge;
             }

@@ -197,7 +197,7 @@ namespace GeometryFriendsAgents
                 Node n = queue[0];
                 queue.RemoveAt(0);
                 // If depth is too high (more than #platforms * #collectibles), we our representation does not have any solution
-                if (n.depth > platforms.Count * Math.Max(limit, 1) /*|| sw.ElapsedMilliseconds >= 500*/)
+                if (n.depth > platforms.Count * Math.Max(limit, 2) /*|| sw.ElapsedMilliseconds >= 500*/)
                 {
                     continue;
                 }
@@ -238,9 +238,18 @@ namespace GeometryFriendsAgents
                     }
                     else
                     {
-                        if (n.plan.ElementAt(0).IsEqual(previous_move))
+                        bool flag = false;
+                        foreach(MoveInformation m in n.plan)
                         {
-                            if (reserve_plan == null)
+                            if (m.IsEqual(previous_move))
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag)
+                        {
+                            if  (reserve_plan == null)
                             {
                                 reserve_plan = n.plan;
                             }

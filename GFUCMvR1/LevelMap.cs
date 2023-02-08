@@ -62,7 +62,7 @@ namespace GeometryFriendsAgents
             GenerateMoveInformation();
 
             // DEBUG
-            String s = "\n";
+            /* String s = "\n";
             s += "Number of platforms: " + platformList.Count.ToString() + "\n";
             for (int i = 0; i < platformList.Count; i++)
             {
@@ -86,7 +86,7 @@ namespace GeometryFriendsAgents
                 }
             }
 
-            Log.LogInformation(s, true);
+            Log.LogInformation(s, true); */
         }
 
         protected void SetCollectibles(CollectibleRepresentation[] colI)

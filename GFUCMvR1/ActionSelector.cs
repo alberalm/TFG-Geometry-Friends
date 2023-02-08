@@ -32,6 +32,7 @@ namespace GeometryFriendsAgents
             //same direction of the velocity or in the oposite (in general will be oposite unless the jump lands near the vertix of the parabolla)
             MoveType moveType = MoveType.NOMOVE;
             MoveInformation nextMoveInThisPlatform;
+            int min_distance = GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH;
             if  (plan.Count > 0)
             {
                 nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH),  plan[0]);
@@ -72,7 +73,10 @@ namespace GeometryFriendsAgents
                         levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                         if (m.landingPlatform.id == currentPlatform.id && Utilities.Contained(nextMoveInThisPlatform.diamondsCollected, m.diamondsCollected))
                         {
-                            return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                            if (nextMoveInThisPlatform.DistanceToRollingEdge() < min_distance || m.DistanceToRollingEdge() >= min_distance)
+                            {
+                                return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                            }
                         }
                         return new Tuple<Moves, Tuple<bool, bool>>(l.ChooseMove(s, ((int)(cI.X / GameInfo.PIXEL_LENGTH)) - target_position), new Tuple<bool, bool>(false, false));
                     }
@@ -97,7 +101,6 @@ namespace GeometryFriendsAgents
                     {
                         if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_QLEARNING) == target_velocity)
                         {
-
                             plan.RemoveAt(0);
                             if (moveType == MoveType.JUMP)
                             {
@@ -118,8 +121,11 @@ namespace GeometryFriendsAgents
                             levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                             if (m.landingPlatform.id == plan[0].landingPlatform.id && Utilities.Contained(aux_move.diamondsCollected, m.diamondsCollected))
                             {
-                                plan.RemoveAt(0);
-                                return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                                if (nextMoveInThisPlatform.DistanceToRollingEdge() < min_distance || m.DistanceToRollingEdge() >= min_distance)
+                                {
+                                    plan.RemoveAt(0);
+                                    return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                                }
                             }
                             return new Tuple<Moves, Tuple<bool, bool>>(l.ChooseMove(s, ((int)(cI.X / GameInfo.PIXEL_LENGTH)) - target_position), new Tuple<bool, bool>(false, false));
                         }
@@ -149,6 +155,7 @@ namespace GeometryFriendsAgents
             //same direction of the velocity or in the oposite (in general will be oposite unless the jump lands near the vertix of the parabolla)
             MoveType moveType = MoveType.NOMOVE;
             MoveInformation nextMoveInThisPlatform;
+            int min_distance = 3 * GameInfo.CIRCLE_RADIUS / (GameInfo.PIXEL_LENGTH * 5);
             if (plan.Count > 0)
             {
                 nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH), plan[0]);
@@ -187,7 +194,10 @@ namespace GeometryFriendsAgents
                         levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                         if (m.landingPlatform.id == currentPlatform.id && Utilities.Contained(nextMoveInThisPlatform.diamondsCollected,m.diamondsCollected))
                         {
-                            return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                            if (nextMoveInThisPlatform.DistanceToRollingEdge() < min_distance || m.DistanceToRollingEdge() >= min_distance)
+                            {
+                                return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                            }
                         }
                         return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                     }
@@ -233,8 +243,11 @@ namespace GeometryFriendsAgents
                             levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                             if (m.landingPlatform.id == plan[0].landingPlatform.id && Utilities.Contained(aux_move.diamondsCollected, m.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO
                             {
-                                plan.RemoveAt(0);
-                                return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                                if (aux_move.DistanceToRollingEdge() < min_distance || m.DistanceToRollingEdge() >= min_distance)
+                                {
+                                    plan.RemoveAt(0);
+                                    return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                                }
                             }
                             return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                         }

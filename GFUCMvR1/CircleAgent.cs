@@ -325,7 +325,7 @@ namespace GeometryFriendsAgents
                 return;
             }
             currentPlatform = levelMap.CirclePlatform(circleInfo);
-            if (!levelMap.AtBorder(circleInfo, currentPlatform, ref currentAction,plan))
+            if (!levelMap.AtBorder(circleInfo, currentPlatform, ref currentAction, plan))
             {
                 if (currentPlatform.id == -1) // Ball is in the air
                 {
@@ -354,7 +354,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    if (plan.Count == 0 || plan[0].departurePlatform != currentPlatform) //CIRCLE IN LAST PLATFORM
+                    if (plan.Count == 0 || plan[0].departurePlatform.id != currentPlatform.id) //CIRCLE IN LAST PLATFORM
                     {
                         if  (fullPlan.Count - plan.Count - 1 >= 0)
                         {
@@ -364,7 +364,6 @@ namespace GeometryFriendsAgents
                         {
                             plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo, null);
                         }
-
                         fullPlan = new List<MoveInformation>(plan);
                     }
                     Tuple<Moves, Tuple<bool, bool>> tup;

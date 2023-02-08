@@ -15,6 +15,35 @@ namespace GeometryFriendsAgents
         List<Tuple<float, float>> list_top_right = new List<Tuple<float, float>>();
         List<Tuple<float, float>> list_bottom_left = new List<Tuple<float, float>>();
         List<Tuple<float, float>> list_bottom_right = new List<Tuple<float, float>>();
+        public List<Platform> simplified_platforms = new List<Platform>();
+        public Dictionary<Platform, List<Platform>> merged = new Dictionary<Platform, List<Platform>>();
+
+        public Platform PlatformBelowRectangle(RectangleRepresentation rI)
+        {
+            for (int i = 0; i < simplified_platforms.Count; i++)
+            {
+                if (rI.Y / GameInfo.PIXEL_LENGTH < simplified_platforms[i].yTop && rI.X / GameInfo.PIXEL_LENGTH >= simplified_platforms[i].leftEdge && rI.X / GameInfo.PIXEL_LENGTH <= simplified_platforms[i].rightEdge)
+                {
+                    return simplified_platforms[i];
+                }
+            }
+            return new Platform(-1);
+        }
+
+        public Platform RectanglePlatform(RectangleRepresentation rI)
+        {
+            RectangleShape.Shape s = RectangleShape.GetShape(rI);
+            for (int i = 0; i < platformList.Count; i++)
+            {
+                if (rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) <= platformList[i].yTop + 1 &&
+                    rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) >= platformList[i].yTop - 10 &&
+                    rI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge - 1 && rI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge + 1)
+                {
+                    return platformList[i];
+                }
+            }
+            return new Platform(-1);
+        }
 
         public override Platform GetPlatform(int x, int y)
         {
@@ -47,6 +76,7 @@ namespace GeometryFriendsAgents
                 return top_right;
             }
         }
+
         private Tuple<double, double> MinimumX(Tuple<double, double> top_left, Tuple<double, double> top_right, Tuple<double, double> bottom_left, Tuple<double, double> bottom_right)
         {
             Tuple<double, double> min = top_left;
@@ -485,6 +515,22 @@ namespace GeometryFriendsAgents
                                 }
                             }
                         }
+                        else
+                        {
+                            if (p2.yTop == p.yTop)
+                            {
+                                if (p2.leftEdge == p.rightEdge + 1)
+                                {
+                                    AddTrajectory(ref p, GameInfo.VELOCITY_STEP_RECTANGLE, MoveType.ADJACENT, p.rightEdge, RectangleShape.Shape.HORIZONTAL, p2);
+                                    AddTrajectory(ref p2, -GameInfo.VELOCITY_STEP_RECTANGLE, MoveType.ADJACENT, p.rightEdge, RectangleShape.Shape.HORIZONTAL, p);
+                                }
+                                else if (p.leftEdge == p2.rightEdge + 1)
+                                {
+                                    AddTrajectory(ref p, -GameInfo.VELOCITY_STEP_RECTANGLE, MoveType.ADJACENT, p.leftEdge, RectangleShape.Shape.HORIZONTAL, p2);
+                                    AddTrajectory(ref p2, GameInfo.VELOCITY_STEP_RECTANGLE, MoveType.ADJACENT, p.leftEdge, RectangleShape.Shape.HORIZONTAL, p);
+                                }
+                            }
+                        }
                     });
 
                     // TILT MOVES
@@ -512,8 +558,7 @@ namespace GeometryFriendsAgents
                     foreach(RectangleShape.Shape s in GameInfo.SHAPES)
                     {
                         if (p.shapes[(int)s]) {
-                            //Parallel.For(0, GameInfo.NUM_VELOCITIES_RECTANGLE, i =>
-                            for (int i = 0; i < GameInfo.NUM_VELOCITIES_RECTANGLE; i++)
+                            Parallel.For(0, GameInfo.NUM_VELOCITIES_RECTANGLE, i =>
                             {
                                 int vx = (i + 1) * GameInfo.VELOCITY_STEP_RECTANGLE;
                                 if (levelMap[p.rightEdge + 1, p.yTop] != PixelType.PLATFORM && levelMap[p.rightEdge + 1, p.yTop] != PixelType.OBSTACLE)
@@ -530,7 +575,7 @@ namespace GeometryFriendsAgents
                                         AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(5 - i / 2, 1), s, new Platform(-1));
                                     }
                                 }
-                            }//);
+                            });
                         }
                     }
                 }
@@ -541,6 +586,8 @@ namespace GeometryFriendsAgents
                     AddTrajectory(ref p, 0, MoveType.DROP, (p.rightEdge + p.leftEdge) / 2 + 1, s, new Platform(-1));
                 }
             }
+
+            MergePlatforms();
         }
 
         protected override void IdentifyDefaultPlatforms()
@@ -833,9 +880,63 @@ namespace GeometryFriendsAgents
             foreach (Tuple<float, float> tup in list_top_right)
             {
                 debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.Black));
-
             }
+        }
 
+        private void MergePlatforms()
+        {
+            Platform currentPlatform  =  null;
+            Dictionary<Platform, Platform> dict = new Dictionary<Platform, Platform>();
+            List<Platform> miniPlatforms = new List<Platform>();
+            for  (int i  =  0; i < platformList.Count; i++)
+            {
+                Platform p = platformList[i];
+                if  (currentPlatform == null)
+                {
+                    currentPlatform = new Platform(simplified_platforms.Count, p.yTop, p.leftEdge, p.rightEdge, new List<MoveInformation>());
+                    currentPlatform.real = p.real;
+                    miniPlatforms.Add(p);
+                    foreach  (MoveInformation m in p.moveInfoList)
+                    {
+                        if  (m.moveType != MoveType.ADJACENT || !m.departurePlatform.real || !m.landingPlatform.real)
+                        {
+                            currentPlatform.moveInfoList.Add(m);
+                        }
+                    }
+                }
+                i++;
+                while (i < platformList.Count && platformList[i].leftEdge == p.rightEdge)
+                {
+                    p = platformList[i];
+                    miniPlatforms.Add(p);
+                    currentPlatform.rightEdge = p.rightEdge;
+                    foreach (MoveInformation m in p.moveInfoList)
+                    {
+                        if (m.moveType != MoveType.ADJACENT || !m.departurePlatform.real || !m.landingPlatform.real)
+                        {
+                            currentPlatform.moveInfoList.Add(m);
+                        }
+                    }
+                    i++;
+                }
+                i--;
+                simplified_platforms.Add(currentPlatform);
+                merged.Add(currentPlatform, miniPlatforms);
+                foreach (Platform plat in miniPlatforms)
+                {
+                    dict.Add(plat, currentPlatform);
+                }
+                currentPlatform = null;
+                miniPlatforms = new List<Platform>();
+            }
+            foreach(Platform p in simplified_platforms)
+            {
+                foreach(MoveInformation m in p.moveInfoList)
+                {
+                    m.landingPlatform = dict[m.landingPlatform];
+                    m.departurePlatform = p;
+                }
+            }
         }
     }
 }

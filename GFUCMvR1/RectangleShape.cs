@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using GeometryFriends.AI.Perceptions.Information;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -66,6 +68,22 @@ namespace GeometryFriendsAgents
                     return GameInfo.HORIZONTAL_RECTANGLE_HEIGHT;
             }
             return 0;
+        }
+
+        public static Shape GetShape(RectangleRepresentation rI)
+        {
+            if(rI.Height > (GameInfo.SQUARE_HEIGHT + GameInfo.VERTICAL_RECTANGLE_HEIGHT) / 2)
+            {
+                return Shape.VERTICAL;
+            }
+            else if (rI.Height < (GameInfo.SQUARE_HEIGHT + GameInfo.HORIZONTAL_RECTANGLE_HEIGHT) / 2)
+            {
+                return Shape.HORIZONTAL;
+            }
+            else
+            {
+                return Shape.SQUARE;
+            }
         }
     }
 }

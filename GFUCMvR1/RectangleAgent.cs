@@ -126,10 +126,10 @@ namespace GeometryFriendsAgents
 
             levelMap.CreateLevelMap(colI, oI, cPI);
 
-            //graph = new Graph(levelMap.GetPlatforms(),colI);
+            graph = new Graph(levelMap.simplified_platforms, colI);
 
-            // plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(cI).id, colI, null);
-            // fullPlan = new List<MoveInformation>(plan);
+            plan = graph.SearchAlgorithm(levelMap.PlatformBelowRectangle(rI).id, colI, null);
+            fullPlan = new List<MoveInformation>(plan);
 
             //actionSelector = new ActionSelector(collectibleId, l, levelMap, graph);
 
@@ -145,7 +145,7 @@ namespace GeometryFriendsAgents
             levelMap.DrawLevelMap(ref newDebugInfo);
             levelMap.DrawConnections(ref newDebugInfo);
             //levelMap.DrawConnectionsVertex(ref newDebugInfo);
-            //PlanDebug();
+            PlanDebug();
         }
 
         private void UpdateDraw()
@@ -155,6 +155,20 @@ namespace GeometryFriendsAgents
             InitialDraw();
             RectangleDraw();
             debugInfo = newDebugInfo.ToArray();
+        }
+
+        private void PlanDebug()
+        {
+            int step = 1;
+            foreach (MoveInformation m in fullPlan)
+            {
+                foreach (Tuple<float, float> tup in m.path)
+                {
+                    newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.Red));
+                }
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(m.path[m.path.Count / 2].Item1, m.path[m.path.Count / 2].Item2), step.ToString(), GeometryFriends.XNAStub.Color.Black));
+                step++;
+            }
         }
 
         private void RectangleDraw()

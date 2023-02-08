@@ -304,7 +304,6 @@ namespace GeometryFriendsAgents
                 {
                     AddTrajectory(ref p, 0, MoveType.NOMOVE, x);
                 });
-
             }
         }
 
@@ -443,6 +442,7 @@ namespace GeometryFriendsAgents
                     i--;
                 }
             }
+            m.RightEdgeIsDangerous = vx_0 > 0;
         }
 
         private Tuple<float, float> NewVelocityAfterCollision(float vx, float vy, CollisionType cct) // Do not call this function with cct=other, bottom or none
