@@ -156,7 +156,7 @@ namespace GeometryFriendsAgents
             return true;
         }
         
-        private CollisionType CornerIntersect(Tuple<double, double> top_left, Tuple<double, double> top_right, Tuple<double, double> bottom_left, Tuple<double, double> bottom_right, ref MoveInformation m)
+        private CollisionType CornerIntersect(Tuple<double, double> top_left, Tuple<double, double> top_right, Tuple<double, double> bottom_left, Tuple<double, double> bottom_right, ref MoveInformation m, bool right)
         {
             Tuple<double, double> min_x = top_left, max_x, min_y, max_y;
             min_x = MinimumX(top_left, top_right, bottom_left, bottom_right);
@@ -170,33 +170,56 @@ namespace GeometryFriendsAgents
             {
                 for(int j = (int) min_y.Item2 / GameInfo.PIXEL_LENGTH; j <= (int) max_y.Item2 / GameInfo.PIXEL_LENGTH; j++)
                 {
-                    if(InsideRectangle(min_x, min_y, max_x, max_y, i, j))
+                    if (InsideRectangle(min_x, min_y, max_x, max_y, i, j))
                     {
-                        switch (levelMap[i, j])
+                        if (0 <= i && i < GameInfo.LEVEL_MAP_WIDTH && 0 <= j && j < GameInfo.LEVEL_MAP_HEIGHT)
                         {
-                            case PixelType.PLATFORM:
-                                m.landingPlatform=GetPlatform(i, j);
-                                return CollisionType.Bottom;
-                            case PixelType.OBSTACLE:
+                            if (levelMap[i, j] == PixelType.PLATFORM || levelMap[i, j] == PixelType.OBSTACLE)
+                            {
+
                                 if (j == (int)max_y.Item2 / GameInfo.PIXEL_LENGTH)
                                 {
-                                    m.landingPlatform = GetPlatform(i, j);
-                                    return CollisionType.Bottom;
+                                    if (right)
+                                    {
+                                        if (GetPlatform(i, j).yTop == GetPlatform((int)(2 * max_x.Item1 + min_x.Item1) / (3 * GameInfo.PIXEL_LENGTH), j).yTop)
+                                        {
+                                            m.landingPlatform = GetPlatform(i, j);
+                                            return CollisionType.Bottom;
+                                        }
+                                        else
+                                        {
+                                            return CollisionType.Other;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (GetPlatform(i, j).yTop == GetPlatform((int)(max_x.Item1 + 2 * min_x.Item1) / (3 * GameInfo.PIXEL_LENGTH), j).yTop)
+                                        {
+                                            m.landingPlatform = GetPlatform(i, j);
+                                            return CollisionType.Bottom;
+                                        }
+                                        else
+                                        {
+                                            return CollisionType.Other;
+                                        }
+                                    }
                                 }
-                                else if(i== (int)min_x.Item1 / GameInfo.PIXEL_LENGTH)
+                                else if (i == (int)min_x.Item1 / GameInfo.PIXEL_LENGTH)
                                 {
                                     return CollisionType.Left;
                                 }
-                                else if(i == (int)max_x.Item1 / GameInfo.PIXEL_LENGTH)
+                                else if (i == (int)max_x.Item1 / GameInfo.PIXEL_LENGTH)
                                 {
                                     return CollisionType.Right;
                                 }
-                                else if (j==(int)min_y.Item2 / GameInfo.PIXEL_LENGTH)
+                                else if (j == (int)min_y.Item2 / GameInfo.PIXEL_LENGTH)
                                 {
                                     return CollisionType.Top;
                                 }
                                 return CollisionType.Other;
-                            case PixelType.DIAMOND:
+                            }
+                            else if (levelMap[i, j] == PixelType.DIAMOND)
+                            {
                                 picks_diamond = true;
                                 for (int d = 0; d < initialCollectiblesInfo.Length; d++)
                                 {
@@ -209,11 +232,14 @@ namespace GeometryFriendsAgents
                                         }
                                     }
                                 }
-                                break;
-                            default:
-                                break;
+                            }
+                        }
+                        else
+                        {
+                            return CollisionType.Other;
                         }
                     }
+
                 }
             }
             if (picks_diamond)
@@ -294,8 +320,10 @@ namespace GeometryFriendsAgents
                     new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI - shape_angle + angle), y_t - radius * Math.Sin(Math.PI - shape_angle + angle)),//topleft
                     new Tuple<double, double>(x_t + radius * Math.Cos(shape_angle + angle), y_t - radius * Math.Sin(shape_angle + angle)),//topright
                     new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI + shape_angle + angle), y_t - radius * Math.Sin(Math.PI + shape_angle + angle)),//bottomleft
-                    new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle)), ref m);//bottom right
+                    new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle)), //bottom right
+                    ref m, vx_t >= 0);
                 m.path.Add(new Tuple<float, float>((float)x_t, (float)y_t));
+                
                 if (cct == CollisionType.None || cct == CollisionType.Diamond)
                 {
                     // Calculate new corner coordinates
@@ -304,13 +332,14 @@ namespace GeometryFriendsAgents
                     bottom_left = new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI + shape_angle + angle), y_t - radius * Math.Sin(Math.PI + shape_angle + angle));
                     bottom_right = new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle));
                     
-                    /*if (vx_0 == GameInfo.TESTING_VELOCITY && s==RectangleShape.Shape.SQUARE)
+                    if (vx_0 == GameInfo.TESTING_VELOCITY)
                     {
+                        
                         list_top_left.Add(new Tuple<float, float>((float)top_left.Item1, (float)top_left.Item2));
                         list_top_right.Add(new Tuple<float, float>((float)top_right.Item1, (float)top_right.Item2));
                         list_bottom_left.Add(new Tuple<float, float>((float)bottom_left.Item1, (float)bottom_left.Item2));
                         list_bottom_right.Add(new Tuple<float, float>((float)bottom_right.Item1, (float)bottom_right.Item2));
-                    }*/
+                    }
                 }
                 else
                 {
@@ -363,7 +392,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        protected override bool EnoughSpaceToAccelerate(int leftEdge, int rigthEdge, int x, int vx)
+        protected override bool EnoughSpaceToAccelerate(int leftEdge, int rightEdge, int x, int vx)
         {
             if (vx > 0)
             {
@@ -371,7 +400,7 @@ namespace GeometryFriendsAgents
             }
             else
             {
-                return vx * vx <= 2 * GameInfo.RECTANGLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge - 1 - x);
+                return vx * vx <= 2 * GameInfo.RECTANGLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (rightEdge - 1 - x);
             }
         }
 
@@ -396,7 +425,7 @@ namespace GeometryFriendsAgents
             {
                 SimulateMove(x * GameInfo.PIXEL_LENGTH, p.yTop*GameInfo.PIXEL_LENGTH - RectangleShape.fheight(s) / 2, vx, 0, ref m, s);
             }
-            else if (moveType == MoveType.DROP)
+            else if (moveType == MoveType.DROP || moveType == MoveType.MONOSIDEDROP)
             {
                 m.xlandPoint = x;
                 int collisionY = GameInfo.LEVEL_MAP_HEIGHT;
@@ -444,6 +473,7 @@ namespace GeometryFriendsAgents
                     m.shape = s;
                 }
             }
+            
             lock (platformList)
             {
                 bool addIt = true;
@@ -539,43 +569,150 @@ namespace GeometryFriendsAgents
                         Platform p2 = platformList[i];
                         if (p2.real)
                         {
-                            RectangleShape.Shape s = RectangleShape.Shape.VERTICAL;
-                            if (p.yTop - p2.yTop > 0 && p.yTop - p2.yTop < 12)
+                            if (p.shapes[(int)RectangleShape.Shape.VERTICAL])
                             {
-                                if (p2.leftEdge - p.rightEdge <= 3 && p2.leftEdge - p.rightEdge >= 0)
+                                RectangleShape.Shape s = RectangleShape.Shape.VERTICAL;
+                                if (p.yTop - p2.yTop > 0 && p.yTop - p2.yTop < 12)
                                 {
-                                    AddTrajectory(ref p, 1, MoveType.TILT, p.rightEdge, s, p2);
+                                    if (p2.leftEdge - p.rightEdge <= RectangleShape.width(RectangleShape.Shape.VERTICAL)
+                                        && p2.leftEdge - p.rightEdge >= 0)
+                                    {
+                                        AddTrajectory(ref p, 1, MoveType.TILT, p.rightEdge, s, p2);
+                                    }
+                                    else if (p.leftEdge - p2.rightEdge <= RectangleShape.width(RectangleShape.Shape.VERTICAL) + 1
+                                        && p.leftEdge - p2.rightEdge >= 0)
+                                    {
+                                        AddTrajectory(ref p, -1, MoveType.TILT, p.leftEdge, s, p2);
+                                    }
                                 }
-                                else if (p.leftEdge - p2.rightEdge <= 3 && p.leftEdge - p2.rightEdge >= 0)
+                            }
+                            else if (p.shapes[(int)RectangleShape.Shape.SQUARE])
+                            {
+                                RectangleShape.Shape s = RectangleShape.Shape.SQUARE;
+                                if (p2.leftEdge - p.rightEdge <= RectangleShape.width(RectangleShape.Shape.SQUARE)
+                                    && p2.leftEdge - p.rightEdge >= 0)
                                 {
-                                    AddTrajectory(ref p, -1, MoveType.TILT, p.leftEdge, s, p2);
+                                    int max_height = p.yTop - RectangleShape.height(RectangleShape.Shape.SQUARE);
+                                    bool flag = true;
+                                    while (flag && p.yTop - max_height < RectangleShape.height(RectangleShape.Shape.VERTICAL))
+                                    {
+                                        for (int x = p.rightEdge - GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * (p.yTop - max_height));
+                                            x < p.rightEdge + GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * (p.yTop - max_height)); x++)
+                                        {
+                                            //OUT OF BOUND
+                                            if (levelMap[x, max_height] == PixelType.OBSTACLE)
+                                            {
+                                                flag = false;
+                                                max_height++;
+                                                break;
+                                            }
+                                        }
+                                        max_height--;
+                                    }
+                                    if (p.yTop - p2.yTop > 0 && p.yTop - p2.yTop < (p.yTop - max_height) / 2)
+                                    {
+                                        AddTrajectory(ref p, 1, MoveType.TILT, p.rightEdge, s, p2);
+                                    }
+                                }
+                                else if (p.leftEdge - p2.rightEdge <= RectangleShape.width(RectangleShape.Shape.SQUARE) + 1
+                                    && p.leftEdge - p2.rightEdge >= 0)
+                                {
+                                    int max_height = p.yTop - RectangleShape.height(RectangleShape.Shape.SQUARE);
+                                    bool flag = true;
+                                    while (flag && p.yTop - max_height < RectangleShape.height(RectangleShape.Shape.VERTICAL))
+                                    {
+                                        for (int x = p.rightEdge - GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * (p.yTop - max_height));
+                                            x < p.rightEdge + GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * (p.yTop - max_height)); x++)
+                                        {
+                                            if (levelMap[x, max_height] == PixelType.OBSTACLE)
+                                            {
+                                                flag = false;
+                                                max_height++;
+                                                break;
+                                            }
+                                        }
+                                        max_height--;
+                                    }
+                                    if (p.yTop - p2.yTop > 0 && p.yTop - p2.yTop < (p.yTop - max_height) / 2)
+                                    {
+                                        AddTrajectory(ref p, -1, MoveType.TILT, p.leftEdge, s, p2);
+                                    }
                                 }
                             }
                         }
                     });
 
+
+                    // MONOSIDEDROP
+                    Parallel.For(0, platformList.Count, i =>
+                    {
+                        RectangleShape.Shape s = RectangleShape.Shape.HORIZONTAL;
+                        if (p.shapes[(int)RectangleShape.Shape.VERTICAL])
+                        {
+                            s = RectangleShape.Shape.VERTICAL;
+                        }
+                        else if (p.shapes[(int)RectangleShape.Shape.SQUARE])
+                        {
+                            s = RectangleShape.Shape.SQUARE;
+                        }
+                        // Right moves
+                        int x = p.rightEdge + 1;
+                        while(x<GameInfo.LEVEL_MAP_WIDTH && levelMap[x,p.yTop]!=PixelType.OBSTACLE && levelMap[x, p.yTop] != PixelType.PLATFORM)
+                        {
+                            x++;
+                        }
+                        if(levelMap[x, p.yTop] == PixelType.OBSTACLE && x - p.rightEdge > RectangleShape.width(RectangleShape.Shape.VERTICAL) + 1
+                            && x - p.rightEdge < RectangleShape.width(RectangleShape.Shape.HORIZONTAL)) // may be wrong
+                        {
+                            AddTrajectory(ref p, 0, MoveType.MONOSIDEDROP, (x + p.rightEdge) / 2 + 1, s, new Platform(-1));
+                        }
+                        // Left moves
+                        x = p.leftEdge - 1;
+                        while (x >= 0 && levelMap[x, p.yTop] != PixelType.OBSTACLE && levelMap[x, p.yTop] != PixelType.PLATFORM)
+                        {
+                            x--;
+                        }
+                        if (levelMap[x, p.yTop] == PixelType.OBSTACLE &&  p.leftEdge - x > RectangleShape.width(RectangleShape.Shape.VERTICAL) + 1
+                            && p.leftEdge - x < RectangleShape.width(RectangleShape.Shape.HORIZONTAL)) // may be wrong
+                        {
+                            AddTrajectory(ref p, 0, MoveType.MONOSIDEDROP, (x + p.leftEdge) / 2 + 1, s, new Platform(-1));
+                        }
+                    });                    
+                    
                     //FALL MOVES
-                    foreach(RectangleShape.Shape s in GameInfo.SHAPES)
+                    foreach (RectangleShape.Shape s in GameInfo.SHAPES)
                     {
                         if (p.shapes[(int)s]) {
-                            Parallel.For(0, GameInfo.NUM_VELOCITIES_RECTANGLE, i =>
+                            for  (int i = 0; i < GameInfo.NUM_VELOCITIES_RECTANGLE; i++)
+                            //Parallel.For(0, GameInfo.NUM_VELOCITIES_RECTANGLE, i =>
                             {
                                 int vx = (i + 1) * GameInfo.VELOCITY_STEP_RECTANGLE;
                                 if (levelMap[p.rightEdge + 1, p.yTop] != PixelType.PLATFORM && levelMap[p.rightEdge + 1, p.yTop] != PixelType.OBSTACLE)
                                 {
-                                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge, vx))
+                                    int min_left = p.leftEdge;
+                                    while(min_left >= 0 && levelMap[min_left, p.yTop] == PixelType.PLATFORM)
+                                    {
+                                        min_left--;
+                                    }
+                                    if (EnoughSpaceToAccelerate(min_left, p.rightEdge, p.rightEdge, vx))
                                     {
                                         AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + Math.Max(5 - i / 2, 1), s, new Platform(-1));
                                     }
                                 }
                                 if (levelMap[p.leftEdge - 1, p.yTop] != PixelType.PLATFORM && levelMap[p.leftEdge - 1, p.yTop] != PixelType.OBSTACLE)
                                 {
-                                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge, -vx))
+                                    int max_right = p.rightEdge;
+                                    while (max_right < GameInfo.LEVEL_MAP_WIDTH && levelMap[max_right, p.yTop] == PixelType.PLATFORM)
+                                    {
+                                        max_right++;
+                                    }
+                                    if (EnoughSpaceToAccelerate(p.leftEdge, max_right, p.leftEdge, -vx))
                                     {
                                         AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(5 - i / 2, 1), s, new Platform(-1));
                                     }
                                 }
-                            });
+                            }
+                            //});
                         }
                     }
                 }
@@ -935,6 +1072,29 @@ namespace GeometryFriendsAgents
                 {
                     m.landingPlatform = dict[m.landingPlatform];
                     m.departurePlatform = p;
+                }
+            }
+            foreach (Platform p in simplified_platforms)
+            {
+                for (int i = 0; i < p.moveInfoList.Count; i++)
+                {
+                    MoveInformation m1 = p.moveInfoList[i];
+                    for (int j = i+1; j < p.moveInfoList.Count; j++)
+                    {
+                        MoveInformation m2 = p.moveInfoList[j];
+                        int comp = m1.CompareRectangle(m2, initialCollectiblesInfo);
+                        if(comp == 1)
+                        {
+                            p.moveInfoList.RemoveAt(j);
+                            j--;
+                        }
+                        else if(comp == -1)
+                        {
+                            p.moveInfoList.RemoveAt(i);
+                            i--;
+                            break;
+                        }
+                    }
                 }
             }
         }
