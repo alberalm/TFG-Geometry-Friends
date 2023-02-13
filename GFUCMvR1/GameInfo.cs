@@ -41,15 +41,16 @@ namespace GeometryFriendsAgents
         public const int VELOCITY_STEP_PHISICS = 15;
         public const int VELOCITY_STEP_QLEARNING = 20;
         public const bool PHYSICS = true;
-        public const int TESTING_VELOCITY = 400;
+        public const int TESTING_VELOCITY = 50;
 
         public const string Q_PATH1 = @"Q_table_";
         public const string Q_PATH2 = @".csv";
         public const int TARGET_POINT_ERROR = 2;//Cambiado
         public const int ERROR = 1;//Cambiado
 
-        public static int[] COLLECTIBLE_SIZE = { 1, 2, 3, 3, 2, 1 }; //Divided by 2
-        public static int[] CIRCLE_SIZE = { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 }; //Divided by 2
+        public static int[] COLLECTIBLE_SIZE = { 1, 2, 3, 3, 2, 1 }; // Divided by 2
+        public static int[] CIRCLE_SIZE = { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 }; // Divided by 2
+        public static int[] COLLECTIBLE_INTERSECTION = { 1, 2, 3, 4, 5, 5, 4, 3, 2, 1 }; // Divided by 2
         public static RectangleShape.Shape[] SHAPES = { RectangleShape.Shape.SQUARE, RectangleShape.Shape.HORIZONTAL, RectangleShape.Shape.VERTICAL };
     }
 }

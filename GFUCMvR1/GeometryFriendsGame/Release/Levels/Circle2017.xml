@@ -216,8 +216,8 @@
     <HighScores>
       <HighScore name="UCMAgent" value="24" />
       <HighScore name="UCMAgent" value="26" />
+      <HighScore name="UCMAgent" value="77" />
       <HighScore name="RandPredictorCircle" value="80" />
-      <HighScore name="RRTCircle" value="120" />
       <HighScore name="RRTCircle" value="120" />
     </HighScores>
   </Level8>

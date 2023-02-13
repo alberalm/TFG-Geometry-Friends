@@ -23,6 +23,7 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="No Name" value="17" />
+      <HighScore name="UCMAgent" value="31" />
     </HighScores>
   </Level1>
   <Level2>

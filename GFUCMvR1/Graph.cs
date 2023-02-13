@@ -197,7 +197,7 @@ namespace GeometryFriendsAgents
                 Node n = queue[0];
                 queue.RemoveAt(0);
                 // If depth is too high (more than #platforms * #collectibles), we our representation does not have any solution
-                if (n.depth > platforms.Count * Math.Max(limit, 2) /*|| sw.ElapsedMilliseconds >= 500*/)
+                if (n.depth > platforms.Count * Math.Max(limit, 3) || sw.ElapsedMilliseconds >= 500)
                 {
                     continue;
                 }

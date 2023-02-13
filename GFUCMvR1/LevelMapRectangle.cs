@@ -183,7 +183,7 @@ namespace GeometryFriendsAgents
                                     {
                                         if (GetPlatform(i, j).yTop == GetPlatform((int)(2 * max_x.Item1 + min_x.Item1) / (3 * GameInfo.PIXEL_LENGTH), j).yTop)
                                         {
-                                            m.landingPlatform = GetPlatform(i, j);
+                                            m.landingPlatform = GetPlatform((int)(2 * max_x.Item1 + min_x.Item1) / (3 * GameInfo.PIXEL_LENGTH), j);
                                             return CollisionType.Bottom;
                                         }
                                         else
@@ -195,7 +195,7 @@ namespace GeometryFriendsAgents
                                     {
                                         if (GetPlatform(i, j).yTop == GetPlatform((int)(max_x.Item1 + 2 * min_x.Item1) / (3 * GameInfo.PIXEL_LENGTH), j).yTop)
                                         {
-                                            m.landingPlatform = GetPlatform(i, j);
+                                            m.landingPlatform = GetPlatform((int)(max_x.Item1 + 2 * min_x.Item1) / (3 * GameInfo.PIXEL_LENGTH), j);
                                             return CollisionType.Bottom;
                                         }
                                         else
@@ -204,11 +204,11 @@ namespace GeometryFriendsAgents
                                         }
                                     }
                                 }
-                                else if (i == (int)min_x.Item1 / GameInfo.PIXEL_LENGTH)
+                                else if (i - (int)min_x.Item1 / GameInfo.PIXEL_LENGTH <= 1)
                                 {
                                     return CollisionType.Left;
                                 }
-                                else if (i == (int)max_x.Item1 / GameInfo.PIXEL_LENGTH)
+                                else if ((int)max_x.Item1 / GameInfo.PIXEL_LENGTH - i <= 1)
                                 {
                                     return CollisionType.Right;
                                 }
@@ -302,7 +302,7 @@ namespace GeometryFriendsAgents
             double vy_t = vy_0;
             int NUM_REBOUNDS = 10;
             int j = 0;
-
+            
             // Initiate with t = 0.1
             double t = 0.1f;
             x_t = x_t + vx_t * t;
@@ -332,7 +332,7 @@ namespace GeometryFriendsAgents
                     bottom_left = new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI + shape_angle + angle), y_t - radius * Math.Sin(Math.PI + shape_angle + angle));
                     bottom_right = new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle));
                     
-                    if (vx_0 == GameInfo.TESTING_VELOCITY)
+                    if (vx_0 == GameInfo.TESTING_VELOCITY && m.departurePlatform.id==0 && m.shape==RectangleShape.Shape.SQUARE)
                     {
                         
                         list_top_left.Add(new Tuple<float, float>((float)top_left.Item1, (float)top_left.Item2));
@@ -423,11 +423,13 @@ namespace GeometryFriendsAgents
             }
             else if (moveType == MoveType.FALL)
             {
-                SimulateMove(x * GameInfo.PIXEL_LENGTH, p.yTop*GameInfo.PIXEL_LENGTH - RectangleShape.fheight(s) / 2, vx, 0, ref m, s);
+                m.shape = s;
+                SimulateMove(x * GameInfo.PIXEL_LENGTH, p.yTop * GameInfo.PIXEL_LENGTH - RectangleShape.fheight(s) / 2, vx, 0, ref m, s);
             }
             else if (moveType == MoveType.DROP || moveType == MoveType.MONOSIDEDROP)
             {
                 m.xlandPoint = x;
+                m.shape = s;
                 int collisionY = GameInfo.LEVEL_MAP_HEIGHT;
                 // Top, Right, Bottom, Left, Diamond, Other, None
                 foreach(Platform platform in platformList)
@@ -442,7 +444,7 @@ namespace GeometryFriendsAgents
                 {
                     foreach(RectangleShape.Shape sh in GameInfo.SHAPES)
                     {
-                        if(RectangleIntersectsWithObstacle(x, collisionY, sh) == CollisionType.Diamond)
+                        if(RectangleIntersectsWithObstacle(x, y, sh) == CollisionType.Diamond)
                         {
                             List<int> catched= GetDiamondCollected(x, y, sh);
                             foreach (int d in catched)
@@ -465,13 +467,22 @@ namespace GeometryFriendsAgents
             }
             else if (moveType == MoveType.NOMOVE)
             {
-                if (RectangleIntersectsWithObstacle(x, p.yTop, s) == CollisionType.Diamond)
+                m.xlandPoint = x;
+                m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - RectangleShape.height(s) / 2) * GameInfo.PIXEL_LENGTH));
+                // NOTE: Be aware of possible NOMOVEs that combine several shapes
+                m.diamondsCollected = CollectsDiamonds(x, p.yTop);
+                if(RectangleIntersectsWithObstacle(x, p.yTop, s) == CollisionType.Diamond)
                 {
-                    m.xlandPoint = x;
-                    m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - RectangleShape.height(s) / 2) * GameInfo.PIXEL_LENGTH));
-                    m.diamondsCollected = GetDiamondCollected(x, p.yTop, s);
-                    m.shape = s;
+                    List<int> others = GetDiamondCollected(x, p.yTop, s);
+                    foreach(int d in others)
+                    {
+                        if (!m.diamondsCollected.Contains(d))
+                        {
+                            m.diamondsCollected.Add(d);
+                        }
+                    }
                 }
+                m.shape = s;
             }
             
             lock (platformList)
@@ -596,10 +607,9 @@ namespace GeometryFriendsAgents
                                     bool flag = true;
                                     while (flag && p.yTop - max_height < RectangleShape.height(RectangleShape.Shape.VERTICAL))
                                     {
-                                        for (int x = p.rightEdge - GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * (p.yTop - max_height));
-                                            x < p.rightEdge + GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * (p.yTop - max_height)); x++)
+                                        for (int x = p.rightEdge - GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * GameInfo.PIXEL_LENGTH * (p.yTop - max_height));
+                                            x < p.rightEdge + GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * GameInfo.PIXEL_LENGTH * (p.yTop - max_height)); x++)
                                         {
-                                            //OUT OF BOUND
                                             if (levelMap[x, max_height] == PixelType.OBSTACLE)
                                             {
                                                 flag = false;
@@ -621,8 +631,8 @@ namespace GeometryFriendsAgents
                                     bool flag = true;
                                     while (flag && p.yTop - max_height < RectangleShape.height(RectangleShape.Shape.VERTICAL))
                                     {
-                                        for (int x = p.rightEdge - GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * (p.yTop - max_height));
-                                            x < p.rightEdge + GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * (p.yTop - max_height)); x++)
+                                        for (int x = p.rightEdge - GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * GameInfo.PIXEL_LENGTH * (p.yTop - max_height));
+                                            x < p.rightEdge + GameInfo.RECTANGLE_AREA / (GameInfo.PIXEL_LENGTH * GameInfo.PIXEL_LENGTH * (p.yTop - max_height)); x++)
                                         {
                                             if (levelMap[x, max_height] == PixelType.OBSTACLE)
                                             {
@@ -708,7 +718,7 @@ namespace GeometryFriendsAgents
                                     }
                                     if (EnoughSpaceToAccelerate(p.leftEdge, max_right, p.leftEdge, -vx))
                                     {
-                                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(5 - i / 2, 1), s, new Platform(-1));
+                                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(5 - i / 2, 1) , s, new Platform(-1));
                                     }
                                 }
                             }
@@ -764,7 +774,7 @@ namespace GeometryFriendsAgents
                 }
             }
         }
-
+        
         private CollisionType RectangleIntersectsWithObstacle(int x, int y, RectangleShape.Shape s)//x is the center of the rectangle and y is the base of the rectangle
         {
             bool diamond = false; // Obstacles and platforms have more priority than diamonds
@@ -806,6 +816,21 @@ namespace GeometryFriendsAgents
                 return CollisionType.Diamond;
             }
             return CollisionType.None;
+        }
+
+        private List<int> CollectsDiamonds(int x, int y)
+        {
+            List<int> ret = new List<int>();
+            for(int i = 0; i < initialCollectiblesInfo.Length; i++)
+            {
+                CollectibleRepresentation d = initialCollectiblesInfo[i];
+                if(Math.Abs(d.X/GameInfo.PIXEL_LENGTH - x) <= GameInfo.HORIZONTAL_RECTANGLE_HEIGHT / (2 * GameInfo.PIXEL_LENGTH) &&
+                    d.Y + 4 * GameInfo.PIXEL_LENGTH > y * GameInfo.PIXEL_LENGTH - GameInfo.VERTICAL_RECTANGLE_HEIGHT && d.Y < y * GameInfo.PIXEL_LENGTH)
+                {
+                    ret.Add(i);
+                }
+            }
+            return ret;
         }
 
         private List<int> GetDiamondCollected(int x, int y, RectangleShape.Shape s)//x is the center of the rectangle and y is the base of the rectangle
@@ -1037,12 +1062,12 @@ namespace GeometryFriendsAgents
                     {
                         if  (m.moveType != MoveType.ADJACENT || !m.departurePlatform.real || !m.landingPlatform.real)
                         {
-                            currentPlatform.moveInfoList.Add(m);
+                            currentPlatform.moveInfoList.Add(new MoveInformation(m));
                         }
                     }
                 }
                 i++;
-                while (i < platformList.Count && platformList[i].leftEdge == p.rightEdge)
+                while (i < platformList.Count && Math.Abs(platformList[i].leftEdge - p.rightEdge) <= 1)
                 {
                     p = platformList[i];
                     miniPlatforms.Add(p);
@@ -1051,7 +1076,7 @@ namespace GeometryFriendsAgents
                     {
                         if (m.moveType != MoveType.ADJACENT || !m.departurePlatform.real || !m.landingPlatform.real)
                         {
-                            currentPlatform.moveInfoList.Add(m);
+                            currentPlatform.moveInfoList.Add(new MoveInformation(m));
                         }
                     }
                     i++;

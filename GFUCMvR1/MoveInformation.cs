@@ -21,6 +21,21 @@ namespace GeometryFriendsAgents
         public RectangleShape.Shape shape;
         public bool RightEdgeIsDangerous;
 
+        public MoveInformation(MoveInformation other)
+        {
+            this.departurePlatform = other.departurePlatform;
+            this.landingPlatform = other.landingPlatform;
+            this.x = other.x;
+            this.xlandPoint = other.xlandPoint;
+            this.velocityX = other.velocityX;
+            this.moveType = other.moveType;
+            this.diamondsCollected = other.diamondsCollected;
+            this.path = other.path;
+            this.distanceToObstacle = other.distanceToObstacle;
+            this.shape = other.shape;
+            this.RightEdgeIsDangerous = other.RightEdgeIsDangerous;
+        }
+
         public MoveInformation(Platform landingPlatform)
         {
             this.departurePlatform = null;

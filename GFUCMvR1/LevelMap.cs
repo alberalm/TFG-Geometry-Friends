@@ -68,15 +68,16 @@ namespace GeometryFriendsAgents
             {
                 Platform p = platformList[i];
                 s += "Platform id = " + p.id + "\n";
-                s += "      Left edge = " + p.leftEdge + "\n";
-                s += "      Right edge = " + p.rightEdge + "\n";
-                s += "      Ytop = " + p.yTop + "\n";
+                //s += "      Left edge = " + p.leftEdge + "\n";
+                //s += "      Right edge = " + p.rightEdge + "\n";
+                //s += "      Ytop = " + p.yTop + "\n";
                 s += "      Moves = " + p.moveInfoList.Count+ "\n";
                 foreach(MoveInformation m in p.moveInfoList)
                 {
                     if (m.path.Count > 1)
                     {
-                        s += "           Type = " + m.moveType.ToString() + " X= " + m.x + " VX= " + m.velocityX + " LandingPlatform= " + m.landingPlatform.id + " Shape=" + m.shape.ToString() + " Collectibles caught= ";
+                        s += "           Type = " + m.moveType.ToString()+ " LandingPlatform= " + m.landingPlatform.id+ " Distancia: " + m.distanceToObstacle.ToString();
+                        //s += "           Type = " + m.moveType.ToString() + " X= " + m.x + " VX= " + m.velocityX + " LandingPlatform= " + m.landingPlatform.id + " Shape=" + m.shape.ToString() + " Collectibles caught= ";
                         foreach (int d in m.diamondsCollected)
                         {
                             s += d.ToString() + " ";

@@ -142,6 +142,7 @@ namespace GeometryFriendsAgents
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
             levelMap.DrawLevelMap(ref newDebugInfo);
             levelMap.DrawConnections(ref newDebugInfo);
+            //levelMap.DrawConnectionsVertex(ref newDebugInfo);
             PlanDebug();
         }
 

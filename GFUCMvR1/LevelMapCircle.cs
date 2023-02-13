@@ -1,7 +1,9 @@
 ﻿using GeometryFriends.AI;
+using GeometryFriends.AI.Debug;
 using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -236,7 +238,7 @@ namespace GeometryFriendsAgents
                                 return CollisionType.Other;
                             }
                         }
-                        else if (levelMap[x + i, y + j] == PixelType.DIAMOND)
+                        else if (levelMap[x + i, y + j] == PixelType.DIAMOND && j >= -GameInfo.COLLECTIBLE_INTERSECTION[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH] && j < GameInfo.COLLECTIBLE_INTERSECTION[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH])
                         {
                             diamond = true;
                         }
@@ -358,9 +360,14 @@ namespace GeometryFriendsAgents
                 }
             }
         }
-
+        List<MoveInformation> parabolas = new List<MoveInformation>();
         public void SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m)
         {
+            bool flag = false;
+            if (vy_0 == 0)
+            {
+                flag = true;
+            }
             float dt = 0.005f;
             float t = 0;
             float x_tfloat = x_0;
@@ -443,6 +450,10 @@ namespace GeometryFriendsAgents
                 }
             }
             m.RightEdgeIsDangerous = vx_0 > 0;
+            if (flag)
+            {
+                parabolas.Add(m);
+            }
         }
 
         private Tuple<float, float> NewVelocityAfterCollision(float vx, float vy, CollisionType cct) // Do not call this function with cct=other, bottom or none
@@ -529,6 +540,29 @@ namespace GeometryFriendsAgents
             {
                 return vx * vx <= 2 * GameInfo.CIRCLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge - 1 - x);//Más conservador que como estaba
             }
+        }
+
+        public void DrawConnectionsVertex(ref List<DebugInformation> debugInformation)
+        {
+            GeometryFriends.XNAStub.Color color = GeometryFriends.XNAStub.Color.Purple;
+
+            foreach (MoveInformation parabola in parabolas)
+            {
+                if (parabola.velocityX % 30 == 0)
+                {
+                    color = GeometryFriends.XNAStub.Color.Purple;
+                }
+                else
+                {
+                    color = GeometryFriends.XNAStub.Color.DeepPink;
+                }
+                foreach (Tuple<float, float> tup in parabola.path)
+                {
+                    debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 1, color));
+
+                }
+            }
+            
         }
     }
 }
