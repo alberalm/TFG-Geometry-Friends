@@ -20,14 +20,19 @@ namespace GeometryFriendsAgents
 
         public Platform PlatformBelowRectangle(RectangleRepresentation rI)
         {
+            Platform p = new Platform(-1);
+            p.yTop = GameInfo.LEVEL_MAP_HEIGHT;
             for (int i = 0; i < simplified_platforms.Count; i++)
             {
-                if (rI.Y / GameInfo.PIXEL_LENGTH < simplified_platforms[i].yTop && rI.X / GameInfo.PIXEL_LENGTH >= simplified_platforms[i].leftEdge && rI.X / GameInfo.PIXEL_LENGTH <= simplified_platforms[i].rightEdge)
+                if (rI.Y / GameInfo.PIXEL_LENGTH < simplified_platforms[i].yTop &&
+                    rI.X / GameInfo.PIXEL_LENGTH >= simplified_platforms[i].leftEdge &&
+                    rI.X / GameInfo.PIXEL_LENGTH <= simplified_platforms[i].rightEdge &&
+                    p.yTop > simplified_platforms[i].yTop)
                 {
-                    return simplified_platforms[i];
+                    p = simplified_platforms[i];
                 }
             }
-            return new Platform(-1);
+            return p;
         }
 
         public Platform RectanglePlatform(RectangleRepresentation rI)
@@ -583,6 +588,7 @@ namespace GeometryFriendsAgents
                             if (p.shapes[(int)RectangleShape.Shape.VERTICAL])
                             {
                                 RectangleShape.Shape s = RectangleShape.Shape.VERTICAL;
+                                // NOTE: Be aware 13 creates impossible moves
                                 if (p.yTop - p2.yTop > 0 && p.yTop - p2.yTop < 12)
                                 {
                                     if (p2.leftEdge - p.rightEdge <= RectangleShape.width(RectangleShape.Shape.VERTICAL)
@@ -693,8 +699,8 @@ namespace GeometryFriendsAgents
                     foreach (RectangleShape.Shape s in GameInfo.SHAPES)
                     {
                         if (p.shapes[(int)s]) {
-                            for  (int i = 0; i < GameInfo.NUM_VELOCITIES_RECTANGLE; i++)
-                            //Parallel.For(0, GameInfo.NUM_VELOCITIES_RECTANGLE, i =>
+                            //for  (int i = 0; i < GameInfo.NUM_VELOCITIES_RECTANGLE; i++)
+                            Parallel.For(0, GameInfo.NUM_VELOCITIES_RECTANGLE, i =>
                             {
                                 int vx = (i + 1) * GameInfo.VELOCITY_STEP_RECTANGLE;
                                 if (levelMap[p.rightEdge + 1, p.yTop] != PixelType.PLATFORM && levelMap[p.rightEdge + 1, p.yTop] != PixelType.OBSTACLE)
@@ -721,8 +727,8 @@ namespace GeometryFriendsAgents
                                         AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(5 - i / 2, 1) , s, new Platform(-1));
                                     }
                                 }
-                            }
-                            //});
+                            //}
+                            });
                         }
                     }
                 }
@@ -1013,10 +1019,24 @@ namespace GeometryFriendsAgents
                 if(pLeft.yTop == pRight.yTop && pRight.leftEdge - pLeft.rightEdge < 3 * GameInfo.VERTICAL_RECTANGLE_HEIGHT / (5 * GameInfo.PIXEL_LENGTH)
                     && pRight.leftEdge - pLeft.rightEdge > GameInfo.HORIZONTAL_RECTANGLE_HEIGHT/GameInfo.PIXEL_LENGTH)
                 {
-                    Platform newP = new Platform(platformList.Count, pLeft.yTop, pLeft.rightEdge + 1, pRight.leftEdge - 1, new List<MoveInformation>());
-                    newP.real = false;
-                    newP.shapes[(int) RectangleShape.Shape.HORIZONTAL] = true;
-                    platformList.Add(newP);
+                    bool rectangle_fits = true;
+                    for (int x = pLeft.rightEdge; x <= pRight.leftEdge && rectangle_fits; x++)
+                    {
+                        for (int y = 1; y < GameInfo.HORIZONTAL_RECTANGLE_HEIGHT / GameInfo.PIXEL_LENGTH; y++)
+                        {
+                            if(levelMap[x,pRight.yTop-y] == PixelType.OBSTACLE || levelMap[x, pRight.yTop - y] == PixelType.PLATFORM)
+                            {
+                                rectangle_fits = false;
+                                break;
+                            }
+                        } 
+                    }
+                    if (rectangle_fits) {
+                        Platform newP = new Platform(platformList.Count, pLeft.yTop, pLeft.rightEdge + 1, pRight.leftEdge - 1, new List<MoveInformation>());
+                        newP.real = false;
+                        newP.shapes[(int)RectangleShape.Shape.HORIZONTAL] = true;
+                        platformList.Add(newP);
+                    }
                 }
             }
         }

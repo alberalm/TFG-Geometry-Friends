@@ -146,7 +146,7 @@
       <Obstacle width="1008" height="32" X="232" Y="712" centered="false" />
       <Obstacle width="816" height="64" X="424" Y="648" centered="false" />
       <Obstacle width="608" height="80" X="632" Y="568" centered="false" />
-      <Obstacle width="304" height="96" X="936" Y="474" centered="false" />
+      <Obstacle width="384" height="96" X="856" Y="472" centered="false" />
     </BlackObstacles>
     <YellowObstacles />
     <GreenElevators />
@@ -209,4 +209,49 @@
       <HighScore name="UCMAgent" value="2" />
     </HighScores>
   </Level10>
+  <Level11>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="-1000" Y="-1000" />
+    <SquareStartingPosition X="664" Y="132" />
+    <Collectibles>
+      <Collectible X="120" Y="232" />
+      <Collectible X="984" Y="712" />
+      <Collectible X="344" Y="440" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="48" height="480" X="244" Y="180" centered="false" />
+      <Obstacle width="656" height="48" X="276" Y="180" centered="false" />
+      <Obstacle width="48" height="272" X="884" Y="228" centered="false" />
+      <Obstacle width="512" height="48" X="248" Y="660" centered="false" />
+      <Obstacle width="256" height="48" X="292" Y="580" centered="false" />
+      <Obstacle width="48" height="64" X="712" Y="696" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+  </Level11>
+  <Level12>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="-5000" Y="-5000" />
+    <SquareStartingPosition X="1096" Y="392" />
+    <Collectibles>
+      <Collectible X="1192" Y="648" />
+      <Collectible X="568" Y="616" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="208" height="32" X="248" Y="664" centered="false" />
+      <Obstacle width="32" height="96" X="424" Y="568" centered="false" />
+      <Obstacle width="288" height="32" X="424" Y="536" centered="false" />
+      <Obstacle width="32" height="96" X="680" Y="568" centered="false" />
+      <Obstacle width="224" height="32" X="680" Y="664" centered="false" />
+      <Obstacle width="32" height="64" X="872" Y="696" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+  </Level12>
 </Levels>

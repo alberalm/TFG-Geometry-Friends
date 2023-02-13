@@ -279,31 +279,42 @@ namespace GeometryFriendsAgents
         //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            UpdateDraw();
-            if (GameInfo.TESTING_VELOCITY > 0)
+            t += elapsedGameTime.TotalMilliseconds;
+
+            if(t < 1000)
             {
-                if (rectangleInfo.VelocityX > GameInfo.TESTING_VELOCITY)
-                {
-                    currentAction = Moves.NO_ACTION;
-                }
-                else
-                {
-                    currentAction = Moves.MOVE_RIGHT;
-                }
+                currentAction = Moves.NO_ACTION;
+            }
+            else if (t <= 2500)
+            {
+                currentAction = Moves.MORPH_UP;
             }
             else
             {
-                if (rectangleInfo.VelocityX < GameInfo.TESTING_VELOCITY)
+                UpdateDraw();
+                if (GameInfo.TESTING_VELOCITY > 0)
                 {
-                    currentAction = Moves.NO_ACTION;
+                    if (rectangleInfo.VelocityX > GameInfo.TESTING_VELOCITY)
+                    {
+                        currentAction = Moves.NO_ACTION;
+                    }
+                    else
+                    {
+                        currentAction = Moves.MOVE_RIGHT;
+                    }
                 }
                 else
                 {
-                    currentAction = Moves.MOVE_LEFT;
+                    if (rectangleInfo.VelocityX < GameInfo.TESTING_VELOCITY)
+                    {
+                        currentAction = Moves.NO_ACTION;
+                    }
+                    else
+                    {
+                        currentAction = Moves.MOVE_LEFT;
+                    }
                 }
             }
-            
-            
         }
 
         //implements abstract rectangle interface: signals the agent the end of the current level
