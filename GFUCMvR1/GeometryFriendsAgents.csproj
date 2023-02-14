@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionSelector.cs" />
+    <Compile Include="ActionSelectorCircle.cs" />
+    <Compile Include="ActionSelectorRectangle.cs" />
     <Compile Include="CircleAgent.cs" />
     <Compile Include="GameInfo.cs" />
     <Compile Include="Graph.cs" />

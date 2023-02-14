@@ -16,7 +16,8 @@ namespace GeometryFriendsAgents
         List<Tuple<float, float>> list_bottom_left = new List<Tuple<float, float>>();
         List<Tuple<float, float>> list_bottom_right = new List<Tuple<float, float>>();
         public List<Platform> simplified_platforms = new List<Platform>();
-        public Dictionary<Platform, List<Platform>> merged = new Dictionary<Platform, List<Platform>>();
+        public Dictionary<Platform, List<Platform>> simplified_to_small = new Dictionary<Platform, List<Platform>>();
+        public Dictionary<Platform, Platform> small_to_simplified = new Dictionary<Platform, Platform>();
 
         public Platform PlatformBelowRectangle(RectangleRepresentation rI)
         {
@@ -40,8 +41,17 @@ namespace GeometryFriendsAgents
             RectangleShape.Shape s = RectangleShape.GetShape(rI);
             for (int i = 0; i < platformList.Count; i++)
             {
-                if (rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) <= platformList[i].yTop + 1 &&
-                    rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) >= platformList[i].yTop - 10 &&
+                if (rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 <= platformList[i].yTop + 1 &&
+                    rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 >= platformList[i].yTop - 10 &&
+                    rI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge - 1 && rI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge + 1)
+                {
+                    return platformList[i];
+                }
+            }
+            for (int i = 0; i < platformList.Count; i++)
+            {
+                if (rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.width(s) / 2 <= platformList[i].yTop + 1 &&
+                    rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.width(s) / 2 >= platformList[i].yTop - 10 &&
                     rI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge - 1 && rI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge + 1)
                 {
                     return platformList[i];
@@ -1068,7 +1078,6 @@ namespace GeometryFriendsAgents
         private void MergePlatforms()
         {
             Platform currentPlatform  =  null;
-            Dictionary<Platform, Platform> dict = new Dictionary<Platform, Platform>();
             List<Platform> miniPlatforms = new List<Platform>();
             for  (int i  =  0; i < platformList.Count; i++)
             {
@@ -1103,10 +1112,10 @@ namespace GeometryFriendsAgents
                 }
                 i--;
                 simplified_platforms.Add(currentPlatform);
-                merged.Add(currentPlatform, miniPlatforms);
+                simplified_to_small.Add(currentPlatform, miniPlatforms);
                 foreach (Platform plat in miniPlatforms)
                 {
-                    dict.Add(plat, currentPlatform);
+                    small_to_simplified.Add(plat, currentPlatform);
                 }
                 currentPlatform = null;
                 miniPlatforms = new List<Platform>();
@@ -1115,7 +1124,7 @@ namespace GeometryFriendsAgents
             {
                 foreach(MoveInformation m in p.moveInfoList)
                 {
-                    m.landingPlatform = dict[m.landingPlatform];
+                    m.landingPlatform = small_to_simplified[m.landingPlatform];
                     m.departurePlatform = p;
                 }
             }

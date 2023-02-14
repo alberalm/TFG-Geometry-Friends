@@ -55,9 +55,9 @@ namespace GeometryFriendsAgents
         private List<MoveInformation> plan;
 
         //Execution
-        ActionSelector actionSelector;
+        ActionSelectorRectangle actionSelector;
         Platform currentPlatform;
-        bool flag = false;
+        private bool tilted = false;
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -131,7 +131,7 @@ namespace GeometryFriendsAgents
             plan = graph.SearchAlgorithm(levelMap.PlatformBelowRectangle(rI).id, colI, null);
             fullPlan = new List<MoveInformation>(plan);
 
-            //actionSelector = new ActionSelector(collectibleId, l, levelMap, graph);
+            actionSelector = new ActionSelectorRectangle(collectibleId, l, levelMap, graph);
 
             //InitialDraw();
 
@@ -188,9 +188,13 @@ namespace GeometryFriendsAgents
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X + 40, rectangleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X - 20, rectangleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
 
-            //Rectangle velocity
-            
+            //Rectangle dimensions
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + rectangleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 150), "Altura: " + rectangleInfo.Height, GeometryFriends.XNAStub.Color.Orange));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 200), "X: " + rectangleInfo.X, GeometryFriends.XNAStub.Color.Orange));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 250), "Y: " + rectangleInfo.Y, GeometryFriends.XNAStub.Color.Orange));
+            //newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 200), "Anchura: " + rectangleInfo., GeometryFriends.XNAStub.Color.Orange));
+
             //newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 150), "Velocidad objetivo: " + actionSelector.target_velocity, GeometryFriends.XNAStub.Color.Orange));
             //newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 200), "Distancia: " + Math.Abs(circleInfo.X / GameInfo.PIXEL_LENGTH - actionSelector.target_position), GeometryFriends.XNAStub.Color.Orange));
 
@@ -225,7 +229,6 @@ namespace GeometryFriendsAgents
         public override void SensorsUpdated(int nC, RectangleRepresentation rI, CircleRepresentation cI, CollectibleRepresentation[] colI)
         {
             nCollectiblesLeft = nC;
-
             rectangleInfo = rI;
             circleInfo = cI;
             collectiblesInfo = colI;
@@ -279,41 +282,64 @@ namespace GeometryFriendsAgents
         //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
+            UpdateDraw();
+            
+            t_0 += elapsedGameTime.TotalMilliseconds;
             t += elapsedGameTime.TotalMilliseconds;
-
-            if(t < 1000)
+            
+            if (t < 100)
             {
-                currentAction = Moves.NO_ACTION;
+                return;
             }
-            else if (t <= 2500)
+
+            currentPlatform = levelMap.RectanglePlatform(rectangleInfo);
+            
+            if (currentPlatform.id == -1) // Rectangle is in the air
             {
-                currentAction = Moves.MORPH_UP;
+                // TODO
             }
             else
             {
-                UpdateDraw();
-                if (GameInfo.TESTING_VELOCITY > 0)
+                if(Math.Abs((rectangleInfo.Height + 2 * rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatform.yTop * 2) > 4)
                 {
-                    if (rectangleInfo.VelocityX > GameInfo.TESTING_VELOCITY)
+                    if(rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
                     {
-                        currentAction = Moves.NO_ACTION;
+                        currentAction = currentAction == Moves.MORPH_UP ? Moves.MORPH_DOWN : Moves.MORPH_UP;
                     }
                     else
                     {
-                        currentAction = Moves.MOVE_RIGHT;
+                        currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
                     }
+                    return;
+                }
+
+                if (plan.Count == 0 || plan[0].departurePlatform.id != levelMap.small_to_simplified[currentPlatform].id) //CIRCLE IN LAST PLATFORM
+                {
+                    if (fullPlan.Count - plan.Count - 1 >= 0)
+                    {
+                        plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
+                    }
+                    else
+                    {
+                        plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, null);
+                    }
+                    fullPlan = new List<MoveInformation>(plan);
+                }
+                Tuple<Moves, Tuple<bool, bool>> tup;
+                if (GameInfo.PHYSICS)
+                {
+                    tup = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
                 }
                 else
                 {
-                    if (rectangleInfo.VelocityX < GameInfo.TESTING_VELOCITY)
-                    {
-                        currentAction = Moves.NO_ACTION;
-                    }
-                    else
-                    {
-                        currentAction = Moves.MOVE_LEFT;
-                    }
+                    //tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
                 }
+                currentAction = tup.Item1;
+                if (tup.Item2.Item1)
+                {
+                    t = 0;
+                }
+                //flag = tup.Item2.Item2;
             }
         }
 

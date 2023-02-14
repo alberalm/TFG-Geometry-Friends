@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GeometryFriendsAgents
 {
-    class LevelMapCircle : LevelMap
+    public class LevelMapCircle : LevelMap
     {
         public Platform PlatformBelowCircle(CircleRepresentation cI)
         {

@@ -18,6 +18,8 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="13" />
+      <HighScore name="UCMAgent" value="15" />
       <HighScore name="UCMAgent" value="19" />
       <HighScore name="UCMAgent" value="45" />
     </HighScores>

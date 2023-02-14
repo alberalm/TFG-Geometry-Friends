@@ -60,7 +60,7 @@ namespace GeometryFriendsAgents
         private List<MoveInformation> plan;
         
         //Execution
-        ActionSelector actionSelector;
+        ActionSelectorCircle actionSelector;
         Platform currentPlatform;
         bool flag = false;
 
@@ -131,7 +131,7 @@ namespace GeometryFriendsAgents
             plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(cI).id, colI,null);
             fullPlan = new List<MoveInformation>(plan);
 
-            actionSelector = new ActionSelector(collectibleId, l, levelMap, graph);
+            actionSelector = new ActionSelectorCircle(collectibleId, l, levelMap, graph);
 
             //send a message to the rectangle informing that the circle setup is complete and show how to pass an attachment: a pen object
             messages.Add(new AgentMessage("Setup complete, testing to send an object as an attachment.", new Pen(Color.AliceBlue)));

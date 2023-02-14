@@ -8,7 +8,7 @@ using System.Web.UI;
 
 namespace GeometryFriendsAgents
 {
-    class Learning
+    public class Learning
     {
         // 3 moves: roll right, roll left and do nothing
         Dictionary <string, Dictionary<Moves, double>> Q_table;
@@ -16,6 +16,7 @@ namespace GeometryFriendsAgents
         List<State> states;
         List<Moves> possibleMoves = new List<Moves>();
         Random random;
+
         public Learning()
         {
             Q_table = new Dictionary<string, Dictionary<Moves, double>>();

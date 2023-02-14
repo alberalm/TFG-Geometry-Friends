@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryFriendsAgents
 {
-    class State
+    public class State
     {
         public int distance;
         public int current_velocity;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GeometryFriendsAgents
 {
-    class Graph
+    public class Graph
     {
         public class Edge
         {
