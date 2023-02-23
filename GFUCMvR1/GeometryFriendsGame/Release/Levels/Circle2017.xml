@@ -22,10 +22,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="22" />
+      <HighScore name="UCMAgent" value="23" />
       <HighScore name="UCMAgent" value="26" />
       <HighScore name="RRTCircle" value="37" />
       <HighScore name="RRTCircle" value="63" />
-      <HighScore name="RRTCircle" value="67" />
     </HighScores>
   </Level1>
   <Level2>
@@ -48,9 +48,9 @@
     <HighScores>
       <HighScore name="UCMAgent" value="7" />
       <HighScore name="UCMAgent" value="7" />
+      <HighScore name="UCMAgent" value="7" />
       <HighScore name="UCMAgent" value="8" />
       <HighScore name="RRTCircle" value="10" />
-      <HighScore name="RRTCircle" value="11" />
     </HighScores>
   </Level2>
   <Level3>
