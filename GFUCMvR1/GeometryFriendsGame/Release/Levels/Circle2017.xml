@@ -23,9 +23,9 @@
     <HighScores>
       <HighScore name="UCMAgent" value="22" />
       <HighScore name="UCMAgent" value="26" />
+      <HighScore name="UCMAgent" value="26" />
       <HighScore name="RRTCircle" value="37" />
       <HighScore name="RRTCircle" value="63" />
-      <HighScore name="RRTCircle" value="67" />
     </HighScores>
   </Level1>
   <Level2>
@@ -48,9 +48,9 @@
     <HighScores>
       <HighScore name="UCMAgent" value="7" />
       <HighScore name="UCMAgent" value="7" />
+      <HighScore name="UCMAgent" value="7" />
       <HighScore name="UCMAgent" value="8" />
       <HighScore name="RRTCircle" value="10" />
-      <HighScore name="RRTCircle" value="11" />
     </HighScores>
   </Level2>
   <Level3>
@@ -77,9 +77,9 @@
     <HighScores>
       <HighScore name="UCMAgent" value="15" />
       <HighScore name="UCMAgent" value="16" />
+      <HighScore name="UCMAgent" value="16" />
       <HighScore name="RRTCircle" value="20" />
       <HighScore name="RRTCircle" value="22" />
-      <HighScore name="RRTCircle" value="38" />
     </HighScores>
   </Level3>
   <Level4>
@@ -105,9 +105,9 @@
     <HighScores>
       <HighScore name="UCMAgent" value="17" />
       <HighScore name="UCMAgent" value="18" />
+      <HighScore name="UCMAgent" value="19" />
       <HighScore name="RRTCircle" value="35" />
       <HighScore name="RRTCircle" value="38" />
-      <HighScore name="RRTCircle" value="86" />
     </HighScores>
   </Level4>
   <Level5>
@@ -130,10 +130,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="11" />
+      <HighScore name="UCMAgent" value="11" />
       <HighScore name="UCMAgent" value="13" />
       <HighScore name="RRTCircle" value="23" />
       <HighScore name="RRTCircle" value="28" />
-      <HighScore name="RRTCircle" value="29" />
     </HighScores>
   </Level5>
   <Level6>
@@ -156,11 +156,11 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="8" />
       <HighScore name="UCMAgent" value="10" />
       <HighScore name="RRTCircle" value="17" />
       <HighScore name="RRTCircle" value="22" />
       <HighScore name="RRTCircle" value="22" />
-      <HighScore name="RRTCircle" value="25" />
     </HighScores>
   </Level6>
   <Level7>
@@ -185,10 +185,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="22" />
+      <HighScore name="UCMAgent" value="22" />
       <HighScore name="RandPredictorCircle" value="29" />
       <HighScore name="UCMAgent" value="31" />
       <HighScore name="RRTCircle" value="50" />
-      <HighScore name="RRTCircle" value="120" />
     </HighScores>
   </Level7>
   <Level8>
@@ -216,9 +216,9 @@
     <HighScores>
       <HighScore name="UCMAgent" value="24" />
       <HighScore name="UCMAgent" value="26" />
+      <HighScore name="UCMAgent" value="57" />
       <HighScore name="UCMAgent" value="77" />
       <HighScore name="RandPredictorCircle" value="80" />
-      <HighScore name="RRTCircle" value="120" />
     </HighScores>
   </Level8>
   <Level9>
@@ -239,10 +239,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="9" />
       <HighScore name="UCMAgent" value="12" />
       <HighScore name="RandPredictorCircle" value="21" />
       <HighScore name="RRTCircle" value="28" />
-      <HighScore name="RRTCircle" value="69" />
     </HighScores>
   </Level9>
   <Level10>
@@ -274,10 +274,10 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="12" />
       <HighScore name="UCMAgent" value="13" />
       <HighScore name="RRTCircle" value="49" />
       <HighScore name="RRTCircle" value="79" />
-      <HighScore name="RRTCircle" value="120" />
       <HighScore name="RRTCircle" value="120" />
     </HighScores>
   </Level10>
