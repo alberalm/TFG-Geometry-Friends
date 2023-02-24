@@ -22,6 +22,7 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="22" />
+      <HighScore name="UCMAgent" value="23" />
       <HighScore name="UCMAgent" value="26" />
       <HighScore name="UCMAgent" value="26" />
       <HighScore name="RRTCircle" value="37" />
