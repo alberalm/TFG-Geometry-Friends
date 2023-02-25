@@ -41,7 +41,7 @@ namespace GeometryFriendsAgents
             RectangleShape.Shape s = RectangleShape.GetShape(rI);
             for (int i = 0; i < platformList.Count; i++)
             {
-                if (rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 <= platformList[i].yTop + 1 &&
+                if (rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 <= platformList[i].yTop + 3 &&
                     rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 >= platformList[i].yTop - 10 &&
                     rI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge - 1 && rI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge + 1)
                 {
@@ -411,11 +411,11 @@ namespace GeometryFriendsAgents
         {
             if (vx > 0)
             {
-                return vx * vx <= 2 * GameInfo.RECTANGLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (x - leftEdge - 1);
+                return vx * vx <= 2 * GameInfo.RECTANGLE_ACCELERATION * (GameInfo.PIXEL_LENGTH * (x - leftEdge - 1) - (GameInfo.VERTICAL_RECTANGLE_HEIGHT - GameInfo.HORIZONTAL_RECTANGLE_HEIGHT) / 2);
             }
             else
             {
-                return vx * vx <= 2 * GameInfo.RECTANGLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (rightEdge - 1 - x);
+                return vx * vx <= 2 * GameInfo.RECTANGLE_ACCELERATION * (GameInfo.PIXEL_LENGTH * (rightEdge - 1 - x) - (GameInfo.VERTICAL_RECTANGLE_HEIGHT - GameInfo.HORIZONTAL_RECTANGLE_HEIGHT) / 2);
             }
         }
 
@@ -690,7 +690,7 @@ namespace GeometryFriendsAgents
                         if(levelMap[x, p.yTop] == PixelType.OBSTACLE && x - p.rightEdge > RectangleShape.width(RectangleShape.Shape.VERTICAL) + 1
                             && x - p.rightEdge < RectangleShape.width(RectangleShape.Shape.HORIZONTAL)) // may be wrong
                         {
-                            AddTrajectory(ref p, 0, MoveType.MONOSIDEDROP, (x + p.rightEdge) / 2 + 1, s, new Platform(-1));
+                            AddTrajectory(ref p, 1, MoveType.MONOSIDEDROP, (x + p.rightEdge) / 2 + 1, s, new Platform(-1));
                         }
                         // Left moves
                         x = p.leftEdge - 1;
@@ -701,7 +701,7 @@ namespace GeometryFriendsAgents
                         if (levelMap[x, p.yTop] == PixelType.OBSTACLE &&  p.leftEdge - x > RectangleShape.width(RectangleShape.Shape.VERTICAL) + 1
                             && p.leftEdge - x < RectangleShape.width(RectangleShape.Shape.HORIZONTAL)) // may be wrong
                         {
-                            AddTrajectory(ref p, 0, MoveType.MONOSIDEDROP, (x + p.leftEdge) / 2 + 1, s, new Platform(-1));
+                            AddTrajectory(ref p, -1, MoveType.MONOSIDEDROP, (x + p.leftEdge) / 2 + 1, s, new Platform(-1));
                         }
                     });                    
                     

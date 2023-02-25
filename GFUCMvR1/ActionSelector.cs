@@ -66,9 +66,7 @@ namespace GeometryFriendsAgents
             }
             return l;
         }
-
-        protected abstract Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, double brake_distance, double acceleration_distance);
-
+        
       }
 } 
     

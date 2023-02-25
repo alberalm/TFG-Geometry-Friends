@@ -20,6 +20,7 @@ namespace GeometryFriendsAgents
         public Learning()
         {
             Q_table = new Dictionary<string, Dictionary<Moves, double>>();
+            
             possibleMoves.Add(Moves.ROLL_LEFT);
             possibleMoves.Add(Moves.ROLL_RIGHT);
             possibleMoves.Add(Moves.NO_ACTION);
@@ -33,7 +34,7 @@ namespace GeometryFriendsAgents
         {
             for (int i = 0; i <= GameInfo.NUM_VELOCITIES_QLEARNING; i++)
             {
-                StreamReader archivo = new StreamReader(GameInfo.Q_PATH1 +(GameInfo.VELOCITY_STEP_QLEARNING * i).ToString()+ GameInfo.Q_PATH2);
+                StreamReader archivo = new StreamReader(GameInfo.Q_PATH1 + (GameInfo.VELOCITY_STEP_QLEARNING * i).ToString() + GameInfo.Q_PATH2);
                 string line = archivo.ReadLine();
                 int count = 0;
                 while ((line = archivo.ReadLine()) != null && line != "")
@@ -68,10 +69,9 @@ namespace GeometryFriendsAgents
             }
         }
 
-
         /*public void SaveFile()
         {
-            StreamWriter sw = new StreamWriter(GameInfo.Q_PATH);
+            StreamWriter sw = new StreamWriter(GameInfo.Q_PATH1 + GameInfo.LEARNING_VELOCITY.ToString() + GameInfo.Q_PATH2);
             sw.WriteLine("Distance;Current_Velocity;Target_Velocity;Move;Value");
             foreach(var pair in Q_table)
             {
@@ -90,7 +90,7 @@ namespace GeometryFriendsAgents
 
             if(current.distance > GameInfo.MAX_DISTANCE)
             {
-                if(d > 0)
+                if (d > 0)
                 {
                     return Moves.ROLL_LEFT;
                 }
@@ -150,6 +150,7 @@ namespace GeometryFriendsAgents
             if (!Q_table.ContainsKey(current.ToString()))
             {
                 Q_table.Add(current.ToString(), new Dictionary<Moves, double>());
+               
                 foreach (Moves mo in possibleMoves)
                 {
                     Q_table[current.ToString()].Add(mo, current.Reward());
@@ -171,6 +172,7 @@ namespace GeometryFriendsAgents
                 }
 
                 Q_table[s.ToString()][m] = (1 - GameInfo.ALPHA) * old_value + GameInfo.ALPHA * (states[i + 1].Reward() + GameInfo.GAMMA * next_max);
+                
             }
 
             moves = new List<Moves>();

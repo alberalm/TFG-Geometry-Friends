@@ -8,6 +8,7 @@ using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography.X509Certificates;
 
 namespace GeometryFriendsAgents
 {
@@ -32,6 +33,8 @@ namespace GeometryFriendsAgents
 
         private CountInformation numbersInfo;
         private RectangleRepresentation rectangleInfo;
+        private RectangleRepresentation lastRectangleInfo;
+        private int timesStuck = 0;
         private CircleRepresentation circleInfo;
         private ObstacleRepresentation[] obstaclesInfo;
         private ObstacleRepresentation[] rectanglePlatformsInfo;
@@ -223,6 +226,27 @@ namespace GeometryFriendsAgents
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 350), 10, GeometryFriends.XNAStub.Color.Red));
             }
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(rectangleInfo.X, rectangleInfo.Y), levelMap.RectanglePlatform(rectangleInfo).id.ToString(), GeometryFriends.XNAStub.Color.Black));
+            if (actionSelector.next_platform == null)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 400), "Next platform: null", GeometryFriends.XNAStub.Color.Orange));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 400), "Next platform: " + actionSelector.next_platform.id.ToString(), GeometryFriends.XNAStub.Color.Orange));
+            }
+            
+            if (actionSelector.move == null)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 500), "Next move: null", GeometryFriends.XNAStub.Color.Orange));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 500), "Next move: -Departure" + actionSelector.move.departurePlatform.id.ToString()
+                    +" -Tipo" + actionSelector.move.moveType, GeometryFriends.XNAStub.Color.Orange));
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelector.move.x*GameInfo.PIXEL_LENGTH, actionSelector.move.departurePlatform.yTop * GameInfo.PIXEL_LENGTH), 10, GeometryFriends.XNAStub.Color.Purple));
+            }
+
         }
 
         //implements abstract rectangle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
@@ -259,18 +283,7 @@ namespace GeometryFriendsAgents
         //simple algorithm for choosing a random action for the rectangle agent
         private void RandomAction()
         {
-            /*
-             Rectangle Actions
-             MOVE_LEFT = 5
-             MOVE_RIGHT = 6
-             MORPH_UP = 7
-             MORPH_DOWN = 8
-            */
-
             currentAction = possibleMoves[rnd.Next(possibleMoves.Count)];
-
-            //send a message to the circle agent telling what action it chose
-            messages.Add(new AgentMessage("Going to :" + currentAction));
         }
 
         //implements abstract rectangle interface: GeometryFriends agents manager gets the current action intended to be actuated in the enviroment for this agent
@@ -282,13 +295,29 @@ namespace GeometryFriendsAgents
         //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
+            if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 1 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 1)
+            {
+                timesStuck++;
+            }
+            else
+            {
+                lastRectangleInfo = rectangleInfo;
+                timesStuck = 0;
+            }
+
             UpdateDraw();
-            
+            /*
             t_0 += elapsedGameTime.TotalMilliseconds;
             t += elapsedGameTime.TotalMilliseconds;
             
             if (t < 100)
             {
+                return;
+            }
+            t = 0;*/
+            if(timesStuck > 10)
+            {
+                RandomAction();
                 return;
             }
 
@@ -297,6 +326,7 @@ namespace GeometryFriendsAgents
             if (currentPlatform.id == -1) // Rectangle is in the air
             {
                 // TODO
+                currentAction = Moves.NO_ACTION;
             }
             else
             {
@@ -325,21 +355,15 @@ namespace GeometryFriendsAgents
                     }
                     fullPlan = new List<MoveInformation>(plan);
                 }
-                Tuple<Moves, Tuple<bool, bool>> tup;
+                
                 if (GameInfo.PHYSICS)
                 {
-                    tup = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
+                    currentAction = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
                 }
                 else
                 {
                     //tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
                 }
-                currentAction = tup.Item1;
-                if (tup.Item2.Item1)
-                {
-                    t = 0;
-                }
-                //flag = tup.Item2.Item2;
             }
         }
 

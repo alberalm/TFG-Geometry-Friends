@@ -33,7 +33,7 @@ namespace GeometryFriendsAgents
 
         public const float ALPHA = 0.1f;//Learning rate
         public const float GAMMA = 0.95f;//Discount factor
-        public const float EPSILON = 0;
+        public const float EPSILON = 0.3f;
 
         public const int MAX_DISTANCE = 25;
         public const int NUM_VELOCITIES = 10;
@@ -45,7 +45,7 @@ namespace GeometryFriendsAgents
         public const int UPDATE_FRECUENCY_MS = 100;
         public const int TIMEJUMPING_MS = 250;
         public const int TIMEROLLING_MS = 5500;
-        public const int SIMULATION_SPEED = 1;
+        public const int SIMULATION_SPEED = 10;
         public const int UPDATE_TABLE_MS = 60000;
         public const int TARGET_POINT_ERROR = 1;
 
