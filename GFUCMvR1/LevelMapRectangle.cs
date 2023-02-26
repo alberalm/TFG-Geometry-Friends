@@ -1,4 +1,5 @@
-﻿using GeometryFriends.AI.Debug;
+﻿using GeometryFriends.AI;
+using GeometryFriends.AI.Debug;
 using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace GeometryFriendsAgents
             for (int i = 0; i < platformList.Count; i++)
             {
                 if (rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 <= platformList[i].yTop + 3 &&
-                    rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 >= platformList[i].yTop - 10 &&
+                    rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 >= platformList[i].yTop - 3 &&
                     rI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge - 1 && rI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge + 1)
                 {
                     return platformList[i];
@@ -482,10 +483,14 @@ namespace GeometryFriendsAgents
             }
             else if (moveType == MoveType.NOMOVE)
             {
+                if(x==47 && p.id == 27)
+                {
+                    int a=0;
+                }
                 m.xlandPoint = x;
                 m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - RectangleShape.height(s) / 2) * GameInfo.PIXEL_LENGTH));
                 // NOTE: Be aware of possible NOMOVEs that combine several shapes
-                m.diamondsCollected = CollectsDiamonds(x, p.yTop);
+                m.diamondsCollected = CollectsDiamonds(x, p.yTop, s);
                 if(RectangleIntersectsWithObstacle(x, p.yTop, s) == CollisionType.Diamond)
                 {
                     List<int> others = GetDiamondCollected(x, p.yTop, s);
@@ -560,13 +565,15 @@ namespace GeometryFriendsAgents
                                 {
                                     if (p2.leftEdge == p.rightEdge)
                                     {
+                                        p2.leftEdge++;
                                         AddTrajectory(ref p, 1, MoveType.ADJACENT, p.rightEdge, s, p2);
-                                        AddTrajectory(ref p2, -1, MoveType.ADJACENT, p.rightEdge, s, p);
+                                        AddTrajectory(ref p2, -1, MoveType.ADJACENT, p2.leftEdge, s, p);
                                     }
                                     else if (p.leftEdge == p2.rightEdge)
                                     {
+                                        p.leftEdge++;
                                         AddTrajectory(ref p, -1, MoveType.ADJACENT, p.leftEdge, s, p2);
-                                        AddTrajectory(ref p2, 1, MoveType.ADJACENT, p.leftEdge, s, p);
+                                        AddTrajectory(ref p2, 1, MoveType.ADJACENT, p2.rightEdge, s, p);
                                     }
                                 }
                             }
@@ -577,13 +584,13 @@ namespace GeometryFriendsAgents
                             {
                                 if (p2.leftEdge == p.rightEdge + 1)
                                 {
-                                    AddTrajectory(ref p, GameInfo.VELOCITY_STEP_RECTANGLE, MoveType.ADJACENT, p.rightEdge, RectangleShape.Shape.HORIZONTAL, p2);
-                                    AddTrajectory(ref p2, -GameInfo.VELOCITY_STEP_RECTANGLE, MoveType.ADJACENT, p.rightEdge, RectangleShape.Shape.HORIZONTAL, p);
+                                    AddTrajectory(ref p, 15 * (p2.rightEdge - p2.leftEdge), MoveType.ADJACENT, p.rightEdge, RectangleShape.Shape.HORIZONTAL, p2);
+                                    AddTrajectory(ref p2, -15 * (p2.rightEdge - p2.leftEdge), MoveType.ADJACENT, p.rightEdge, RectangleShape.Shape.HORIZONTAL, p);
                                 }
                                 else if (p.leftEdge == p2.rightEdge + 1)
                                 {
-                                    AddTrajectory(ref p, -GameInfo.VELOCITY_STEP_RECTANGLE, MoveType.ADJACENT, p.leftEdge, RectangleShape.Shape.HORIZONTAL, p2);
-                                    AddTrajectory(ref p2, GameInfo.VELOCITY_STEP_RECTANGLE, MoveType.ADJACENT, p.leftEdge, RectangleShape.Shape.HORIZONTAL, p);
+                                    AddTrajectory(ref p, -15 * (p2.rightEdge - p2.leftEdge), MoveType.ADJACENT, p.leftEdge, RectangleShape.Shape.HORIZONTAL, p2);
+                                    AddTrajectory(ref p2, 15 * (p2.rightEdge - p2.leftEdge), MoveType.ADJACENT, p.leftEdge, RectangleShape.Shape.HORIZONTAL, p);
                                 }
                             }
                         }
@@ -672,15 +679,7 @@ namespace GeometryFriendsAgents
                     // MONOSIDEDROP
                     Parallel.For(0, platformList.Count, i =>
                     {
-                        RectangleShape.Shape s = RectangleShape.Shape.HORIZONTAL;
-                        if (p.shapes[(int)RectangleShape.Shape.VERTICAL])
-                        {
-                            s = RectangleShape.Shape.VERTICAL;
-                        }
-                        else if (p.shapes[(int)RectangleShape.Shape.SQUARE])
-                        {
-                            s = RectangleShape.Shape.SQUARE;
-                        }
+                        RectangleShape.Shape s = RectangleShape.Shape.VERTICAL;
                         // Right moves
                         int x = p.rightEdge + 1;
                         while(x<GameInfo.LEVEL_MAP_WIDTH && levelMap[x,p.yTop]!=PixelType.OBSTACLE && levelMap[x, p.yTop] != PixelType.PLATFORM)
@@ -834,14 +833,14 @@ namespace GeometryFriendsAgents
             return CollisionType.None;
         }
 
-        private List<int> CollectsDiamonds(int x, int y)
+        private List<int> CollectsDiamonds(int x, int y, RectangleShape.Shape shape)
         {
             List<int> ret = new List<int>();
             for(int i = 0; i < initialCollectiblesInfo.Length; i++)
             {
                 CollectibleRepresentation d = initialCollectiblesInfo[i];
-                if(Math.Abs(d.X/GameInfo.PIXEL_LENGTH - x) <= GameInfo.HORIZONTAL_RECTANGLE_HEIGHT / (2 * GameInfo.PIXEL_LENGTH) &&
-                    d.Y + 4 * GameInfo.PIXEL_LENGTH > y * GameInfo.PIXEL_LENGTH - GameInfo.VERTICAL_RECTANGLE_HEIGHT && d.Y < y * GameInfo.PIXEL_LENGTH)
+                if(Math.Abs(d.X/GameInfo.PIXEL_LENGTH - x) <= RectangleShape.fwidth(shape) / (2 * GameInfo.PIXEL_LENGTH) &&
+                    d.Y + 4 * GameInfo.PIXEL_LENGTH > y * GameInfo.PIXEL_LENGTH - RectangleShape.fheight(shape) && d.Y < y * GameInfo.PIXEL_LENGTH)
                 {
                     ret.Add(i);
                 }
@@ -1151,6 +1150,47 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
+        }
+
+        public bool AtBorder(RectangleRepresentation rI, Platform p, ref Moves currentAction, List<MoveInformation> plan)
+        {
+            if (p.id == -1)
+            {
+                RectangleRepresentation rI2 = new RectangleRepresentation();
+                rI2.X = rI.X - GameInfo.PIXEL_LENGTH;
+                rI2.Y = rI.Y;
+                rI2.Height = rI.Height;
+                if (RectanglePlatform(rI2).id != -1) // Rectangle at right edge
+                {
+                    currentAction = Moves.MOVE_LEFT;
+                    return true;
+                }
+                rI2.X = rI.X + GameInfo.PIXEL_LENGTH;
+                if (RectanglePlatform(rI2).id != -1) // Rectangle at left edge
+                {
+                    currentAction = Moves.MOVE_RIGHT;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool RectangleCanMorphDown(RectangleRepresentation rI)
+        {
+            double width = GameInfo.RECTANGLE_AREA / (rI.Height * GameInfo.PIXEL_LENGTH);
+            int x = (int)rI.X / GameInfo.PIXEL_LENGTH;
+            int xleft = x - (int) width / 2 - 1;
+            int xright = x + (int)width / 2 + 1;
+            for(int y = (int)(rI.Y - rI.Height / 2) / GameInfo.PIXEL_LENGTH + 2;
+                y <= (int)(rI.Y + rI.Height / 2) / GameInfo.PIXEL_LENGTH - 1; y++)
+            {
+                if (!((levelMap[xleft, y] == PixelType.EMPTY || levelMap[xleft, y] == PixelType.DIAMOND) &&
+                (levelMap[xright, y] == PixelType.EMPTY || levelMap[xright, y] == PixelType.DIAMOND)))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

@@ -61,6 +61,7 @@ namespace GeometryFriendsAgents
         ActionSelectorRectangle actionSelector;
         Platform currentPlatform;
         private bool tilted = false;
+        private bool hasFinishedDrop = true;
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -306,63 +307,96 @@ namespace GeometryFriendsAgents
             }
 
             UpdateDraw();
-            /*
-            t_0 += elapsedGameTime.TotalMilliseconds;
-            t += elapsedGameTime.TotalMilliseconds;
+
+            /*t += elapsedGameTime.TotalMilliseconds;
             
             if (t < 100)
             {
                 return;
             }
             t = 0;*/
-            if(timesStuck > 10)
+
+            if (t_0 > 0 || timesStuck > 100)
             {
-                RandomAction();
+                t_0 += elapsedGameTime.TotalMilliseconds;
+                if (timesStuck > 100 && t_0 > 250)
+                {
+                    RandomAction();
+                    t_0 = 1;
+                }
+                else if(t_0 > 250)
+                {
+                    t_0 = 0;
+                }
                 return;
             }
 
             currentPlatform = levelMap.RectanglePlatform(rectangleInfo);
-            
-            if (currentPlatform.id == -1) // Rectangle is in the air
-            {
-                // TODO
-                currentAction = Moves.NO_ACTION;
-            }
-            else
-            {
-                if(Math.Abs((rectangleInfo.Height + 2 * rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatform.yTop * 2) > 4)
-                {
-                    if(rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
-                    {
-                        currentAction = currentAction == Moves.MORPH_UP ? Moves.MORPH_DOWN : Moves.MORPH_UP;
-                    }
-                    else
-                    {
-                        currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
-                    }
-                    return;
-                }
 
-                if (plan.Count == 0 || plan[0].departurePlatform.id != levelMap.small_to_simplified[currentPlatform].id) //CIRCLE IN LAST PLATFORM
+            if (!hasFinishedDrop && plan.Count > 0 && !plan[0].landingPlatform.real)
+            {
+                if (rectangleInfo.Height < GameInfo.HORIZONTAL_RECTANGLE_HEIGHT + 5)
                 {
-                    if (fullPlan.Count - plan.Count - 1 >= 0)
-                    {
-                        plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
-                    }
-                    else
-                    {
-                        plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, null);
-                    }
-                    fullPlan = new List<MoveInformation>(plan);
-                }
-                
-                if (GameInfo.PHYSICS)
-                {
-                    currentAction = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
+                    hasFinishedDrop = true;
                 }
                 else
                 {
-                    //tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
+                    currentAction = levelMap.RectangleCanMorphDown(rectangleInfo) ? Moves.MORPH_DOWN : Moves.NO_ACTION;
+                    return;
+                }
+            }
+            if (!levelMap.AtBorder(rectangleInfo, currentPlatform, ref currentAction, plan))
+            {
+                if (currentPlatform.id == -1) // Rectangle is in the air
+                {
+                    // TODO
+                    if(actionSelector.move.moveType == MoveType.DROP && levelMap.RectangleCanMorphDown(rectangleInfo))
+                    {
+                        currentAction = Moves.MORPH_DOWN;
+                        hasFinishedDrop = false;
+                    }
+                    else
+                    {
+                        currentAction = Moves.NO_ACTION;
+                    }
+                }
+                else
+                {
+                    if (Math.Abs((rectangleInfo.Height + 2 * rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatform.yTop * 2) > 4)
+                    {
+                        if (rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
+                        {
+                            currentAction = currentAction == Moves.MORPH_UP ? Moves.MORPH_DOWN : Moves.MORPH_UP;
+                        }
+                        else
+                        {
+                            currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                        }
+                        return;
+                    }
+
+                    if (plan.Count == 0 || plan[0].departurePlatform.id != levelMap.small_to_simplified[currentPlatform].id) //CIRCLE IN LAST PLATFORM
+                    {
+                        if (fullPlan.Count - plan.Count - 1 >= 0)
+                        {
+                            plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
+                        }
+                        else
+                        {
+                            plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, null);
+                        }
+                        fullPlan = new List<MoveInformation>(plan);
+                    }
+
+                    if (GameInfo.PHYSICS)
+                    {
+                        currentAction = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
+                    }
+                    else
+                    {
+                        //tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
+                    }
+                    actionSelector.lastMove = currentAction;
                 }
             }
         }

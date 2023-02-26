@@ -224,6 +224,8 @@ namespace GeometryFriendsAgents
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + circleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 150), "Velocidad objetivo: " + target_velocity, GeometryFriends.XNAStub.Color.Orange));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 200), "Velocidad relativa: " + Math.Abs(circleInfo.VelocityX - target_velocity), GeometryFriends.XNAStub.Color.Orange));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 250), "Distancia: " + Math.Abs(circleInfo.X / GameInfo.PIXEL_LENGTH - target_position), GeometryFriends.XNAStub.Color.Orange));
+
             if (currentAction == Moves.NO_ACTION)
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 300), 10, GeometryFriends.XNAStub.Color.Blue));

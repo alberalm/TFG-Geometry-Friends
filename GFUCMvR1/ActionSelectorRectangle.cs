@@ -14,6 +14,7 @@ namespace GeometryFriendsAgents
         public LevelMapRectangle levelMap;
         public Platform next_platform = null;
         public MoveInformation move;
+        public Moves lastMove = Moves.NO_ACTION;
 
         public ActionSelectorRectangle(Dictionary<CollectibleRepresentation, int> collectibleId, Learning l, LevelMapRectangle levelMap, Graph graph) : base(collectibleId, l, graph)
         {
@@ -23,7 +24,7 @@ namespace GeometryFriendsAgents
         public Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, MoveInformation move)
         {
 
-            if (move.moveType == MoveType.FALL || move.moveType == MoveType.NOMOVE || move.moveType == MoveType.ADJACENT || move.moveType == MoveType.DROP)
+            if (move.moveType == MoveType.FALL || move.moveType == MoveType.NOMOVE || move.moveType == MoveType.ADJACENT)
             {
                 if (current_position >= target_position) // Rectangle on the right
                 {
@@ -99,6 +100,73 @@ namespace GeometryFriendsAgents
                     return Moves.MOVE_LEFT;
                 }
             }
+            else if  (move.moveType == MoveType.DROP)
+            {
+                if (current_position >= target_position) // Rectangle on the right
+                {
+                    if (current_velocity < -1 && current_position - target_position < GameInfo.PIXEL_LENGTH * 2 && current_velocity > -20)
+                    {
+                        return Moves.NO_ACTION;
+                    }
+                    // target_velocity is always = 0
+                    if (current_velocity >= 0)
+                    {
+                        double brake_distance = current_velocity * current_velocity / (2 * GameInfo.RECTANGLE_ACCELERATION);
+                        if (Math.Abs(current_position + brake_distance - target_position) <= GameInfo.ERROR * GameInfo.PIXEL_LENGTH)
+                        {
+                            return Moves.MOVE_RIGHT;
+                        }
+                        else
+                        {
+                            if (current_position + brake_distance > target_position)
+                            {
+                                return Moves.MOVE_LEFT;
+                            }
+                            else
+                            {
+                                return Moves.MOVE_RIGHT;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        double sup_threshold = current_velocity * current_velocity + 2 * (current_position - target_position) * GameInfo.RECTANGLE_ACCELERATION;
+                        double inf_threshold = current_velocity * current_velocity - 2 * (current_position - target_position) * GameInfo.RECTANGLE_ACCELERATION;
+                        if (0 > sup_threshold)
+                        {
+                            return Moves.MOVE_RIGHT;
+                        }
+                        else if (0 < inf_threshold)
+                        {
+                            return Moves.MOVE_RIGHT;
+                        }
+                        else if (0 <= inf_threshold + 5)
+                        {
+                            return Moves.MOVE_RIGHT;
+                        }
+                        else
+                        {
+                            return Moves.MOVE_LEFT;
+                        }
+                    }
+                }
+                else
+                {
+                    Moves m = getPhisicsMove(2 * target_position - current_position, target_position, -current_velocity, -target_velocity, move);
+                    if (m == Moves.MOVE_LEFT)
+                    {
+                        return Moves.MOVE_RIGHT;
+                    }
+                    else if (m == Moves.MOVE_RIGHT)
+                    {
+                        return Moves.MOVE_LEFT;
+                    }
+                    else
+                    {
+                        return Moves.NO_ACTION;
+                    }
+                }
+            }
             else
             {
                 return Moves.NO_ACTION;
@@ -109,10 +177,7 @@ namespace GeometryFriendsAgents
         {
             //returns the next move, a first boolean indicating whether the move will lead to an air situation (Jump or fall) and a second boolean indicating whether the ball has to rotate in the
             //same direction of the velocity or in the oposite (in general will be oposite unless the jump lands near the vertix of the parabolla)
-            if (Math.Abs(rI.X - 1143) <= 2)
-            {
-                int a = 0;
-            }
+            
             if (plan.Count > 0)
             {
                 move = DiamondsCanBeCollectedFrom(levelMap.small_to_simplified[currentPlatform], remaining, (int)(rI.X / GameInfo.PIXEL_LENGTH), plan[0]);
@@ -148,6 +213,11 @@ namespace GeometryFriendsAgents
                 }
             }
 
+            if(lastMove == Moves.MORPH_UP && move.moveType == MoveType.DROP)
+            {
+                return Moves.MORPH_UP;
+            }
+
             Moves m = getPhisicsMove(rI.X, move.x * GameInfo.PIXEL_LENGTH, rI.VelocityX, move.velocityX, move);
             
             Platform current_platform = levelMap.RectanglePlatform(rI);
@@ -168,24 +238,25 @@ namespace GeometryFriendsAgents
                 }
                 target_shape = BestShape(current_platform, next_platform, target_shape, RectangleShape.GetShape(rI));
             }
-            
-            // Check shape
-            if (target_shape == RectangleShape.Shape.SQUARE && rI.Height < RectangleShape.fheight(target_shape) + 5
-                    && rI.Height > RectangleShape.fheight(target_shape) - 5)
+            if (move.moveType != MoveType.DROP || (Math.Abs(rI.X / GameInfo.PIXEL_LENGTH - move.x) <= 1 && Math.Abs(rI.VelocityX) <= 20))
             {
-
-            }
-            else if (RectangleShape.fheight(target_shape) + 5 < rI.Height)
-            {
-                return Moves.MORPH_DOWN;
-            }
-            else if (RectangleShape.fheight(target_shape) - 5 > rI.Height)
-            {
-                if (levelMap.levelMap[(int) rI.X / GameInfo.PIXEL_LENGTH, (int)((rI.Y-rI.Height)/GameInfo.PIXEL_LENGTH) - 1] != LevelMap.PixelType.OBSTACLE)
+                // Check shape
+                if (target_shape == RectangleShape.Shape.SQUARE && rI.Height < RectangleShape.fheight(target_shape) + 5
+                        && rI.Height > RectangleShape.fheight(target_shape) - 5)
                 {
-                    return Moves.MORPH_UP;
+
                 }
-                
+                else if (RectangleShape.fheight(target_shape) + 5 < rI.Height)
+                {
+                    return Moves.MORPH_DOWN;
+                }
+                else if (RectangleShape.fheight(target_shape) - 5 > rI.Height)
+                {
+                    if (levelMap.levelMap[(int)rI.X / GameInfo.PIXEL_LENGTH, (int)((rI.Y - 3 * rI.Height / 5) / GameInfo.PIXEL_LENGTH) - 1] != LevelMap.PixelType.OBSTACLE)
+                    {
+                        return Moves.MORPH_UP;
+                    }
+                }
             }
             return m;
         }
@@ -198,7 +269,7 @@ namespace GeometryFriendsAgents
             }
             if(next_platform.id == -1)
             {
-                return current_shape;
+                return move_shape;
             }
             if (next_platform.shapes[(int)current_shape])
             {
