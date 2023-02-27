@@ -62,6 +62,7 @@ namespace GeometryFriendsAgents
         Platform currentPlatform;
         private bool tilted = false;
         private bool hasFinishedDrop = true;
+        private bool hasFinishedTilt = true;
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -133,6 +134,8 @@ namespace GeometryFriendsAgents
             graph = new Graph(levelMap.simplified_platforms, colI);
 
             plan = graph.SearchAlgorithm(levelMap.PlatformBelowRectangle(rI).id, colI, null);
+            
+            
             fullPlan = new List<MoveInformation>(plan);
 
             actionSelector = new ActionSelectorRectangle(collectibleId, l, levelMap, graph);
@@ -287,6 +290,27 @@ namespace GeometryFriendsAgents
             currentAction = possibleMoves[rnd.Next(possibleMoves.Count)];
         }
 
+        private void WeightRandomAction()
+        {
+            int a = rnd.Next(6);
+            if(a == 0 || a == 1)
+            {
+                currentAction = Moves.MOVE_LEFT;
+            }
+            else if (a == 2 || a == 3)
+            {
+                currentAction = Moves.MOVE_RIGHT;
+            }
+            else if(a == 4)
+            {
+                currentAction = Moves.MORPH_UP;
+            }
+            else
+            {
+                currentAction = Moves.MORPH_DOWN;
+            }
+        }
+
         //implements abstract rectangle interface: GeometryFriends agents manager gets the current action intended to be actuated in the enviroment for this agent
         public override Moves GetAction()
         {
@@ -296,7 +320,7 @@ namespace GeometryFriendsAgents
         //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 1 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 1)
+            if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 5 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 5)
             {
                 timesStuck++;
             }
@@ -316,15 +340,15 @@ namespace GeometryFriendsAgents
             }
             t = 0;*/
 
-            if (t_0 > 0 || timesStuck > 100)
+            if (t_0 > 0 || timesStuck > 30)
             {
                 t_0 += elapsedGameTime.TotalMilliseconds;
-                if (timesStuck > 100 && t_0 > 250)
+                if (timesStuck > 30 && t_0 > 200)
                 {
                     RandomAction();
                     t_0 = 1;
                 }
-                else if(t_0 > 250)
+                else if(t_0 > 200)
                 {
                     t_0 = 0;
                 }
@@ -345,19 +369,80 @@ namespace GeometryFriendsAgents
                     return;
                 }
             }
+
+            if (actionSelector.move != null)
+            {
+                int edge = actionSelector.move.velocityX > 0 ? actionSelector.move.landingPlatform.leftEdge : actionSelector.move.landingPlatform.rightEdge;
+                if (!hasFinishedTilt)
+                {
+                    if (Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH)
+                    {
+                        hasFinishedTilt = true;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                if (actionSelector.move.moveType == MoveType.TILT && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH)
+                {
+                    if (actionSelector.move.velocityX > 0)
+                    {
+                        currentAction = Moves.MOVE_RIGHT;
+                    }
+                    else
+                    {
+                        currentAction = Moves.MOVE_LEFT;
+                    }
+                    hasFinishedTilt = false;
+                    return;
+                }
+            }
+
             if (!levelMap.AtBorder(rectangleInfo, currentPlatform, ref currentAction, plan))
             {
                 if (currentPlatform.id == -1) // Rectangle is in the air
                 {
                     // TODO
-                    if(actionSelector.move.moveType == MoveType.DROP && levelMap.RectangleCanMorphDown(rectangleInfo))
+                    if (actionSelector.move != null)
                     {
-                        currentAction = Moves.MORPH_DOWN;
-                        hasFinishedDrop = false;
+                        if (actionSelector.move.moveType == MoveType.DROP && levelMap.RectangleCanMorphDown(rectangleInfo))
+                        {
+                            currentAction = Moves.MORPH_DOWN;
+                            hasFinishedDrop = false;
+                        }
+                        else if (actionSelector.move.moveType == MoveType.MONOSIDEDROP)
+                        {
+                            if (rectangleInfo.Y / GameInfo.PIXEL_LENGTH < actionSelector.move.departurePlatform.yTop)
+                            {
+                                if (actionSelector.move.x > actionSelector.move.departurePlatform.rightEdge)
+                                {
+                                    currentAction = Moves.MOVE_RIGHT;
+                                }
+                                else
+                                {
+                                    currentAction = Moves.MOVE_LEFT;
+                                }
+                            }
+                            else if (levelMap.RectangleCanMorphDown(rectangleInfo))
+                            {
+                                currentAction = Moves.MORPH_DOWN;
+                                hasFinishedDrop = false;
+                            }
+                            else
+                            {
+                                currentAction = Moves.NO_ACTION;
+                            }
+                        }
+                        else
+                        {
+                            currentAction = Moves.NO_ACTION;
+                        }
                     }
                     else
                     {
-                        currentAction = Moves.NO_ACTION;
+                        // TODO
                     }
                 }
                 else

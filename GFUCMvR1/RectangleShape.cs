@@ -70,6 +70,31 @@ namespace GeometryFriendsAgents
             return 0;
         }
 
+        // Returns 1 is first is better, -1 if second is better, 0 if same
+        public static int CompareShapes(Shape first, Shape second)
+        {
+            if(first == second)
+            {
+                return 0;
+            }
+            if(first == Shape.HORIZONTAL)
+            {
+                return 1;
+            }
+            else if (second == Shape.HORIZONTAL)
+            {
+                return -1;
+            }
+            else if(first == Shape.SQUARE)
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
         public static Shape GetShape(RectangleRepresentation rI)
         {
             if(rI.Height > (GameInfo.SQUARE_HEIGHT + GameInfo.VERTICAL_RECTANGLE_HEIGHT) / 2)

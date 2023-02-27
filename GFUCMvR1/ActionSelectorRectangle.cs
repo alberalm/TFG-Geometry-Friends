@@ -23,9 +23,9 @@ namespace GeometryFriendsAgents
 
         public Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, MoveInformation move)
         {
-
             if (move.moveType == MoveType.FALL || move.moveType == MoveType.NOMOVE || move.moveType == MoveType.ADJACENT)
             {
+
                 if (current_position >= target_position) // Rectangle on the right
                 {
                     // target_velocity is always <= 0
@@ -89,7 +89,7 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
-            else if (move.moveType == MoveType.TILT || move.moveType == MoveType.MONOSIDEDROP)
+            else if (move.moveType == MoveType.TILT)
             {
                 if (target_velocity > 0)
                 {
@@ -100,7 +100,22 @@ namespace GeometryFriendsAgents
                     return Moves.MOVE_LEFT;
                 }
             }
-            else if  (move.moveType == MoveType.DROP)
+            else if (move.moveType == MoveType.MONOSIDEDROP)
+            {
+                if (Math.Abs(current_velocity) > 250)
+                {
+                    return Moves.NO_ACTION;
+                }
+                if (target_velocity > 0)
+                {
+                    return Moves.MOVE_RIGHT;
+                }
+                else
+                {
+                    return Moves.MOVE_LEFT;
+                }
+            }
+            else if (move.moveType == MoveType.DROP)
             {
                 if (current_position >= target_position) // Rectangle on the right
                 {
@@ -226,16 +241,62 @@ namespace GeometryFriendsAgents
             RectangleShape.Shape target_shape = move.shape;
             if (move.x < current_platform.leftEdge || move.x > current_platform.rightEdge)
             {
-                if (rI.VelocityX >= 0)
+                Tuple<Platform, Platform> adjacent_platforms = levelMap.AdjacentPlatforms(currentPlatform);
+                double brake_point = rI.X + Math.Abs(rI.VelocityX) * rI.VelocityX / (2 * GameInfo.RECTANGLE_ACCELERATION);
+                if (Math.Abs(rI.VelocityX) <= 10)
                 {
-                    RectangleRepresentation rI2 = new RectangleRepresentation(GameInfo.PIXEL_LENGTH * (currentPlatform.rightEdge + 2), rI.Y, rI.VelocityX, rI.VelocityY, rI.Height);
-                    next_platform = levelMap.RectanglePlatform(rI2);
+                    if (move.x * GameInfo.PIXEL_LENGTH < rI.X)
+                    {
+                        next_platform = adjacent_platforms.Item1;
+                    }
+                    else
+                    {
+                        next_platform = adjacent_platforms.Item2;
+                    }
+                }
+                else {
+                    if (current_platform.leftEdge * GameInfo.PIXEL_LENGTH <= brake_point &&
+                        brake_point <= current_platform.rightEdge * GameInfo.PIXEL_LENGTH)
+                    {
+                        // break_point inside current_platfom
+                        if (move.x * GameInfo.PIXEL_LENGTH < rI.X)
+                        {
+                            next_platform = adjacent_platforms.Item1;
+                        }
+                        else
+                        {
+                            next_platform = adjacent_platforms.Item2;
+                        }
+                    }
+                    // break_point is at the left of current platform
+                    else if(current_platform.leftEdge * GameInfo.PIXEL_LENGTH > brake_point)
+                    {
+                        next_platform = adjacent_platforms.Item1;
+                    }
+                    
+                    // break_point is at the right of current_platfom
+                    else
+                    {
+                        next_platform = adjacent_platforms.Item2;
+                    }
+                }
+
+                /*if (rI.VelocityX >10)
+                {
+                    next_platform = adjacent_platforms.Item2;
+                }
+                else if (rI.VelocityX < -10)
+                {
+                    next_platform = adjacent_platforms.Item1;
+                }
+                else if (move.x * GameInfo.PIXEL_LENGTH < rI.X)
+                {
+                    next_platform = adjacent_platforms.Item1;
                 }
                 else
                 {
-                    RectangleRepresentation rI2 = new RectangleRepresentation(GameInfo.PIXEL_LENGTH * (currentPlatform.leftEdge - 2), rI.Y, rI.VelocityX, rI.VelocityY, rI.Height);
-                    next_platform = levelMap.RectanglePlatform(rI2);
-                }
+                    next_platform = adjacent_platforms.Item2;
+                }*/
                 target_shape = BestShape(current_platform, next_platform, target_shape, RectangleShape.GetShape(rI));
             }
             if (move.moveType != MoveType.DROP || (Math.Abs(rI.X / GameInfo.PIXEL_LENGTH - move.x) <= 1 && Math.Abs(rI.VelocityX) <= 20))
@@ -252,7 +313,14 @@ namespace GeometryFriendsAgents
                 }
                 else if (RectangleShape.fheight(target_shape) - 5 > rI.Height)
                 {
-                    if (levelMap.levelMap[(int)rI.X / GameInfo.PIXEL_LENGTH, (int)((rI.Y - 3 * rI.Height / 5) / GameInfo.PIXEL_LENGTH) - 1] != LevelMap.PixelType.OBSTACLE)
+                    if (move.moveType == MoveType.NOMOVE || move.moveType == MoveType.TILT)
+                    {
+                        if (levelMap.levelMap[(int)rI.X / GameInfo.PIXEL_LENGTH, (int)((rI.Y - 3 * rI.Height / 5) / GameInfo.PIXEL_LENGTH) - 1] != LevelMap.PixelType.OBSTACLE)
+                        {
+                            return Moves.MORPH_UP;
+                        }
+                    }
+                    else if (levelMap.RectangleCanMorphUp(rI))
                     {
                         return Moves.MORPH_UP;
                     }
