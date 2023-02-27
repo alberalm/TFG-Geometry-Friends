@@ -8,6 +8,7 @@ using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography.X509Certificates;
 
 namespace GeometryFriendsAgents
 {
@@ -32,6 +33,8 @@ namespace GeometryFriendsAgents
 
         private CountInformation numbersInfo;
         private RectangleRepresentation rectangleInfo;
+        private RectangleRepresentation lastRectangleInfo;
+        private int timesStuck = 0;
         private CircleRepresentation circleInfo;
         private ObstacleRepresentation[] obstaclesInfo;
         private ObstacleRepresentation[] rectanglePlatformsInfo;
@@ -58,6 +61,8 @@ namespace GeometryFriendsAgents
         ActionSelectorRectangle actionSelector;
         Platform currentPlatform;
         private bool tilted = false;
+        private bool hasFinishedDrop = true;
+        private bool hasFinishedTilt = true;
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -129,6 +134,8 @@ namespace GeometryFriendsAgents
             graph = new Graph(levelMap.simplified_platforms, colI);
 
             plan = graph.SearchAlgorithm(levelMap.PlatformBelowRectangle(rI).id, colI, null);
+            
+            
             fullPlan = new List<MoveInformation>(plan);
 
             actionSelector = new ActionSelectorRectangle(collectibleId, l, levelMap, graph);
@@ -223,6 +230,27 @@ namespace GeometryFriendsAgents
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 350), 10, GeometryFriends.XNAStub.Color.Red));
             }
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(rectangleInfo.X, rectangleInfo.Y), levelMap.RectanglePlatform(rectangleInfo).id.ToString(), GeometryFriends.XNAStub.Color.Black));
+            if (actionSelector.next_platform == null)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 400), "Next platform: null", GeometryFriends.XNAStub.Color.Orange));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 400), "Next platform: " + actionSelector.next_platform.id.ToString(), GeometryFriends.XNAStub.Color.Orange));
+            }
+            
+            if (actionSelector.move == null)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 500), "Next move: null", GeometryFriends.XNAStub.Color.Orange));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 500), "Next move: -Departure" + actionSelector.move.departurePlatform.id.ToString()
+                    +" -Tipo" + actionSelector.move.moveType, GeometryFriends.XNAStub.Color.Orange));
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelector.move.x*GameInfo.PIXEL_LENGTH, actionSelector.move.departurePlatform.yTop * GameInfo.PIXEL_LENGTH), 10, GeometryFriends.XNAStub.Color.Purple));
+            }
+
         }
 
         //implements abstract rectangle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
@@ -259,18 +287,28 @@ namespace GeometryFriendsAgents
         //simple algorithm for choosing a random action for the rectangle agent
         private void RandomAction()
         {
-            /*
-             Rectangle Actions
-             MOVE_LEFT = 5
-             MOVE_RIGHT = 6
-             MORPH_UP = 7
-             MORPH_DOWN = 8
-            */
-
             currentAction = possibleMoves[rnd.Next(possibleMoves.Count)];
+        }
 
-            //send a message to the circle agent telling what action it chose
-            messages.Add(new AgentMessage("Going to :" + currentAction));
+        private void WeightRandomAction()
+        {
+            int a = rnd.Next(6);
+            if(a == 0 || a == 1)
+            {
+                currentAction = Moves.MOVE_LEFT;
+            }
+            else if (a == 2 || a == 3)
+            {
+                currentAction = Moves.MOVE_RIGHT;
+            }
+            else if(a == 4)
+            {
+                currentAction = Moves.MORPH_UP;
+            }
+            else
+            {
+                currentAction = Moves.MORPH_DOWN;
+            }
         }
 
         //implements abstract rectangle interface: GeometryFriends agents manager gets the current action intended to be actuated in the enviroment for this agent
@@ -282,64 +320,169 @@ namespace GeometryFriendsAgents
         //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
+            if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 5 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 5)
+            {
+                timesStuck++;
+            }
+            else
+            {
+                lastRectangleInfo = rectangleInfo;
+                timesStuck = 0;
+            }
+
             UpdateDraw();
-            
-            t_0 += elapsedGameTime.TotalMilliseconds;
-            t += elapsedGameTime.TotalMilliseconds;
+
+            /*t += elapsedGameTime.TotalMilliseconds;
             
             if (t < 100)
             {
                 return;
             }
+            t = 0;*/
+
+            if (t_0 > 0 || timesStuck > 30)
+            {
+                t_0 += elapsedGameTime.TotalMilliseconds;
+                if (timesStuck > 30 && t_0 > 200)
+                {
+                    RandomAction();
+                    t_0 = 1;
+                }
+                else if(t_0 > 200)
+                {
+                    t_0 = 0;
+                }
+                return;
+            }
 
             currentPlatform = levelMap.RectanglePlatform(rectangleInfo);
-            
-            if (currentPlatform.id == -1) // Rectangle is in the air
-            {
-                // TODO
-            }
-            else
-            {
-                if(Math.Abs((rectangleInfo.Height + 2 * rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatform.yTop * 2) > 4)
-                {
-                    if(rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
-                    {
-                        currentAction = currentAction == Moves.MORPH_UP ? Moves.MORPH_DOWN : Moves.MORPH_UP;
-                    }
-                    else
-                    {
-                        currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
-                    }
-                    return;
-                }
 
-                if (plan.Count == 0 || plan[0].departurePlatform.id != levelMap.small_to_simplified[currentPlatform].id) //CIRCLE IN LAST PLATFORM
+            if (!hasFinishedDrop && plan.Count > 0 && !plan[0].landingPlatform.real)
+            {
+                if (rectangleInfo.Height < GameInfo.HORIZONTAL_RECTANGLE_HEIGHT + 5)
                 {
-                    if (fullPlan.Count - plan.Count - 1 >= 0)
-                    {
-                        plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
-                    }
-                    else
-                    {
-                        plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, null);
-                    }
-                    fullPlan = new List<MoveInformation>(plan);
-                }
-                Tuple<Moves, Tuple<bool, bool>> tup;
-                if (GameInfo.PHYSICS)
-                {
-                    tup = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
+                    hasFinishedDrop = true;
                 }
                 else
                 {
-                    //tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
+                    currentAction = levelMap.RectangleCanMorphDown(rectangleInfo) ? Moves.MORPH_DOWN : Moves.NO_ACTION;
+                    return;
                 }
-                currentAction = tup.Item1;
-                if (tup.Item2.Item1)
+            }
+
+            if (actionSelector.move != null)
+            {
+                int edge = actionSelector.move.velocityX > 0 ? actionSelector.move.landingPlatform.leftEdge : actionSelector.move.landingPlatform.rightEdge;
+                if (!hasFinishedTilt)
                 {
-                    t = 0;
+                    if (Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH)
+                    {
+                        hasFinishedTilt = true;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
-                //flag = tup.Item2.Item2;
+
+                if (actionSelector.move.moveType == MoveType.TILT && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH)
+                {
+                    if (actionSelector.move.velocityX > 0)
+                    {
+                        currentAction = Moves.MOVE_RIGHT;
+                    }
+                    else
+                    {
+                        currentAction = Moves.MOVE_LEFT;
+                    }
+                    hasFinishedTilt = false;
+                    return;
+                }
+            }
+
+            if (!levelMap.AtBorder(rectangleInfo, currentPlatform, ref currentAction, plan))
+            {
+                if (currentPlatform.id == -1) // Rectangle is in the air
+                {
+                    // TODO
+                    if (actionSelector.move != null)
+                    {
+                        if (actionSelector.move.moveType == MoveType.DROP && levelMap.RectangleCanMorphDown(rectangleInfo))
+                        {
+                            currentAction = Moves.MORPH_DOWN;
+                            hasFinishedDrop = false;
+                        }
+                        else if (actionSelector.move.moveType == MoveType.MONOSIDEDROP)
+                        {
+                            if (rectangleInfo.Y / GameInfo.PIXEL_LENGTH < actionSelector.move.departurePlatform.yTop)
+                            {
+                                if (actionSelector.move.x > actionSelector.move.departurePlatform.rightEdge)
+                                {
+                                    currentAction = Moves.MOVE_RIGHT;
+                                }
+                                else
+                                {
+                                    currentAction = Moves.MOVE_LEFT;
+                                }
+                            }
+                            else if (levelMap.RectangleCanMorphDown(rectangleInfo))
+                            {
+                                currentAction = Moves.MORPH_DOWN;
+                                hasFinishedDrop = false;
+                            }
+                            else
+                            {
+                                currentAction = Moves.NO_ACTION;
+                            }
+                        }
+                        else
+                        {
+                            currentAction = Moves.NO_ACTION;
+                        }
+                    }
+                    else
+                    {
+                        // TODO
+                    }
+                }
+                else
+                {
+                    if (Math.Abs((rectangleInfo.Height + 2 * rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatform.yTop * 2) > 4)
+                    {
+                        if (rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
+                        {
+                            currentAction = currentAction == Moves.MORPH_UP ? Moves.MORPH_DOWN : Moves.MORPH_UP;
+                        }
+                        else
+                        {
+                            currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                        }
+                        return;
+                    }
+
+                    if (plan.Count == 0 || plan[0].departurePlatform.id != levelMap.small_to_simplified[currentPlatform].id) //CIRCLE IN LAST PLATFORM
+                    {
+                        if (fullPlan.Count - plan.Count - 1 >= 0)
+                        {
+                            plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
+                        }
+                        else
+                        {
+                            plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, null);
+                        }
+                        fullPlan = new List<MoveInformation>(plan);
+                    }
+
+                    if (GameInfo.PHYSICS)
+                    {
+                        currentAction = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
+                    }
+                    else
+                    {
+                        //tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
+                    }
+                    actionSelector.lastMove = currentAction;
+                }
             }
         }
 

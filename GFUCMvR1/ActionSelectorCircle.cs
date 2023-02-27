@@ -282,7 +282,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        protected override Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, double brake_distance, double acceleration_distance)
+        public Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, double brake_distance, double acceleration_distance)
         {
             if (current_position >= target_position)//Circle on the right
             {

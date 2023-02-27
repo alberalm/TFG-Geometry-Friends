@@ -75,6 +75,7 @@ namespace GeometryFriendsAgents
         private List<CircleRepresentation> trajectory;
         private List<LevelMap.MoveInformation> fullPlan;
         private Dictionary<int, CircleRepresentation> velocityPoints;
+        public static bool random = false;
 
         private List<TimeSpan> elapsed;
 
@@ -222,6 +223,7 @@ namespace GeometryFriendsAgents
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + circleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 150), "Velocidad objetivo: " + target_velocity, GeometryFriends.XNAStub.Color.Orange));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 200), "Velocidad relativa: " + Math.Abs(circleInfo.VelocityX - target_velocity), GeometryFriends.XNAStub.Color.Orange));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 250), "Distancia: " + Math.Abs(circleInfo.X / GameInfo.PIXEL_LENGTH - target_position), GeometryFriends.XNAStub.Color.Orange));
             if (currentAction == Moves.NO_ACTION)
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 300), 10, GeometryFriends.XNAStub.Color.Blue));
@@ -239,7 +241,11 @@ namespace GeometryFriendsAgents
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 250), 10, GeometryFriends.XNAStub.Color.Yellow));
             }
-            VisualDebug.DrawParabola(ref newDebugInfo, target_position * GameInfo.PIXEL_LENGTH, 700, GameInfo.LEARNING_VELOCITY, GameInfo.JUMP_VELOCITYY, GeometryFriends.XNAStub.Color.Purple);
+            VisualDebug.DrawParabola(ref newDebugInfo, target_position * GameInfo.PIXEL_LENGTH, 700, target_velocity, GameInfo.JUMP_VELOCITYY, GeometryFriends.XNAStub.Color.Purple);
+            if (random)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(900, 250), 20, GeometryFriends.XNAStub.Color.Orange));
+            }
             /*
             for(int i =-200; i <= 200; i += 20)
             {
@@ -370,10 +376,7 @@ namespace GeometryFriendsAgents
                         currentAction = Moves.JUMP;
                         jump = true;
                         reset_counter = 0;
-
                     }
-                    
-                     
                 }
                 else 
                 {

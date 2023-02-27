@@ -36,6 +36,7 @@ namespace GeometryFriendsAgents
             this.moveInfoList = moveInfoList;
             shapes[(int)s] = true;
         }
+
         public Platform(int id)
         {
             this.id = id;
@@ -44,12 +45,25 @@ namespace GeometryFriendsAgents
             this.rightEdge = 0;
             this.moveInfoList = null;
         }
+
         public void CombineShapes(bool[] others)
         {
             for (int i=0; i<shapes.Length; i++)
             {
                 shapes[i] = shapes[i] || others[i];
             }
+        }
+
+        public bool ShapesAreEqual(Platform other)
+        {
+            foreach (RectangleShape.Shape s in GameInfo.SHAPES)
+            {
+                if((!shapes[(int)s] && other.shapes[(int)s]) || (shapes[(int)s] && !other.shapes[(int)s]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public List<int> ReachableCollectiblesLandingInThisPlatform()

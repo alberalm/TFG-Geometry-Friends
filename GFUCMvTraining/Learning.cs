@@ -12,6 +12,7 @@ namespace GeometryFriendsAgents
     {
         // 3 moves: roll right, roll left and do nothing
         Dictionary <string, Dictionary<Moves, double>> Q_table;
+        Dictionary<string, Dictionary<Moves, int>> timesInEachState;
         List<Moves> moves;
         List<State> states;
         List<Moves> possibleMoves = new List<Moves>();
@@ -19,6 +20,7 @@ namespace GeometryFriendsAgents
         public Learning()
         {
             Q_table = new Dictionary<string, Dictionary<Moves, double>>();
+            timesInEachState = new Dictionary<string, Dictionary<Moves, int>>();
             possibleMoves.Add(Moves.ROLL_LEFT);
             possibleMoves.Add(Moves.ROLL_RIGHT);
             possibleMoves.Add(Moves.NO_ACTION);
@@ -58,8 +60,17 @@ namespace GeometryFriendsAgents
                         if (!Q_table.ContainsKey(s.ToString()))
                         {
                             Q_table.Add(s.ToString(), new Dictionary<Moves, double>());
+                            timesInEachState.Add(s.ToString(), new Dictionary<Moves, int>());
                         }
                         Q_table[s.ToString()].Add(m, v);
+                        if (Math.Abs(int.Parse(split[2])) == GameInfo.LEARNING_VELOCITY)
+                        {
+                            timesInEachState[s.ToString()].Add(m, int.Parse(split[5]));
+                        }
+                        else
+                        {
+                            timesInEachState[s.ToString()].Add(m, 0);
+                        }
                     }
                     count++;
                 }
@@ -67,17 +78,26 @@ namespace GeometryFriendsAgents
             }
         }
 
-
         public void SaveFile()
         {
             StreamWriter sw = new StreamWriter(GameInfo.Q_PATH);
-            sw.WriteLine("Distance;Current_Velocity;Target_Velocity;Move;Value");
+            sw.WriteLine("Distance;Current_Velocity;Target_Velocity;Move;Value;Times");
             foreach(var pair in Q_table)
             {
                 foreach (var pair2 in pair.Value)
                 {
                     string[] st = pair.Key.ToString().Split(';');
-                    sw.WriteLine("{0};{1};{2};{3};{4}", st[0], st[1], st[2], pair2.Key.ToString(), pair2.Value);
+                    if (Math.Abs(double.Parse(st[2])) == GameInfo.LEARNING_VELOCITY)
+                    {
+                        sw.WriteLine("{0};{1};{2};{3};{4};{5}",
+                            st[0],
+                            st[1],
+                            st[2],
+                            pair2.Key.ToString(),
+                            pair2.Value,
+                            timesInEachState[pair.Key][pair2.Key].ToString());
+                        //sw.WriteLine("{0};{1};{2};{3};{4}", st[0], st[1], st[2], pair2.Key.ToString(), pair2.Value);
+                    }
                 }
             }
             sw.Close();
@@ -89,7 +109,8 @@ namespace GeometryFriendsAgents
 
             if(current.distance > GameInfo.MAX_DISTANCE) //If circle is far away of the current point, get closer
             {
-                if(d > 0)
+                CircleAgent.random = false;
+                if (d > 0)
                 {
                     return Moves.ROLL_LEFT;
                 }
@@ -101,16 +122,21 @@ namespace GeometryFriendsAgents
 
             if (!Q_table.ContainsKey(current.ToString()))//First time in this state, act randomly
             {
+                
                 Q_table.Add(current.ToString(), new Dictionary<Moves, double>());
+                timesInEachState.Add(current.ToString(), new Dictionary<Moves, int>());
                 foreach (Moves m in possibleMoves)
                 {
                     Q_table[current.ToString()].Add(m, 0);
+                    timesInEachState[current.ToString()].Add(m, 0);
                 }
                 action = possibleMoves[random.Next(possibleMoves.Count)];
+                CircleAgent.random = true;
             }
             else if (random.NextDouble() < GameInfo.EPSILON)//Exploration
             {
                 action = possibleMoves[random.Next(possibleMoves.Count)];
+                CircleAgent.random = true;
             }
             else//Exploitation
             {
@@ -124,6 +150,7 @@ namespace GeometryFriendsAgents
                         action = m;
                     }
                 }
+                CircleAgent.random = false;
             }
             if (current.target_velocity != 0)
             {
@@ -152,9 +179,11 @@ namespace GeometryFriendsAgents
             if (!Q_table.ContainsKey(current.ToString()))
             {
                 Q_table.Add(current.ToString(), new Dictionary<Moves, double>());
+                timesInEachState.Add(current.ToString(), new Dictionary<Moves, int>());
                 foreach (Moves mo in possibleMoves)
                 {
                     Q_table[current.ToString()].Add(mo, current.Reward());
+                    timesInEachState[current.ToString()].Add(mo, 1);
                 }
             }
             for (int i = moves.Count() - 1; i >= 0; i--)
@@ -173,6 +202,7 @@ namespace GeometryFriendsAgents
                 }
 
                 Q_table[s.ToString()][m] = (1 - GameInfo.ALPHA) * old_value + GameInfo.ALPHA * (Reward(s,m) + GameInfo.GAMMA * next_max);
+                timesInEachState[s.ToString()][m] += 1;
             }
 
             moves = new List<Moves>();

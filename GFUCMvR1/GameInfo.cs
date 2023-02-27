@@ -27,7 +27,6 @@ namespace GeometryFriendsAgents
         public const int LEVEL_WIDTH = 1272;
         public const int LEVEL_HEIGHT = 776;
         public const int PIXEL_LENGTH = 8;
-        public const float RESTITUTION = 0*75f * (JUMP_VELOCITYY - GRAVITY) / (JUMP_VELOCITYY - 0.72f * GRAVITY);
 
         public const float ALPHA = 0.1f;//Learning rate
         public const float GAMMA = 0.95f;//Discount factor
