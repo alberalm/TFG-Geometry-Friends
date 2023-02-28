@@ -195,9 +195,13 @@ namespace GeometryFriendsAgents
                         {
                             if (levelMap[i, j] == PixelType.PLATFORM || levelMap[i, j] == PixelType.OBSTACLE)
                             {
-
                                 if (j == (int)max_y.Item2 / GameInfo.PIXEL_LENGTH)
                                 {
+                                    if (m.moveDuringFlight != Moves.NO_ACTION)
+                                    {
+                                        m.landingPlatform = GetPlatform(i , j);
+                                        return CollisionType.Bottom;
+                                    }
                                     if (right)
                                     {
                                         if (GetPlatform(i, j).yTop == GetPlatform((int)(2 * max_x.Item1 + min_x.Item1) / (3 * GameInfo.PIXEL_LENGTH), j).yTop)
@@ -278,7 +282,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private double AngularVelocity(double vx_0)
+        private double AngularVelocity(double vx_0, Moves moveDuringFlight)
         {
             // if vx_0 = 200 -> return 0.5
             // if vx_0 = 100 -> return 1.25
@@ -287,11 +291,26 @@ namespace GeometryFriendsAgents
             
             if (vx_0>=0)
             {
-                return 204.35f / Math.Pow(vx_0, 1.12);
+                if(moveDuringFlight==Moves.MOVE_RIGHT && vx_0 >= 250)
+                {
+                    return 0.15f;
+                }
+                else
+                {
+                    return 204.35f / Math.Pow(vx_0, 1.12);
+                }
             }
             else
             {
-                return -AngularVelocity(-vx_0);
+                if(moveDuringFlight == Moves.MOVE_RIGHT)
+                {
+                    return -AngularVelocity(-vx_0, Moves.MOVE_LEFT);
+                }
+                if (moveDuringFlight == Moves.MOVE_LEFT)
+                {
+                    return -AngularVelocity(-vx_0, Moves.MOVE_RIGHT);
+                }
+                return -AngularVelocity(-vx_0, moveDuringFlight);
             }
         }
 
@@ -299,7 +318,7 @@ namespace GeometryFriendsAgents
         {
             Tuple<double, double> top_left, top_right, bottom_left, bottom_right;
             double radius = Math.Sqrt(RectangleShape.fwidth(s) * RectangleShape.fwidth(s) + RectangleShape.fheight(s) * RectangleShape.fheight(s)) / 2;
-            double angular_velocity = AngularVelocity(vx_0);
+            double angular_velocity = AngularVelocity(vx_0,m.moveDuringFlight);
             double shape_angle = Math.Atan(RectangleShape.fheight(s) / RectangleShape.fwidth(s));
             /*
              *    ----------
@@ -321,14 +340,41 @@ namespace GeometryFriendsAgents
             double vy_t = vy_0;
             int NUM_REBOUNDS = 3;
             int j = 0;
+            double acc_x = 0;
             
             // Initiate with t = 0.1
             double t = 0.1f;
-            x_t = x_t + vx_t * t;
+            if (s ==RectangleShape.Shape.HORIZONTAL && Math.Abs(vx_0)>=250)
+            {
+                t = 0.3f;
+            }
+            /*
+             * MOVE_RIGHT y rightEdge: d < 0 y acc_x > 0 -> |vx_t| > |vx_0| -> vx_t^2 = vx_0^2 - 2*a*d
+             * MOVE_RIGHT y leftEdge: d > 0 y acc_x > 0 -> |vx_t| < |vx_0| -> vx_t^2 = vx_0^2 - 2*a*d
+             * MOVE_LEFT y rightEdge: d < 0 y acc_x < 0 -> |vx_t| < |vx_0| -> vx_t^2 = vx_0^2 - 2*a*d
+             * MOVE_LEFT y leftEdge: d > 0 y acc_x < 0 -> |vx_t| > |vx_0| -> vx_t^2 = vx_0^2 - 2*a*d
+             * */
+
+            if (m.moveDuringFlight == Moves.MOVE_LEFT)
+            {
+                acc_x = -GameInfo.RECTANGLE_ACCELERATION;
+            }
+            else if (m.moveDuringFlight == Moves.MOVE_RIGHT)
+            {
+                acc_x = GameInfo.RECTANGLE_ACCELERATION;
+            }
+            if(m.moveDuringFlight != Moves.NO_ACTION)
+            {
+                double d = (m.velocityX > 0 ? m.departurePlatform.rightEdge * GameInfo.PIXEL_LENGTH : m.departurePlatform.leftEdge * GameInfo.PIXEL_LENGTH) - x_0;
+                vx_t = Math.Sign(vx_0) * Math.Sqrt(vx_0 * vx_0 - 2 * acc_x * d);
+            }
+
+            x_t = x_t + vx_t * t + acc_x * Math.Pow(t, 2) / 2;
             y_t = y_t + vy_t * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2;
             angle -= angular_velocity * t;
             m.path.Add(new Tuple<float, float>((float)x_t, (float)y_t));
             vy_t = vy_t + t * GameInfo.GRAVITY;
+            vx_t = vx_t + t * acc_x;
 
             CollisionType cct = CollisionType.None, last_collision = CollisionType.None;
             while (cct != CollisionType.Bottom && j <= NUM_REBOUNDS)
@@ -351,14 +397,13 @@ namespace GeometryFriendsAgents
                     bottom_left = new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI + shape_angle + angle), y_t - radius * Math.Sin(Math.PI + shape_angle + angle));
                     bottom_right = new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle));
                     
-                    /*if (Math.Abs(vx_0) == 300 && m.departurePlatform.id==3 && m.shape==RectangleShape.Shape.VERTICAL)
+                    if (Math.Abs(vx_0) == 300 && m.shape==RectangleShape.Shape.SQUARE && m.moveDuringFlight==Moves.NO_ACTION && m.departurePlatform.id == 2)
                     {
-                        
                         list_top_left.Add(new Tuple<float, float>((float)top_left.Item1, (float)top_left.Item2));
                         list_top_right.Add(new Tuple<float, float>((float)top_right.Item1, (float)top_right.Item2));
                         list_bottom_left.Add(new Tuple<float, float>((float)bottom_left.Item1, (float)bottom_left.Item2));
                         list_bottom_right.Add(new Tuple<float, float>((float)bottom_right.Item1, (float)bottom_right.Item2));
-                    }*/
+                    }
                 }
                 else
                 {
@@ -400,15 +445,14 @@ namespace GeometryFriendsAgents
                     default:
                         break;
                 }
-                x_t = x_t + vx_t * dt;
+                x_t = x_t + vx_t * dt + acc_x * Math.Pow(dt, 2) / 2;
                 y_t = y_t + vy_t * dt + GameInfo.GRAVITY * Math.Pow(dt, 2) / 2;
                 m.path.Add(new Tuple<float, float>((float)x_t, (float)y_t));
                 vy_t = vy_t + dt * GameInfo.GRAVITY;
+                vx_t = vx_t + dt * acc_x;
             }
-            if (j > NUM_REBOUNDS)
-            {
-                int a = 0;
-            }
+            m.xlandPoint = (int)x_t / GameInfo.PIXEL_LENGTH;
+            m.x = m.velocityX > 0 ? m.departurePlatform.rightEdge : m.departurePlatform.leftEdge;
         }
 
         protected override bool EnoughSpaceToAccelerate(int leftEdge, int rightEdge, int x, int vx)
@@ -423,9 +467,10 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private void AddTrajectory(ref Platform p, int vx, MoveType moveType, int x, RectangleShape.Shape s, Platform landing)
+        private void AddTrajectory(ref Platform p, int vx, MoveType moveType, int x, RectangleShape.Shape s, Platform landing, Moves moveDuringFlight = Moves.NO_ACTION)
         {
             MoveInformation m = new MoveInformation(landing, p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
+            m.moveDuringFlight = moveDuringFlight;
 
             if (moveType == MoveType.TILT)
             {
@@ -444,6 +489,10 @@ namespace GeometryFriendsAgents
             {
                 m.shape = s;
                 SimulateMove(x * GameInfo.PIXEL_LENGTH, p.yTop * GameInfo.PIXEL_LENGTH - RectangleShape.fheight(s) / 2, vx, 0, ref m, s);
+                if (!m.landingPlatform.real)
+                {
+                    return;
+                }
             }
             else if (moveType == MoveType.DROP || moveType == MoveType.MONOSIDEDROP)
             {
@@ -617,6 +666,17 @@ namespace GeometryFriendsAgents
                 }
             }
 
+            for(int k = 0; k < platformList.Count; k++)
+            {
+                Platform p = platformList[k];
+                if (!p.real)
+                {
+                    // DROP MOVES
+                    RectangleShape.Shape s = RectangleShape.Shape.VERTICAL;
+                    AddTrajectory(ref p, 0, MoveType.DROP, (p.rightEdge + p.leftEdge) / 2 + 1, s, new Platform(-1));
+                }
+            }
+
             for (int k = 0; k < platformList.Count; k++)
             {
                 Platform p = platformList[k];
@@ -746,7 +806,7 @@ namespace GeometryFriendsAgents
                     {
                         if (p.shapes[(int)s])
                         {
-                            //for  (int i = 0; i < GameInfo.NUM_VELOCITIES_RECTANGLE; i++)
+                            //for (int i = 0; i < GameInfo.NUM_VELOCITIES_RECTANGLE; i++)
                             Parallel.For(0, GameInfo.NUM_VELOCITIES_RECTANGLE, i =>
                             {
                                 int vx = (i + 1) * GameInfo.VELOCITY_STEP_RECTANGLE;
@@ -757,9 +817,11 @@ namespace GeometryFriendsAgents
                                     {
                                         min_left--;
                                     }
-                                    if (EnoughSpaceToAccelerate(min_left, p.rightEdge, p.rightEdge, vx))
+                                    if (i == 0 || EnoughSpaceToAccelerate(min_left, p.rightEdge, p.rightEdge, vx))
                                     {
                                         AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + Math.Max(5 - i / 2, 1), s, new Platform(-1));
+                                        AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + Math.Max(5 - i / 2, 1), s, new Platform(-1), Moves.MOVE_LEFT);
+                                        AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + Math.Max(5 - i / 2, 1), s, new Platform(-1), Moves.MOVE_RIGHT);
                                     }
                                 }
                                 if (levelMap[p.leftEdge - 1, p.yTop] != PixelType.PLATFORM && levelMap[p.leftEdge - 1, p.yTop] != PixelType.OBSTACLE)
@@ -769,21 +831,17 @@ namespace GeometryFriendsAgents
                                     {
                                         max_right++;
                                     }
-                                    if (EnoughSpaceToAccelerate(p.leftEdge, max_right, p.leftEdge, -vx))
+                                    if (i == 0 || EnoughSpaceToAccelerate(p.leftEdge, max_right, p.leftEdge, -vx))
                                     {
                                         AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(5 - i / 2, 1), s, new Platform(-1));
+                                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(5 - i / 2, 1), s, new Platform(-1), Moves.MOVE_LEFT);
+                                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(5 - i / 2, 1), s, new Platform(-1), Moves.MOVE_RIGHT);
                                     }
                                 }
-                                //}
+                            //}
                             });
                         }
                     }
-                }
-                else
-                {
-                    // DROP MOVES
-                    RectangleShape.Shape s = RectangleShape.Shape.VERTICAL;
-                    AddTrajectory(ref p, 0, MoveType.DROP, (p.rightEdge + p.leftEdge) / 2 + 1, s, new Platform(-1));
                 }
             }
 

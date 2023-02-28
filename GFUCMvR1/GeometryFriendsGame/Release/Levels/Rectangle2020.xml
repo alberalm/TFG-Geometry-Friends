@@ -19,7 +19,10 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="14" />
       <HighScore name="UCMAgent" value="16" />
+      <HighScore name="UCMAgent" value="16" />
+      <HighScore name="UCMAgent" value="21" />
     </HighScores>
   </Level1>
   <Level2>
@@ -43,11 +46,11 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="12" />
       <HighScore name="UCMAgent" value="13" />
       <HighScore name="UCMAgent" value="14" />
       <HighScore name="UCMAgent" value="14" />
       <HighScore name="UCMAgent" value="14" />
-      <HighScore name="UCMAgent" value="15" />
     </HighScores>
   </Level2>
   <Level3>
@@ -71,6 +74,9 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="13" />
+      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="15" />
+      <HighScore name="UCMAgent" value="22" />
     </HighScores>
   </Level3>
   <Level4>
@@ -96,6 +102,9 @@
     <TimeLimit value="180" />
     <HighScores>
       <HighScore name="UCMAgent" value="13" />
+      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="15" />
+      <HighScore name="UCMAgent" value="17" />
       <HighScore name="UCMAgent" value="23" />
     </HighScores>
   </Level4>
@@ -178,9 +187,11 @@
     <OrangeElevators />
     <TimeLimit value="60" />
     <HighScores>
+      <HighScore name="UCMAgent" value="3" />
+      <HighScore name="UCMAgent" value="3" />
+      <HighScore name="UCMAgent" value="3" />
       <HighScore name="UCMAgent" value="6" />
       <HighScore name="UCMAgent" value="7" />
-      <HighScore name="UCMAgent" value="18" />
     </HighScores>
   </Level7>
   <Level8>
@@ -203,6 +214,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="6" />
+      <HighScore name="UCMAgent" value="6" />
+      <HighScore name="UCMAgent" value="6" />
+      <HighScore name="UCMAgent" value="10" />
+      <HighScore name="UCMAgent" value="10" />
     </HighScores>
   </Level8>
   <Level9>

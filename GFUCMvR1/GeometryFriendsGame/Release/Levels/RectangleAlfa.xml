@@ -16,6 +16,7 @@
     <OrangeElevators />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="UCMAgent" value="3" />
       <HighScore name="RandRect" value="13" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
@@ -37,6 +38,7 @@
     <OrangeElevators />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="UCMAgent" value="2" />
       <HighScore name="RandRect" value="5" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
@@ -61,6 +63,7 @@
     <OrangeElevators />
     <TimeLimit value="45" />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="10" />
       <HighScore name="RandPredictorCircle&amp;RandRect" value="45" />
     </HighScores>
   </Level3>
@@ -101,6 +104,7 @@
     <TimeLimit value="25" />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="UCMAgent" value="5" />
       <HighScore name="RandRect" value="25" />
     </HighScores>
   </Level5>
@@ -122,6 +126,7 @@
     <OrangeElevators />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="UCMAgent" value="3" />
       <HighScore name="RandRect" value="8" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
@@ -143,6 +148,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="1" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level7>
@@ -164,6 +170,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="6" />
       <HighScore name="RandRect" value="13" />
     </HighScores>
   </Level8>
@@ -184,6 +191,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="1" />
       <HighScore name="RandRect" value="1" />
     </HighScores>
   </Level9>
@@ -207,6 +215,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="6" />
       <HighScore name="RandRect" value="25" />
     </HighScores>
   </Level10>
@@ -228,6 +237,7 @@
     <OrangeElevators />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="UCMAgent" value="4" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level11>
@@ -249,6 +259,7 @@
     <TimeLimit value="25" />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="UCMAgent" value="8" />
       <HighScore name="RandRect" value="25" />
     </HighScores>
   </Level12>
@@ -270,6 +281,7 @@
     <OrangeElevators />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="UCMAgent" value="4" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level13>
@@ -290,6 +302,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="1" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level14>
@@ -311,6 +324,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="7" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level15>
@@ -331,6 +345,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="2" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level16>
@@ -354,6 +369,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="6" />
       <HighScore name="RandRect" value="25" />
     </HighScores>
   </Level17>
@@ -375,6 +391,7 @@
     <OrangeElevators />
     <TimeLimit value="15" />
     <HighScores>
+      <HighScore name="UCMAgent" value="5" />
       <HighScore name="RandRect" value="15" />
     </HighScores>
   </Level18>

@@ -1,9 +1,14 @@
 ﻿using GeometryFriends.AI;
+using GeometryFriends.AI.Debug;
 using GeometryFriends.AI.Perceptions.Information;
+using GeometryFriends.XNAStub;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using static GeometryFriendsAgents.RectangleShape;
 
@@ -15,7 +20,8 @@ namespace GeometryFriendsAgents
         public Platform next_platform = null;
         public MoveInformation move;
         public Moves lastMove = Moves.NO_ACTION;
-
+        public double tilt_height = 0;
+        
         public ActionSelectorRectangle(Dictionary<CollectibleRepresentation, int> collectibleId, Learning l, LevelMapRectangle levelMap, Graph graph) : base(collectibleId, l, graph)
         {
             this.levelMap = levelMap;
@@ -56,6 +62,11 @@ namespace GeometryFriendsAgents
                         double square_target = target_velocity * target_velocity;
                         if (square_target > sup_threshold)
                         {
+                            double break_point = Math.Abs(current_velocity) * current_velocity / (2 * GameInfo.RECTANGLE_ACCELERATION) + current_position;
+                            if (move.moveType == MoveType.FALL && break_point < move.x * GameInfo.PIXEL_LENGTH)
+                            {
+                                return Moves.MOVE_LEFT;
+                            }
                             return Moves.MOVE_RIGHT;
                         }
                         else if (square_target < inf_threshold)
@@ -239,6 +250,8 @@ namespace GeometryFriendsAgents
             next_platform = null;
 
             RectangleShape.Shape target_shape = move.shape;
+            double target_height = fheight(target_shape);
+
             if (move.x < current_platform.leftEdge || move.x > current_platform.rightEdge)
             {
                 Tuple<Platform, Platform> adjacent_platforms = levelMap.AdjacentPlatforms(currentPlatform);
@@ -281,39 +294,67 @@ namespace GeometryFriendsAgents
                     }
                 }
 
-                /*if (rI.VelocityX >10)
-                {
-                    next_platform = adjacent_platforms.Item2;
-                }
-                else if (rI.VelocityX < -10)
-                {
-                    next_platform = adjacent_platforms.Item1;
-                }
-                else if (move.x * GameInfo.PIXEL_LENGTH < rI.X)
-                {
-                    next_platform = adjacent_platforms.Item1;
-                }
-                else
-                {
-                    next_platform = adjacent_platforms.Item2;
-                }*/
                 target_shape = BestShape(current_platform, next_platform, target_shape, RectangleShape.GetShape(rI));
+                target_height = fheight(target_shape);
             }
-            if (move.moveType != MoveType.DROP || (Math.Abs(rI.X / GameInfo.PIXEL_LENGTH - move.x) <= 1 && Math.Abs(rI.VelocityX) <= 20))
+
+            if (move.moveType == MoveType.TILT && tilt_height == 0)
+            {
+                double xcenter = move.velocityX > 0 ? move.landingPlatform.leftEdge * GameInfo.PIXEL_LENGTH : move.landingPlatform.rightEdge * GameInfo.PIXEL_LENGTH;
+                double ycenter = move.landingPlatform.yTop * GameInfo.PIXEL_LENGTH;
+                for (double h = GameInfo.VERTICAL_RECTANGLE_HEIGHT; h >= Math.Max(GameInfo.SQUARE_HEIGHT, (move.departurePlatform.yTop - move.landingPlatform.yTop) * GameInfo.PIXEL_LENGTH * 2); h -= 4)
+                {
+                    bool fits = true;
+                    double radius1 = h - (move.departurePlatform.yTop - move.landingPlatform.yTop) * GameInfo.PIXEL_LENGTH;
+                    double width = GameInfo.RECTANGLE_AREA / h;
+                    double radius2 = Math.Sqrt(width * width + radius1 * radius1);
+                    double angle_difference = move.velocityX < 0 ? -Math.Atan(width / radius1) : Math.Atan(width / radius1);
+                    for (double theta = Math.PI / 2; move.velocityX > 0 ? theta > 0 : theta < Math.PI;
+                        theta = move.velocityX > 0 ? theta - 0.05 : theta + 0.05)
+                    {
+                        int x1 = (int)(xcenter + radius1 * Math.Cos(theta)) / GameInfo.PIXEL_LENGTH;
+                        int y1 = (int)(ycenter - radius1 * Math.Sin(theta)) / GameInfo.PIXEL_LENGTH - 1;
+                        
+                        int x2 = (int)(xcenter + radius2 * Math.Cos(theta + angle_difference)) / GameInfo.PIXEL_LENGTH;
+                        int y2 = (int)(ycenter - radius1 * Math.Sin(theta + angle_difference)) / GameInfo.PIXEL_LENGTH - 1;
+                        
+                        if (y1 >= move.landingPlatform.yTop)
+                        {
+                            break;
+                        }
+                        if (levelMap.levelMap[x1, y1] == LevelMap.PixelType.OBSTACLE || levelMap.levelMap[x1, y1] == LevelMap.PixelType.PLATFORM ||
+                            levelMap.levelMap[x2, y2] == LevelMap.PixelType.OBSTACLE || levelMap.levelMap[x2, y2] == LevelMap.PixelType.PLATFORM)
+                        {
+                            fits = false;
+                            
+                            break;
+                        }
+                    }
+                    if (fits)
+                    {
+                        tilt_height = h;
+                        break;
+                    }
+                }
+            }
+            else if (move.moveType != MoveType.DROP || (Math.Abs(rI.X / GameInfo.PIXEL_LENGTH - move.x) <= 1 && Math.Abs(rI.VelocityX) <= 20))
             {
                 // Check shape
-                if (target_shape == RectangleShape.Shape.SQUARE && rI.Height < RectangleShape.fheight(target_shape) + 5
-                        && rI.Height > RectangleShape.fheight(target_shape) - 5)
+                if(move.moveType == MoveType.TILT && (next_platform == null || next_platform.id == -1 || target_shape == RectangleShape.Shape.VERTICAL))
+                {
+                    target_height = tilt_height;
+                }
+                if (target_shape == RectangleShape.Shape.SQUARE && rI.Height < target_height + 5 && rI.Height > target_height - 5)
                 {
 
                 }
-                else if (RectangleShape.fheight(target_shape) + 5 < rI.Height)
+                else if (target_height + 3 < rI.Height)
                 {
                     return Moves.MORPH_DOWN;
                 }
-                else if (RectangleShape.fheight(target_shape) - 5 > rI.Height)
+                else if (target_height - 5 > rI.Height)
                 {
-                    if (move.moveType == MoveType.NOMOVE || move.moveType == MoveType.TILT)
+                    if (move.moveType == MoveType.NOMOVE || move.moveType == MoveType.TILT || move.moveType == MoveType.DROP)
                     {
                         if (levelMap.levelMap[(int)rI.X / GameInfo.PIXEL_LENGTH, (int)((rI.Y - 3 * rI.Height / 5) / GameInfo.PIXEL_LENGTH) - 1] != LevelMap.PixelType.OBSTACLE)
                         {
@@ -339,6 +380,45 @@ namespace GeometryFriendsAgents
             {
                 return move_shape;
             }
+            if(move.moveType == MoveType.TILT && next_platform.shapes[(int)RectangleShape.Shape.VERTICAL])
+            {
+                if (move.x > (current_platform.leftEdge + current_platform.rightEdge) / 2)
+                {
+                    bool canKeepVerticalShape = true;
+                    Platform next= levelMap.AdjacentPlatforms(current_platform).Item2;
+                    while (move.x > next.leftEdge)
+                    {
+                        if (!next.shapes[(int)RectangleShape.Shape.VERTICAL])
+                        {
+                            canKeepVerticalShape = false;
+                            break;
+                        }
+                        next = levelMap.AdjacentPlatforms(next).Item2;
+                    }
+                    if(canKeepVerticalShape)
+                    {
+                        return RectangleShape.Shape.VERTICAL;
+                    }
+                }
+                else
+                {
+                    bool canKeepVerticalShape = true;
+                    Platform next = levelMap.AdjacentPlatforms(current_platform).Item1;
+                    while (move.x < next.rightEdge)
+                    {
+                        if (!next.shapes[(int)RectangleShape.Shape.VERTICAL])
+                        {
+                            canKeepVerticalShape = false;
+                            break;
+                        }
+                        next = levelMap.AdjacentPlatforms(next).Item1;
+                    }
+                    if (canKeepVerticalShape)
+                    {
+                        return RectangleShape.Shape.VERTICAL;
+                    }
+                }
+            }
             if (next_platform.shapes[(int)current_shape])
             {
                 return current_shape;
@@ -353,5 +433,6 @@ namespace GeometryFriendsAgents
             }
             return RectangleShape.Shape.VERTICAL;
         }
+        
     }
 }

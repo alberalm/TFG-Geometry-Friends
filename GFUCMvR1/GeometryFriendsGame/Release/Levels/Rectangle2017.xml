@@ -18,9 +18,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="8" />
+      <HighScore name="UCMAgent" value="11" />
+      <HighScore name="UCMAgent" value="11" />
       <HighScore name="UCMAgent" value="11" />
       <HighScore name="RandRect" value="18" />
-      <HighScore name="RRTRectangle" value="89" />
     </HighScores>
   </Level1>
   <Level2>
@@ -43,10 +45,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="12" />
       <HighScore name="UCMAgent" value="15" />
       <HighScore name="RandRect" value="15" />
-      <HighScore name="RRTRectangle" value="24" />
-      <HighScore name="RRTRectangle" value="35" />
+      <HighScore name="UCMAgent" value="21" />
+      <HighScore name="UCMAgent" value="23" />
     </HighScores>
   </Level2>
   <Level3>
@@ -68,11 +71,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="7" />
+      <HighScore name="UCMAgent" value="8" />
+      <HighScore name="UCMAgent" value="8" />
+      <HighScore name="UCMAgent" value="8" />
       <HighScore name="UCMAgent" value="10" />
-      <HighScore name="RRTRectangle" value="14" />
-      <HighScore name="RRTRectangle" value="15" />
-      <HighScore name="RRTRectangle" value="20" />
-      <HighScore name="RRTRectangle" value="34" />
     </HighScores>
   </Level3>
   <Level4>
@@ -103,8 +106,10 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="UCMAgent" value="12" />
+      <HighScore name="UCMAgent" value="12" />
+      <HighScore name="UCMAgent" value="12" />
+      <HighScore name="UCMAgent" value="13" />
       <HighScore name="RandRect" value="22" />
-      <HighScore name="RRTRectangle" value="58" />
     </HighScores>
   </Level4>
   <Level5>
@@ -124,10 +129,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="5" />
+      <HighScore name="UCMAgent" value="5" />
       <HighScore name="RRTRectangle" value="6" />
       <HighScore name="UCMAgent" value="7" />
-      <HighScore name="RRTRectangle" value="12" />
-      <HighScore name="RandRect" value="26" />
     </HighScores>
   </Level5>
   <Level6>
@@ -150,11 +156,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="5" />
       <HighScore name="RandRect" value="5" />
+      <HighScore name="UCMAgent" value="5" />
+      <HighScore name="UCMAgent" value="6" />
       <HighScore name="UCMAgent" value="15" />
-      <HighScore name="RRTRectangle" value="19" />
-      <HighScore name="RRTRectangle" value="20" />
-      <HighScore name="RRTRectangle" value="34" />
     </HighScores>
   </Level6>
   <Level7>
@@ -182,9 +188,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
-      <HighScore name="UCMAgent" value="21" />
-      <HighScore name="RandRect" value="30" />
-      <HighScore name="UCMAgent" value="38" />
+      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="15" />
+      <HighScore name="UCMAgent" value="16" />
     </HighScores>
   </Level7>
   <Level8>
@@ -206,11 +214,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="12" />
       <HighScore name="UCMAgent" value="13" />
       <HighScore name="UCMAgent" value="14" />
-      <HighScore name="UCMAgent" value="16" />
-      <HighScore name="RRTRectangle" value="37" />
-      <HighScore name="RRTRectangle" value="39" />
+      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="14" />
     </HighScores>
   </Level8>
   <Level9>
@@ -233,11 +241,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="6" />
+      <HighScore name="UCMAgent" value="6" />
       <HighScore name="UCMAgent" value="8" />
+      <HighScore name="UCMAgent" value="10" />
       <HighScore name="RandRect" value="11" />
-      <HighScore name="RRTRectangle" value="45" />
-      <HighScore name="RRTRectangle" value="50" />
-      <HighScore name="RRTRectangle" value="60" />
     </HighScores>
   </Level9>
   <Level10>
@@ -258,10 +266,10 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="UCMAgent" value="5" />
-      <HighScore name="No Name" value="6" />
-      <HighScore name="RandRect" value="34" />
-      <HighScore name="RRTRectangle" value="44" />
-      <HighScore name="RRTRectangle" value="53" />
+      <HighScore name="UCMAgent" value="5" />
+      <HighScore name="UCMAgent" value="5" />
+      <HighScore name="UCMAgent" value="5" />
+      <HighScore name="UCMAgent" value="5" />
     </HighScores>
   </Level10>
 </Levels>

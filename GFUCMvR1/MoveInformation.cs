@@ -20,6 +20,7 @@ namespace GeometryFriendsAgents
         public int distanceToObstacle;
         public RectangleShape.Shape shape;
         public bool RightEdgeIsDangerous;
+        public Moves moveDuringFlight;
 
         public MoveInformation(MoveInformation other)
         {
@@ -34,6 +35,7 @@ namespace GeometryFriendsAgents
             this.distanceToObstacle = other.distanceToObstacle;
             this.shape = other.shape;
             this.RightEdgeIsDangerous = other.RightEdgeIsDangerous;
+            this.moveDuringFlight = other.moveDuringFlight;
         }
 
         public MoveInformation(Platform landingPlatform)
@@ -47,6 +49,7 @@ namespace GeometryFriendsAgents
             this.diamondsCollected = new List<int>();
             this.path = null;
             this.distanceToObstacle = 0;
+            this.moveDuringFlight = Moves.NO_ACTION;
         }
 
         public MoveInformation(Platform landingPlatform, Platform departurePlatform, int x, int xlandPoint, int velocityX, MoveType moveType, List<int> diamondsCollected, List<Tuple<float, float>> path, int distanceToObstacle)
@@ -60,6 +63,7 @@ namespace GeometryFriendsAgents
             this.diamondsCollected = diamondsCollected;
             this.path = path;
             this.distanceToObstacle = distanceToObstacle;
+            this.moveDuringFlight = Moves.NO_ACTION;
             if(velocityX > 0)
             {
                 RightEdgeIsDangerous = true;
@@ -197,7 +201,7 @@ namespace GeometryFriendsAgents
             {
                 foreach(MoveInformation adj in platformList[other.landingPlatform.id].moveInfoList)
                 {
-                    if(adj.moveType == MoveType.ADJACENT && adj.landingPlatform.id == landingPlatform.id)
+                    if((adj.moveType == MoveType.ADJACENT || adj.moveType == MoveType.DROP) && adj.landingPlatform.id == landingPlatform.id)
                     {
                         return -1;
                     }
@@ -206,6 +210,10 @@ namespace GeometryFriendsAgents
             if (landingPlatform.id != other.landingPlatform.id || departurePlatform.id != other.departurePlatform.id)
             {
                 return 0;
+            }
+            if(moveType == MoveType.FALL && other.moveType == MoveType.ADJACENT)
+            {
+                return -1;
             }
             if (moveType == MoveType.NOMOVE && other.moveType == MoveType.NOMOVE && diamondsCollected[0] == other.diamondsCollected[0])
             {
@@ -244,24 +252,21 @@ namespace GeometryFriendsAgents
             {
                 if(moveType == MoveType.FALL && other.moveType == MoveType.FALL)
                 {
-                    if(landingPlatform.yTop == departurePlatform.yTop)
+                    if(shape == RectangleShape.Shape.HORIZONTAL && other.shape != RectangleShape.Shape.HORIZONTAL)
                     {
-                        if(shape == RectangleShape.Shape.HORIZONTAL && other.shape != RectangleShape.Shape.HORIZONTAL)
-                        {
-                            return 1;
-                        }
-                        if(other.shape == RectangleShape.Shape.HORIZONTAL && shape != RectangleShape.Shape.HORIZONTAL)
-                        {
-                            return -1;
-                        }
-                        if(shape == RectangleShape.Shape.SQUARE && other.shape == RectangleShape.Shape.VERTICAL)
-                        {
-                            return 1;
-                        }
-                        if (shape == RectangleShape.Shape.VERTICAL && other.shape == RectangleShape.Shape.SQUARE)
-                        {
-                            return -1;
-                        }
+                        return 1;
+                    }
+                    if(other.shape == RectangleShape.Shape.HORIZONTAL && shape != RectangleShape.Shape.HORIZONTAL)
+                    {
+                        return -1;
+                    }
+                    if(shape == RectangleShape.Shape.SQUARE && other.shape == RectangleShape.Shape.VERTICAL)
+                    {
+                        return 1;
+                    }
+                    if (shape == RectangleShape.Shape.VERTICAL && other.shape == RectangleShape.Shape.SQUARE)
+                    {
+                        return -1;
                     }
                 }
                 if (this.Value() < other.Value())

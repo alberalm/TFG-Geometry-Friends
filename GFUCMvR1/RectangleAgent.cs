@@ -60,7 +60,6 @@ namespace GeometryFriendsAgents
         //Execution
         ActionSelectorRectangle actionSelector;
         Platform currentPlatform;
-        private bool tilted = false;
         private bool hasFinishedDrop = true;
         private bool hasFinishedTilt = true;
 
@@ -135,7 +134,6 @@ namespace GeometryFriendsAgents
 
             plan = graph.SearchAlgorithm(levelMap.PlatformBelowRectangle(rI).id, colI, null);
             
-            
             fullPlan = new List<MoveInformation>(plan);
 
             actionSelector = new ActionSelectorRectangle(collectibleId, l, levelMap, graph);
@@ -151,7 +149,7 @@ namespace GeometryFriendsAgents
         {
             levelMap.DrawLevelMap(ref newDebugInfo);
             levelMap.DrawConnections(ref newDebugInfo);
-            levelMap.DrawConnectionsVertex(ref newDebugInfo);
+            levelMap.DrawConnectionsVertex(ref newDebugInfo);            
             PlanDebug();
         }
 
@@ -317,8 +315,22 @@ namespace GeometryFriendsAgents
             return currentAction;
         }
 
-        //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
+        {
+            UpdateDraw();
+            t += elapsedGameTime.TotalMilliseconds;
+            if (levelMap.RectanglePlatform(rectangleInfo).id != -1 && rectangleInfo.VelocityX < 300)
+            {
+                currentAction = Moves.MOVE_RIGHT;
+            }
+            else
+            {
+                currentAction = Moves.NO_ACTION;
+            }
+        }
+
+        //implements abstract rectangle interface: updates the agent state logic and predictions
+        public void Update2(TimeSpan elapsedGameTime)
         {
             if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 5 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 5)
             {
@@ -378,6 +390,7 @@ namespace GeometryFriendsAgents
                     if (Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH)
                     {
                         hasFinishedTilt = true;
+                        actionSelector.tilt_height = 0;
                     }
                     else
                     {
@@ -400,7 +413,9 @@ namespace GeometryFriendsAgents
                 }
             }
 
-            if (!levelMap.AtBorder(rectangleInfo, currentPlatform, ref currentAction, plan))
+            if ((actionSelector.move != null && actionSelector.move.moveType == MoveType.FALL &&
+                Math.Abs(actionSelector.move.x * GameInfo.PIXEL_LENGTH - rectangleInfo.X) <= 2 * GameInfo.PIXEL_LENGTH)
+                || !levelMap.AtBorder(rectangleInfo, currentPlatform, ref currentAction, plan))
             {
                 if (currentPlatform.id == -1) // Rectangle is in the air
                 {
@@ -434,6 +449,10 @@ namespace GeometryFriendsAgents
                             {
                                 currentAction = Moves.NO_ACTION;
                             }
+                        }
+                        else if (actionSelector.move.moveType == MoveType.FALL)
+                        {
+                            currentAction = actionSelector.move.moveDuringFlight;
                         }
                         else
                         {
