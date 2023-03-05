@@ -67,6 +67,7 @@ namespace GeometryFriendsAgents
         public CollectibleRepresentation[] initialCollectibles;
         public List<Platform> platforms;
         public Stopwatch sw;
+        public bool PlanIsComplete = false;
 
         public Graph(int V)
         {
@@ -160,6 +161,7 @@ namespace GeometryFriendsAgents
 
         public List<MoveInformation> SearchAlgorithm(int src, CollectibleRepresentation[] uncaught, MoveInformation previous_move)
         {
+            PlanIsComplete = false;
             Dictionary<int, int> diamonds = new Dictionary<int, int>();
             List<Diamond> newList = new List<Diamond>();
             int count = 0;
@@ -234,6 +236,7 @@ namespace GeometryFriendsAgents
                     n.plan.RemoveAt(0);
                     if (previous_move == null)
                     {
+                        PlanIsComplete = true;
                         return n.plan;
                     }
                     else
@@ -256,6 +259,7 @@ namespace GeometryFriendsAgents
                         }
                         else
                         {
+                            PlanIsComplete = true;
                             return n.plan;
                         }
                     }
@@ -277,6 +281,7 @@ namespace GeometryFriendsAgents
             // If we find no complete solution, we return the one that catches the most diamonds possible
             if (reserve_plan != null)
             {
+                PlanIsComplete = true;
                 return reserve_plan;
             }
             if (sol.plan == null || sol.plan.Count==0)
@@ -336,5 +341,6 @@ namespace GeometryFriendsAgents
             }
             return g;
         }
+        
     }
 }

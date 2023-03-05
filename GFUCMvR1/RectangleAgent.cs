@@ -8,6 +8,7 @@ using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace GeometryFriendsAgents
@@ -132,7 +133,42 @@ namespace GeometryFriendsAgents
 
             graph = new Graph(levelMap.simplified_platforms, colI);
 
-            plan = graph.SearchAlgorithm(levelMap.PlatformBelowRectangle(rI).id, colI, null);
+            Platform initialPlatform = levelMap.PlatformBelowRectangle(rI);
+            plan = graph.SearchAlgorithm(initialPlatform.id, colI, null);
+
+            if (!graph.PlanIsComplete)
+            {
+                MoveInformation m_left = new MoveInformation(new Platform(-1), new Platform(-1), (int) rectangleInfo.X / GameInfo.PIXEL_LENGTH,(int) rectangleInfo.X / GameInfo.PIXEL_LENGTH, 0, MoveType.FALL, new List<int>(), new List<Tuple<float, float>>(), 10);
+                m_left.moveDuringFlight = Moves.MOVE_LEFT;
+                levelMap.SimulateMove(rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_left, RectangleShape.GetShape(rectangleInfo));
+
+                MoveInformation m_right = new MoveInformation(new Platform(-1), new Platform(-1), (int)rectangleInfo.X / GameInfo.PIXEL_LENGTH, (int)rectangleInfo.X / GameInfo.PIXEL_LENGTH, 0, MoveType.FALL, new List<int>(), new List<Tuple<float, float>>(), 10);
+                m_right.moveDuringFlight = Moves.MOVE_RIGHT;
+                levelMap.SimulateMove(rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_right, RectangleShape.GetShape(rectangleInfo));
+                
+                if(m_left.landingPlatform.id >= 0 && levelMap.small_to_simplified[m_left.landingPlatform].id != initialPlatform.id)
+                {
+                    List<MoveInformation> plan_left = graph.SearchAlgorithm(levelMap.small_to_simplified[m_left.landingPlatform].id, colI, null);
+                    if (graph.PlanIsComplete)
+                    {
+                        plan = plan_left;
+                        currentAction = Moves.MOVE_LEFT;
+                    }
+                }
+                if (m_right.landingPlatform.id >= 0 && levelMap.small_to_simplified[m_right.landingPlatform].id != initialPlatform.id)
+                {
+                    List<MoveInformation> plan_right = graph.SearchAlgorithm(levelMap.small_to_simplified[m_right.landingPlatform].id, colI, null);
+                    if (graph.PlanIsComplete)
+                    {
+                        if (currentAction == Moves.NO_ACTION || plan_right.Count < plan.Count)
+                        {
+                            plan = plan_right;
+                            currentAction = Moves.MOVE_RIGHT;
+                        }
+                    }
+                }
+                
+            }
             
             fullPlan = new List<MoveInformation>(plan);
 
@@ -315,7 +351,7 @@ namespace GeometryFriendsAgents
             return currentAction;
         }
 
-        public override void Update(TimeSpan elapsedGameTime)
+        public void Update2(TimeSpan elapsedGameTime)
         {
             UpdateDraw();
             t += elapsedGameTime.TotalMilliseconds;
@@ -330,7 +366,7 @@ namespace GeometryFriendsAgents
         }
 
         //implements abstract rectangle interface: updates the agent state logic and predictions
-        public void Update2(TimeSpan elapsedGameTime)
+        public override void Update(TimeSpan elapsedGameTime)
         {
             if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 5 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 5)
             {
@@ -453,6 +489,42 @@ namespace GeometryFriendsAgents
                         else if (actionSelector.move.moveType == MoveType.FALL)
                         {
                             currentAction = actionSelector.move.moveDuringFlight;
+                            /*if(actionSelector.move.moveDuringFlight != Moves.NO_ACTION)
+                            {
+                                currentAction = actionSelector.move.moveDuringFlight;
+                            }
+                            else
+                            {
+                                int xmidpoint = (actionSelector.move.landingPlatform.leftEdge + actionSelector.move.landingPlatform.rightEdge) / 2;
+                                MoveInformation m_left = new MoveInformation(actionSelector.move);
+                                m_left.moveDuringFlight = Moves.MOVE_LEFT;
+                                m_left.landingPlatform = new Platform(-1);
+                                levelMap.SimulateMove(rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_left, RectangleShape.GetShape(rectangleInfo));
+                                MoveInformation m_right = new MoveInformation(actionSelector.move);
+                                m_right.moveDuringFlight = Moves.MOVE_RIGHT;
+                                m_right.landingPlatform = new Platform(-1);
+                                levelMap.SimulateMove(rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_right, RectangleShape.GetShape(rectangleInfo));
+                                currentAction = Moves.NO_ACTION;
+                                if (m_left.landingPlatform.id >= 0 &&
+                                    levelMap.small_to_simplified[m_left.landingPlatform].id == actionSelector.move.landingPlatform.id)
+                                {
+                                    if (Math.Abs(m_left.xlandPoint - xmidpoint) < Math.Abs(actionSelector.move.xlandPoint-xmidpoint))
+                                    {
+                                        currentAction = Moves.MOVE_LEFT;
+                                    }
+                                }
+                                if(m_right.landingPlatform.id >= 0 &&
+                                    levelMap.small_to_simplified[m_right.landingPlatform].id == actionSelector.move.landingPlatform.id)
+                                {
+                                    if ((currentAction == Moves.NO_ACTION &&
+                                        Math.Abs(m_right.xlandPoint - xmidpoint) < Math.Abs(actionSelector.move.xlandPoint - xmidpoint))
+                                        || (currentAction == Moves.MOVE_LEFT &&
+                                        Math.Abs(m_right.xlandPoint - xmidpoint) < Math.Abs(m_left.xlandPoint - xmidpoint)))
+                                    {
+                                        currentAction = Moves.MOVE_RIGHT;
+                                    }
+                                }
+                            }*/
                         }
                         else
                         {
@@ -462,6 +534,7 @@ namespace GeometryFriendsAgents
                     else
                     {
                         // TODO
+
                     }
                 }
                 else

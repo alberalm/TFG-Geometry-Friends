@@ -352,7 +352,7 @@ namespace GeometryFriendsAgents
                 {
                     return Moves.MORPH_DOWN;
                 }
-                else if (target_height - 5 > rI.Height)
+                else if ((target_height == RectangleShape.fheight(RectangleShape.Shape.VERTICAL) ? target_height - 3 : target_height - 5) > rI.Height)
                 {
                     if (move.moveType == MoveType.NOMOVE || move.moveType == MoveType.TILT || move.moveType == MoveType.DROP)
                     {

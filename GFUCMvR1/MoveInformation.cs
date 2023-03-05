@@ -196,6 +196,7 @@ namespace GeometryFriendsAgents
         // Returns 1 is this is better, -1 if other is better, 0 if not clear or not comparable
         public int CompareRectangle(MoveInformation other, CollectibleRepresentation[] initialCollectiblesInfo, List<Platform> platformList)
         {
+            
             if(departurePlatform.id == other.departurePlatform.id && moveType == MoveType.FALL && other.moveType == MoveType.ADJACENT
                 && !other.landingPlatform.real && other.departurePlatform.real)
             {
@@ -268,6 +269,15 @@ namespace GeometryFriendsAgents
                     {
                         return -1;
                     }
+                    if (moveDuringFlight != Moves.NO_ACTION && other.moveDuringFlight==Moves.NO_ACTION)
+                    {
+                        return -1;
+                    }
+                    if (moveDuringFlight == Moves.NO_ACTION && other.moveDuringFlight != Moves.NO_ACTION)
+                    {
+                        return 1;
+                    }
+
                 }
                 if (this.Value() < other.Value())
                 {

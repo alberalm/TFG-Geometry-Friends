@@ -22,8 +22,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="15" />
       <HighScore name="No Name" value="17" />
-      <HighScore name="UCMAgent" value="31" />
+      <HighScore name="UCMAgent" value="21" />
+      <HighScore name="UCMAgent" value="22" />
+      <HighScore name="UCMAgent" value="24" />
     </HighScores>
   </Level1>
   <Level2>
@@ -113,7 +116,9 @@
     <HighScores>
       <HighScore name="No Name" value="8" />
       <HighScore name="No Name" value="8" />
-      <HighScore name="No Name" value="11" />
+      <HighScore name="UCMAgent" value="10" />
+      <HighScore name="UCMAgent" value="10" />
+      <HighScore name="UCMAgent" value="11" />
     </HighScores>
   </Level4>
   <Level5>
@@ -141,7 +146,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent" value="8" />
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="9" />
       <HighScore name="No Name" value="12" />
+      <HighScore name="UCMAgent" value="13" />
     </HighScores>
   </Level5>
 </Levels>

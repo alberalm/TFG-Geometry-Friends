@@ -289,7 +289,7 @@ namespace GeometryFriendsAgents
             // if vx_0 = 300 -> return 0.3125
             // if vx_0 = 400 -> return 0.28
             
-            if (vx_0>=0)
+            if (vx_0 > 0)
             {
                 if(moveDuringFlight==Moves.MOVE_RIGHT && vx_0 >= 250)
                 {
@@ -300,7 +300,7 @@ namespace GeometryFriendsAgents
                     return 204.35f / Math.Pow(vx_0, 1.12);
                 }
             }
-            else
+            else if(vx_0 < 0)
             {
                 if(moveDuringFlight == Moves.MOVE_RIGHT)
                 {
@@ -311,6 +311,10 @@ namespace GeometryFriendsAgents
                     return -AngularVelocity(-vx_0, Moves.MOVE_RIGHT);
                 }
                 return -AngularVelocity(-vx_0, moveDuringFlight);
+            }
+            else
+            {
+                return 0;
             }
         }
 
@@ -344,7 +348,7 @@ namespace GeometryFriendsAgents
             
             // Initiate with t = 0.1
             double t = 0.1f;
-            if (s ==RectangleShape.Shape.HORIZONTAL && Math.Abs(vx_0)>=250)
+            if (s == RectangleShape.Shape.HORIZONTAL && Math.Abs(vx_0)>=250)
             {
                 t = 0.3f;
             }
@@ -363,7 +367,7 @@ namespace GeometryFriendsAgents
             {
                 acc_x = GameInfo.RECTANGLE_ACCELERATION;
             }
-            if(m.moveDuringFlight != Moves.NO_ACTION)
+            if(m.moveDuringFlight != Moves.NO_ACTION && m.departurePlatform.id != -1)
             {
                 double d = (m.velocityX > 0 ? m.departurePlatform.rightEdge * GameInfo.PIXEL_LENGTH : m.departurePlatform.leftEdge * GameInfo.PIXEL_LENGTH) - x_0;
                 vx_t = Math.Sign(vx_0) * Math.Sqrt(vx_0 * vx_0 - 2 * acc_x * d);
@@ -397,7 +401,7 @@ namespace GeometryFriendsAgents
                     bottom_left = new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI + shape_angle + angle), y_t - radius * Math.Sin(Math.PI + shape_angle + angle));
                     bottom_right = new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle));
                     
-                    if (Math.Abs(vx_0) == 300 && m.shape==RectangleShape.Shape.SQUARE && m.moveDuringFlight==Moves.NO_ACTION && m.departurePlatform.id == 2)
+                    if (m.departurePlatform.id == -1)
                     {
                         list_top_left.Add(new Tuple<float, float>((float)top_left.Item1, (float)top_left.Item2));
                         list_top_right.Add(new Tuple<float, float>((float)top_right.Item1, (float)top_right.Item2));
@@ -547,6 +551,24 @@ namespace GeometryFriendsAgents
                         if (!m.diamondsCollected.Contains(d))
                         {
                             m.diamondsCollected.Add(d);
+                        }
+                    }
+                }
+                if(s == RectangleShape.Shape.VERTICAL)
+                {
+                    double ytop = p.yTop * GameInfo.PIXEL_LENGTH - RectangleShape.fheight(s);
+                    for (double xtop = x * GameInfo.PIXEL_LENGTH - RectangleShape.fwidth(s) / 2; xtop  <= x * GameInfo.PIXEL_LENGTH + RectangleShape.fwidth(s) / 2; xtop++)
+                    {
+                        for(int d =0; d< initialCollectiblesInfo.Length; d++)
+                        {
+                            CollectibleRepresentation c = initialCollectiblesInfo[d];
+                            if (Math.Abs(c.X-xtop)+ Math.Abs(c.Y - ytop) <=32)
+                            {
+                                if (!m.diamondsCollected.Contains(d))
+                                {
+                                    m.diamondsCollected.Add(d);
+                                }
+                            }
                         }
                     }
                 }
