@@ -20,7 +20,7 @@ namespace GeometryFriendsAgents
         public const float FALL_VELOCITYY = 0;
         public const float GRAVITY = 299.1f;
         public const float CIRCLE_ACCELERATION = 118f;
-        public const float RECTANGLE_ACCELERATION = 156f;
+        public const float RECTANGLE_ACCELERATION = 150f;
 
         public const int LEVEL_MAP_WIDTH = 160;
         public const int LEVEL_MAP_HEIGHT = 100;
@@ -40,7 +40,7 @@ namespace GeometryFriendsAgents
         public const int VELOCITY_STEP_PHISICS = 15;
         public const int VELOCITY_STEP_QLEARNING = 20;
         public const bool PHYSICS = true;
-        public const int TESTING_VELOCITY = 400;
+        public const int TESTING_VELOCITY = 100;
 
         public const string Q_PATH1 = @"Q_table_";
         public const string Q_PATH2 = @".csv";

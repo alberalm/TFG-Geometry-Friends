@@ -31,7 +31,7 @@ namespace GeometryFriendsAgents
         public class Diamond
         {
             public int id;
-            public int isAbovePlatform; // -1 means there is no platform, if there are several platforms, we pick the highest one
+            public List<int> isAbovePlatform; // -1 means there is no platform, if there are several platforms, we pick the highest one
             public List<MoveInformation> moves;
             public List<Platform> platforms;
 
@@ -40,7 +40,7 @@ namespace GeometryFriendsAgents
                 this.id = id;
                 this.moves = new List<MoveInformation>();
                 this.platforms = new List<Platform>();
-                this.isAbovePlatform = -1;
+                this.isAbovePlatform = new List<int>();
             }
         }
 
@@ -100,10 +100,7 @@ namespace GeometryFriendsAgents
                 adj.Add(new List<Edge>());
                 foreach(int d in platforms[i].ReachableCollectiblesLandingInThisPlatform())
                 {
-                    if(this.collectibles[d].isAbovePlatform == -1)
-                    {
-                        this.collectibles[d].isAbovePlatform = i;
-                    }
+                    this.collectibles[d].isAbovePlatform.Add(i);
                 }
                 foreach (MoveInformation m in platforms[i].moveInfoList)
                 {
@@ -118,18 +115,17 @@ namespace GeometryFriendsAgents
             }
             foreach(Diamond d in this.collectibles)
             {
-                if(d.isAbovePlatform != -1)
+                if(d.isAbovePlatform.Count() > 0)
                 {
                     for(int i = 0; i < d.moves.Count; i++)
                     {
                         MoveInformation m = d.moves[i];
-                        if(m.landingPlatform.id != d.isAbovePlatform || m.departurePlatform.id != d.isAbovePlatform)
+                        if(!d.isAbovePlatform.Contains(m.landingPlatform.id) || !d.isAbovePlatform.Contains(m.departurePlatform.id))
                         {
                             d.moves.Remove(m);
                             i--;
                         }
                     }
-                    // There should be just one move after this
                 }
             }
         }
@@ -188,18 +184,18 @@ namespace GeometryFriendsAgents
             int limit = collectibles.Count;
             foreach(Diamond d in collectibles)
             {
-                if(d.isAbovePlatform != -1)
+                if(d.isAbovePlatform.Count > 0)
                 {
                     limit--;
                 }
             }
-            sw.Restart();
+            //sw.Restart();
             while (queue.Count > 0)
             {
                 Node n = queue[0];
                 queue.RemoveAt(0);
                 // If depth is too high (more than #platforms * #collectibles), we our representation does not have any solution
-                if (n.depth > platforms.Count * Math.Max(limit, 3) || sw.ElapsedMilliseconds >= 500)
+                if (n.depth > platforms.Count * Math.Max(limit, 3) /*|| sw.ElapsedMilliseconds >= 500*/)
                 {
                     continue;
                 }
@@ -219,7 +215,7 @@ namespace GeometryFriendsAgents
                 {
                     if (!n.caught[i])
                     {
-                        if (collectibles[i].isAbovePlatform == move.landingPlatform.id)
+                        if (collectibles[i].isAbovePlatform.Contains(move.landingPlatform.id))
                         {
                             n.caught[i] = true;
                             n.numCaught++;

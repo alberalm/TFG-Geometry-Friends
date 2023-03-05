@@ -40,7 +40,7 @@ namespace GeometryFriendsAgents
                             {
                                 if  (diamond.id == d)
                                 {
-                                    if (diamond.isAbovePlatform == p.id || m.moveType == MoveType.NOMOVE)
+                                    if (diamond.isAbovePlatform.Contains(p.id))
                                     {
                                         if (Math.Abs(m.x - agentX) < mindistance && (next_move == null || !next_move.diamondsCollected.Contains(d)))
                                         {

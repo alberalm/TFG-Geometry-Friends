@@ -23,7 +23,7 @@
       <HighScore name="UCMAgent" value="5" />
       <HighScore name="UCMAgent" value="5" />
       <HighScore name="UCMAgent" value="5" />
-      <HighScore name="UCMAgent" value="6" />
+      <HighScore name="UCMAgent" value="5" />
     </HighScores>
   </Level1>
   <Level2>
@@ -102,6 +102,8 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="13" />
+      <HighScore name="UCMAgent" value="13" />
       <HighScore name="UCMAgent" value="17" />
       <HighScore name="UCMAgent" value="17" />
       <HighScore name="UCMAgent" value="19" />

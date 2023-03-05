@@ -60,11 +60,11 @@
     <OrangeElevators />
     <TimeLimit value="90" />
     <HighScores>
+      <HighScore name="UCMAgent" value="22" />
       <HighScore name="RandCircle&amp;RandRect" value="37" />
       <HighScore name="RandCircle&amp;RandRect" value="37" />
       <HighScore name="UCMAgent" value="38" />
       <HighScore name="RandCircle&amp;RandRect" value="39" />
-      <HighScore name="RandCircle&amp;RandRect" value="41" />
     </HighScores>
   </Level2>
   <Level3>

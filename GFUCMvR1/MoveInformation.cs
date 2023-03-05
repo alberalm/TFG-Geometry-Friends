@@ -219,22 +219,19 @@ namespace GeometryFriendsAgents
             {
                 if(Utilities.Contained(diamondsCollected, other.diamondsCollected) && Utilities.Contained(other.diamondsCollected, diamondsCollected))
                 {
-                    if(diamondsCollected[0] == other.diamondsCollected[0])
+                    if (RectangleShape.CompareShapes(shape, other.shape) != 0)
                     {
-                        if (RectangleShape.CompareShapes(shape, other.shape) != 0)
+                        return RectangleShape.CompareShapes(shape, other.shape);
+                    }
+                    else
+                    {
+                        if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) < Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
                         {
-                            return RectangleShape.CompareShapes(shape, other.shape);
+                            return 1;
                         }
-                        else
+                        if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) > Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
                         {
-                            if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) < Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
-                            {
-                                return 1;
-                            }
-                            if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) > Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
-                            {
-                                return -1;
-                            }
+                            return -1;
                         }
                     }
                 }

@@ -282,35 +282,20 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private double AngularVelocity(double vx_0, Moves moveDuringFlight)
+        private double AngularVelocity(double vx_0)
         {
             // if vx_0 = 200 -> return 0.5
             // if vx_0 = 100 -> return 1.25
             // if vx_0 = 300 -> return 0.3125
             // if vx_0 = 400 -> return 0.28
-            
+
             if (vx_0 > 0)
             {
-                if(moveDuringFlight==Moves.MOVE_RIGHT && vx_0 >= 250)
-                {
-                    return 0.15f;
-                }
-                else
-                {
-                    return 204.35f / Math.Pow(vx_0, 1.12);
-                }
+                return 204.35f / Math.Pow(vx_0, 1.12);
             }
             else if(vx_0 < 0)
             {
-                if(moveDuringFlight == Moves.MOVE_RIGHT)
-                {
-                    return -AngularVelocity(-vx_0, Moves.MOVE_LEFT);
-                }
-                if (moveDuringFlight == Moves.MOVE_LEFT)
-                {
-                    return -AngularVelocity(-vx_0, Moves.MOVE_RIGHT);
-                }
-                return -AngularVelocity(-vx_0, moveDuringFlight);
+                return -AngularVelocity(-vx_0);
             }
             else
             {
@@ -322,7 +307,7 @@ namespace GeometryFriendsAgents
         {
             Tuple<double, double> top_left, top_right, bottom_left, bottom_right;
             double radius = Math.Sqrt(RectangleShape.fwidth(s) * RectangleShape.fwidth(s) + RectangleShape.fheight(s) * RectangleShape.fheight(s)) / 2;
-            double angular_velocity = AngularVelocity(vx_0,m.moveDuringFlight);
+            double angular_velocity = AngularVelocity(vx_0);
             double shape_angle = Math.Atan(RectangleShape.fheight(s) / RectangleShape.fwidth(s));
             /*
              *    ----------
@@ -375,6 +360,7 @@ namespace GeometryFriendsAgents
 
             x_t = x_t + vx_t * t + acc_x * Math.Pow(t, 2) / 2;
             y_t = y_t + vy_t * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2;
+            angular_velocity = AngularVelocity(vx_t);
             angle -= angular_velocity * t;
             m.path.Add(new Tuple<float, float>((float)x_t, (float)y_t));
             vy_t = vy_t + t * GameInfo.GRAVITY;
@@ -401,7 +387,7 @@ namespace GeometryFriendsAgents
                     bottom_left = new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI + shape_angle + angle), y_t - radius * Math.Sin(Math.PI + shape_angle + angle));
                     bottom_right = new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle));
                     
-                    if (m.departurePlatform.id == -1)
+                    if (Math.Abs(vx_0)==GameInfo.TESTING_VELOCITY && s==RectangleShape.Shape.SQUARE && m.moveDuringFlight==Moves.MOVE_RIGHT)
                     {
                         list_top_left.Add(new Tuple<float, float>((float)top_left.Item1, (float)top_left.Item2));
                         list_top_right.Add(new Tuple<float, float>((float)top_right.Item1, (float)top_right.Item2));
@@ -411,6 +397,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
+                    angular_velocity = AngularVelocity(vx_t);
                     angle += angular_velocity * dt;
                 }
                 switch (cct)
@@ -1362,6 +1349,18 @@ namespace GeometryFriendsAgents
                 }
             }
             return new Tuple<Platform, Platform>(left, right);
+        }
+
+        public bool HitsCeiling(RectangleRepresentation rI, Platform current_platform)
+        {
+            int x = (int)rI.X / GameInfo.PIXEL_LENGTH;
+            int y = (int)rI.Y / GameInfo.PIXEL_LENGTH;
+
+            while (y >= 0 && (levelMap[x,y]==PixelType.EMPTY|| levelMap[x, y] == PixelType.DIAMOND))
+            {
+                y--;
+            }
+            return (current_platform.yTop - y - 1) * GameInfo.PIXEL_LENGTH < rI.Height + 3;
         }
     }
 }
