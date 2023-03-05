@@ -196,7 +196,6 @@ namespace GeometryFriendsAgents
         // Returns 1 is this is better, -1 if other is better, 0 if not clear or not comparable
         public int CompareRectangle(MoveInformation other, CollectibleRepresentation[] initialCollectiblesInfo, List<Platform> platformList)
         {
-            
             if(departurePlatform.id == other.departurePlatform.id && moveType == MoveType.FALL && other.moveType == MoveType.ADJACENT
                 && !other.landingPlatform.real && other.departurePlatform.real)
             {
@@ -216,21 +215,38 @@ namespace GeometryFriendsAgents
             {
                 return -1;
             }
-            if (moveType == MoveType.NOMOVE && other.moveType == MoveType.NOMOVE && diamondsCollected[0] == other.diamondsCollected[0])
+            if (moveType == MoveType.NOMOVE && other.moveType == MoveType.NOMOVE)
             {
-                if (RectangleShape.CompareShapes(shape, other.shape) != 0)
+                if(Utilities.Contained(diamondsCollected, other.diamondsCollected) && Utilities.Contained(other.diamondsCollected, diamondsCollected))
                 {
-                    return RectangleShape.CompareShapes(shape, other.shape);
+                    if(diamondsCollected[0] == other.diamondsCollected[0])
+                    {
+                        if (RectangleShape.CompareShapes(shape, other.shape) != 0)
+                        {
+                            return RectangleShape.CompareShapes(shape, other.shape);
+                        }
+                        else
+                        {
+                            if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) < Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
+                            {
+                                return 1;
+                            }
+                            if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) > Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
+                            {
+                                return -1;
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) < Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
-                    {
-                        return 1;
-                    }
-                    if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) > Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
+                    if(Utilities.Contained(diamondsCollected, other.diamondsCollected))
                     {
                         return -1;
+                    }
+                    if(Utilities.Contained(other.diamondsCollected, diamondsCollected))
+                    {
+                        return 1;
                     }
                 }
             }

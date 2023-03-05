@@ -72,19 +72,23 @@
     <BallStartingPosition X="-1000" Y="-1000" />
     <SquareStartingPosition X="104" Y="680" />
     <Collectibles>
-      <Collectible X="1032" Y="552" />
+      <Collectible X="1192" Y="712" />
     </Collectibles>
     <GreenObstacles />
     <BlackObstacles>
-      <Obstacle width="16" height="16" X="1000" Y="40" centered="false" />
       <Obstacle width="240" height="160" X="728" Y="536" centered="false" />
       <Obstacle width="272" height="160" X="344" Y="536" centered="false" />
+      <Obstacle width="272" height="64" X="344" Y="472" centered="false" />
+      <Obstacle width="240" height="64" X="728" Y="472" centered="false" />
+      <Obstacle width="576" height="576" X="40" Y="24" centered="false" />
+      <Obstacle width="624" height="448" X="616" Y="24" centered="false" />
+      <Obstacle width="288" height="208" X="968" Y="472" centered="false" />
     </BlackObstacles>
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
-      <HighScore name="UCMAgent" value="44" />
+      <HighScore name="UCMAgent" value="4" />
     </HighScores>
   </Level4>
 </Levels>

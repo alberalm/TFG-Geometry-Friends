@@ -621,7 +621,7 @@ namespace GeometryFriendsAgents
                             {
                                 if (p2.yTop == p.yTop && p.shapes[(int)s] && p2.shapes[(int)s])
                                 {
-                                    if (p2.leftEdge == p.rightEdge || p2.leftEdge == p.rightEdge + 1)
+                                    if (p2.leftEdge == p.rightEdge || (i == k + 1 && p2.leftEdge == p.rightEdge + 1))
                                     {
                                         if (p.ShapesAreEqual(p2))
                                         {
@@ -1057,7 +1057,7 @@ namespace GeometryFriendsAgents
                         {
                             if (p1.leftEdge < p2.leftEdge)
                             {
-                                Platform pLeft = new Platform(platformList.Count, p1.yTop, p1.leftEdge, p2.leftEdge, new List<MoveInformation>());
+                                Platform pLeft = new Platform(platformList[platformList.Count - 1].id + 1, p1.yTop, p1.leftEdge, p2.leftEdge, new List<MoveInformation>());
                                 Array.Copy(p1.shapes, pLeft.shapes, p1.shapes.Length);
                                 platformList.Add(pLeft);
                             }
@@ -1070,11 +1070,11 @@ namespace GeometryFriendsAgents
                             }
                             else
                             {
-                                Platform pMiddle = new Platform(platformList.Count, p1.yTop, p2.leftEdge, Math.Min(p2.rightEdge,p1.rightEdge), new List<MoveInformation>());
+                                Platform pMiddle = new Platform(platformList[platformList.Count - 1].id + 1, p1.yTop, p2.leftEdge, Math.Min(p2.rightEdge,p1.rightEdge), new List<MoveInformation>());
                                 Array.Copy(p1.shapes, pMiddle.shapes, p1.shapes.Length);
                                 pMiddle.CombineShapes(p2.shapes);
                                 platformList.Add(pMiddle);
-                                Platform pRight = new Platform(platformList.Count, p1.yTop, Math.Min(p2.rightEdge, p1.rightEdge), Math.Max(p2.rightEdge, p1.rightEdge), new List<MoveInformation>());
+                                Platform pRight = new Platform(platformList[platformList.Count - 1].id + 1, p1.yTop, Math.Min(p2.rightEdge, p1.rightEdge), Math.Max(p2.rightEdge, p1.rightEdge), new List<MoveInformation>());
                                 if(p2.rightEdge > p1.rightEdge)
                                 {
                                     Array.Copy(p2.shapes, pRight.shapes, p1.shapes.Length);
@@ -1095,7 +1095,7 @@ namespace GeometryFriendsAgents
                         {
                             if (p2.leftEdge < p1.leftEdge)
                             {
-                                Platform pLeft = new Platform(platformList.Count, p1.yTop, p2.leftEdge, p1.leftEdge, new List<MoveInformation>());
+                                Platform pLeft = new Platform(platformList[platformList.Count - 1].id + 1, p1.yTop, p2.leftEdge, p1.leftEdge, new List<MoveInformation>());
                                 Array.Copy(p2.shapes, pLeft.shapes, p1.shapes.Length);
                                 platformList.Add(pLeft);
                             }
@@ -1108,11 +1108,11 @@ namespace GeometryFriendsAgents
                             }
                             else
                             {
-                                Platform pMiddle = new Platform(platformList.Count, p1.yTop, p1.leftEdge, Math.Min(p1.rightEdge, p2.rightEdge), new List<MoveInformation>());
+                                Platform pMiddle = new Platform(platformList[platformList.Count - 1].id + 1, p1.yTop, p1.leftEdge, Math.Min(p1.rightEdge, p2.rightEdge), new List<MoveInformation>());
                                 Array.Copy(p2.shapes, pMiddle.shapes, p1.shapes.Length);
                                 pMiddle.CombineShapes(p1.shapes);
                                 platformList.Add(pMiddle);
-                                Platform pRight = new Platform(platformList.Count, p1.yTop, Math.Min(p1.rightEdge, p2.rightEdge), Math.Max(p1.rightEdge, p2.rightEdge), new List<MoveInformation>());
+                                Platform pRight = new Platform(platformList[platformList.Count - 1].id + 1, p1.yTop, Math.Min(p1.rightEdge, p2.rightEdge), Math.Max(p1.rightEdge, p2.rightEdge), new List<MoveInformation>());
                                 if (p2.rightEdge > p1.rightEdge)
                                 {
                                     Array.Copy(p2.shapes, pRight.shapes, p1.shapes.Length);

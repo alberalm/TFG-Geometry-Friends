@@ -40,3 +40,9 @@ D:\TFG Infor\TFG---Geometry-Friends\GFUCMvR1\obj\Debug\GeometryFriendsAgents.csp
 D:\TFG Infor\TFG---Geometry-Friends\GFUCMvR1\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
 D:\TFG Infor\TFG---Geometry-Friends\GFUCMvR1\obj\Debug\GeometryFriendsAgents.dll
 D:\TFG Infor\TFG---Geometry-Friends\GFUCMvR1\obj\Debug\GeometryFriendsAgents.pdb
+C:\Users\alber\Documents\TFG_Info\TFG-Geometry-Friends\GFUCMvR1\obj\Debug\GeometryFriendsAgents.dll
+C:\Users\alber\Documents\TFG_Info\TFG-Geometry-Friends\GFUCMvR1\obj\Debug\GeometryFriendsAgents.pdb
+C:\Users\alber\Documents\TFG_Info\TFG-Geometry-Friends\GFUCMvR1\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.dll
+C:\Users\alber\Documents\TFG_Info\TFG-Geometry-Friends\GFUCMvR1\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.pdb
+C:\Users\alber\Documents\TFG_Info\TFG-Geometry-Friends\GFUCMvR1\obj\Debug\GeometryFriendsAgents.csproj.AssemblyReference.cache
+C:\Users\alber\Documents\TFG_Info\TFG-Geometry-Friends\GFUCMvR1\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
