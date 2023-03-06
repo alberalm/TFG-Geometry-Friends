@@ -185,7 +185,7 @@ namespace GeometryFriendsAgents
         {
             levelMap.DrawLevelMap(ref newDebugInfo);
             levelMap.DrawConnections(ref newDebugInfo);
-            //levelMap.DrawConnectionsVertex(ref newDebugInfo);            
+            levelMap.DrawConnectionsVertex(ref newDebugInfo);            
             PlanDebug();
         }
 
@@ -355,6 +355,16 @@ namespace GeometryFriendsAgents
         {
             UpdateDraw();
             t += elapsedGameTime.TotalMilliseconds;
+            if(t < 1000)
+            {
+                currentAction   =   Moves.MORPH_DOWN;
+                return;
+            }
+            if(t < 3000)
+            {
+                currentAction = Moves.MOVE_LEFT;
+                return;
+            }
             if (levelMap.RectanglePlatform(rectangleInfo).id != -1 && rectangleInfo.VelocityX < GameInfo.TESTING_VELOCITY)
             {
                 currentAction = Moves.MOVE_RIGHT;
@@ -468,7 +478,7 @@ namespace GeometryFriendsAgents
                             currentAction = Moves.MORPH_DOWN;
                             hasFinishedDrop = false;
                         }
-                        else if (actionSelector.move.moveType == MoveType.MONOSIDEDROP)
+                        else if (actionSelector.move.moveType == MoveType.MONOSIDEDROP || actionSelector.move.moveType == MoveType.BIGHOLEADJ)
                         {
                             if (rectangleInfo.Y / GameInfo.PIXEL_LENGTH < actionSelector.move.departurePlatform.yTop)
                             {

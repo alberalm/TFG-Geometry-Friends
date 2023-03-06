@@ -360,7 +360,7 @@ namespace GeometryFriendsAgents
 
             x_t = x_t + vx_t * t + acc_x * Math.Pow(t, 2) / 2;
             y_t = y_t + vy_t * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2;
-            angular_velocity = AngularVelocity(vx_t);
+            angular_velocity = m.moveDuringFlight!=Moves.NO_ACTION?AngularVelocity(vx_t)/2: AngularVelocity(vx_t);
             angle -= angular_velocity * t;
             m.path.Add(new Tuple<float, float>((float)x_t, (float)y_t));
             vy_t = vy_t + t * GameInfo.GRAVITY;
@@ -387,7 +387,7 @@ namespace GeometryFriendsAgents
                     bottom_left = new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI + shape_angle + angle), y_t - radius * Math.Sin(Math.PI + shape_angle + angle));
                     bottom_right = new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle));
                     
-                    if (Math.Abs(vx_0)==GameInfo.TESTING_VELOCITY && s==RectangleShape.Shape.SQUARE && m.moveDuringFlight==Moves.MOVE_RIGHT)
+                    if (Math.Abs(vx_0)==GameInfo.TESTING_VELOCITY && s==RectangleShape.Shape.HORIZONTAL && m.moveDuringFlight==Moves.MOVE_RIGHT)
                     {
                         list_top_left.Add(new Tuple<float, float>((float)top_left.Item1, (float)top_left.Item2));
                         list_top_right.Add(new Tuple<float, float>((float)top_right.Item1, (float)top_right.Item2));
@@ -397,7 +397,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    angular_velocity = AngularVelocity(vx_t);
+                    angular_velocity = AngularVelocity(vx_t) / (m.moveDuringFlight != Moves.NO_ACTION ? 2 : 1);
                     angle += angular_velocity * dt;
                 }
                 switch (cct)
@@ -516,7 +516,29 @@ namespace GeometryFriendsAgents
                         }
                     }
                     m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (y - RectangleShape.height(s) / 2) * GameInfo.PIXEL_LENGTH));
-                } 
+                }
+            }
+            else if (moveType == MoveType.BIGHOLEADJ)
+            {
+                m.shape = s;
+                m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - RectangleShape.height(s) / 2) * GameInfo.PIXEL_LENGTH));
+                m.xlandPoint = m.velocityX < 0 ? m.landingPlatform.rightEdge: m.landingPlatform.leftEdge;
+                int max_x = m.velocityX < 0 ? m.departurePlatform.leftEdge : m.landingPlatform.leftEdge;
+                int min_x = m.velocityX > 0 ? m.departurePlatform.rightEdge : m.landingPlatform.rightEdge;
+                for (int d = 0; d < initialCollectiblesInfo.Length; d++)
+                {
+                    CollectibleRepresentation diamond = initialCollectiblesInfo[d];
+
+                    if (diamond.X / GameInfo.PIXEL_LENGTH >= min_x && diamond.X / GameInfo.PIXEL_LENGTH <= max_x &&
+                        (diamond.Y + GameInfo.SEMI_COLLECTIBLE_HEIGHT) / GameInfo.PIXEL_LENGTH >= m.departurePlatform.yTop - RectangleShape.height(RectangleShape.Shape.VERTICAL)
+                        && (diamond.Y - GameInfo.SEMI_COLLECTIBLE_HEIGHT) / GameInfo.PIXEL_LENGTH <= m.departurePlatform.yTop)
+                    {
+                        if (!m.diamondsCollected.Contains(d))
+                        {
+                            m.diamondsCollected.Add(d);
+                        }
+                    }
+                }
             }
             else if (moveType == MoveType.ADJACENT)
             {
@@ -549,7 +571,7 @@ namespace GeometryFriendsAgents
                         for(int d =0; d< initialCollectiblesInfo.Length; d++)
                         {
                             CollectibleRepresentation c = initialCollectiblesInfo[d];
-                            if (Math.Abs(c.X-xtop)+ Math.Abs(c.Y - ytop) <=32)
+                            if (Math.Abs(c.X-xtop)+ Math.Abs(c.Y - ytop) <= GameInfo.SEMI_COLLECTIBLE_HEIGHT)
                             {
                                 if (!m.diamondsCollected.Contains(d))
                                 {
@@ -793,7 +815,7 @@ namespace GeometryFriendsAgents
                             x++;
                         }
                         if (levelMap[x, p.yTop] == PixelType.OBSTACLE && x - p.rightEdge > RectangleShape.width(RectangleShape.Shape.VERTICAL) + 1
-                            && x - p.rightEdge < RectangleShape.width(RectangleShape.Shape.HORIZONTAL)) // may be wrong
+                            && x - p.rightEdge < RectangleShape.width(RectangleShape.Shape.HORIZONTAL)) 
                         {
                             AddTrajectory(ref p, 1, MoveType.MONOSIDEDROP, (x + p.rightEdge) / 2 + 1, s, new Platform(-1));
                         }
@@ -804,7 +826,7 @@ namespace GeometryFriendsAgents
                             x--;
                         }
                         if (levelMap[x, p.yTop] == PixelType.OBSTACLE && p.leftEdge - x > RectangleShape.width(RectangleShape.Shape.VERTICAL) + 1
-                            && p.leftEdge - x < RectangleShape.width(RectangleShape.Shape.HORIZONTAL)) // may be wrong
+                            && p.leftEdge - x < RectangleShape.width(RectangleShape.Shape.HORIZONTAL))
                         {
                             AddTrajectory(ref p, -1, MoveType.MONOSIDEDROP, (x + p.leftEdge) / 2 + 1, s, new Platform(-1));
                         }
@@ -851,6 +873,36 @@ namespace GeometryFriendsAgents
                             });
                         }
                     }
+
+                    // BIGHOLEADJ
+                    Parallel.For(0, platformList.Count, i =>
+                    {
+                        RectangleShape.Shape s = RectangleShape.Shape.VERTICAL;
+                        // Right moves
+                        int x = p.rightEdge + 1;
+                        while (x < GameInfo.LEVEL_MAP_WIDTH && levelMap[x, p.yTop] != PixelType.OBSTACLE && levelMap[x, p.yTop] != PixelType.PLATFORM)
+                        {
+                            x++;
+                        }
+                        if (levelMap[x, p.yTop] == PixelType.PLATFORM &&
+                            x - p.rightEdge > RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2 &&
+                            x - p.rightEdge < RectangleShape.width(RectangleShape.Shape.HORIZONTAL)) 
+                        {
+                            AddTrajectory(ref p, 1, MoveType.BIGHOLEADJ, (x + p.rightEdge) / 2 + 1, s, GetPlatform(x, p.yTop));
+                        }
+                        // Left moves
+                        x = p.leftEdge - 1;
+                        while (x >= 0 && levelMap[x, p.yTop] != PixelType.OBSTACLE && levelMap[x, p.yTop] != PixelType.PLATFORM)
+                        {
+                            x--;
+                        }
+                        if (levelMap[x, p.yTop] == PixelType.PLATFORM &&
+                            p.leftEdge - x > RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2 &&
+                            p.leftEdge - x < RectangleShape.width(RectangleShape.Shape.HORIZONTAL))
+                        {
+                            AddTrajectory(ref p, -1, MoveType.BIGHOLEADJ, (x + p.leftEdge) / 2 + 1, s, GetPlatform(x, p.yTop));
+                        }
+                    });
                 }
             }
 

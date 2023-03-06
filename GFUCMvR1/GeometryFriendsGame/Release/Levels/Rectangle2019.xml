@@ -75,7 +75,8 @@
       <HighScore name="UCMAgent" value="15" />
       <HighScore name="UCMAgent" value="16" />
       <HighScore name="UCMAgent" value="16" />
-      <HighScore name="UCMAgent" value="18" />
+      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="17" />
     </HighScores>
   </Level3>
   <Level4>
@@ -129,6 +130,8 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="4" />
       <HighScore name="UCMAgent" value="6" />
       <HighScore name="UCMAgent" value="6" />
     </HighScores>
@@ -154,11 +157,11 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="12" />
       <HighScore name="UCMAgent" value="13" />
       <HighScore name="UCMAgent" value="13" />
       <HighScore name="UCMAgent" value="13" />
-      <HighScore name="UCMAgent" value="14" />
-      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="13" />
     </HighScores>
   </Level6>
   <Level7>
@@ -183,8 +186,8 @@
     <HighScores>
       <HighScore name="UCMAgent" value="7" />
       <HighScore name="UCMAgent" value="8" />
-      <HighScore name="UCMAgent" value="9" />
-      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="8" />
+      <HighScore name="UCMAgent" value="8" />
       <HighScore name="UCMAgent" value="9" />
     </HighScores>
   </Level7>
@@ -239,6 +242,7 @@
       <HighScore name="UCMAgent" value="6" />
       <HighScore name="UCMAgent" value="6" />
       <HighScore name="UCMAgent" value="6" />
+      <HighScore name="UCMAgent" value="6" />
       <HighScore name="UCMAgent" value="8" />
     </HighScores>
   </Level9>
@@ -260,6 +264,7 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="5" />
       <HighScore name="UCMAgent" value="5" />
       <HighScore name="UCMAgent" value="5" />
       <HighScore name="UCMAgent" value="6" />

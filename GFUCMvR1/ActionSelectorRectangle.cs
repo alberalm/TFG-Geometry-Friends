@@ -133,7 +133,7 @@ namespace GeometryFriendsAgents
                     return Moves.MOVE_LEFT;
                 }
             }
-            else if (move.moveType == MoveType.MONOSIDEDROP)
+            else if (move.moveType == MoveType.MONOSIDEDROP ||move.moveType == MoveType.BIGHOLEADJ)
             {
                 if (Math.Abs(current_velocity) > 250)
                 {

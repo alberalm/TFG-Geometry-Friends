@@ -215,6 +215,10 @@ namespace GeometryFriendsAgents
             {
                 return -1;
             }
+            if (moveType == MoveType.BIGHOLEADJ && other.moveType == MoveType.FALL)
+            {
+                return 1;
+            }
             if (moveType == MoveType.NOMOVE && other.moveType == MoveType.NOMOVE)
             {
                 if(Utilities.Contained(diamondsCollected, other.diamondsCollected) && Utilities.Contained(other.diamondsCollected, diamondsCollected))

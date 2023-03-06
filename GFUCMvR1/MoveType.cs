@@ -7,6 +7,6 @@ namespace GeometryFriendsAgents
 {
     public enum MoveType
     {
-        JUMP, FALL, NOMOVE, TILT, DROP, ADJACENT, MONOSIDEDROP
+        JUMP, FALL, NOMOVE, TILT, DROP, ADJACENT, MONOSIDEDROP, BIGHOLEADJ, BIGHOLEDROP
     }
 }
