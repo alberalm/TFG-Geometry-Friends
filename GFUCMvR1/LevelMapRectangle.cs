@@ -387,7 +387,7 @@ namespace GeometryFriendsAgents
                     bottom_left = new Tuple<double, double>(x_t + radius * Math.Cos(Math.PI + shape_angle + angle), y_t - radius * Math.Sin(Math.PI + shape_angle + angle));
                     bottom_right = new Tuple<double, double>(x_t + radius * Math.Cos(-shape_angle + angle), y_t - radius * Math.Sin(-shape_angle + angle));
                     
-                    if (Math.Abs(vx_0)==GameInfo.TESTING_VELOCITY && s==RectangleShape.Shape.HORIZONTAL && m.moveDuringFlight==Moves.MOVE_RIGHT)
+                    if (Math.Abs(vx_0)==GameInfo.TESTING_VELOCITY && s==RectangleShape.Shape.HORIZONTAL && m.moveDuringFlight==Moves.NO_ACTION)
                     {
                         list_top_left.Add(new Tuple<float, float>((float)top_left.Item1, (float)top_left.Item2));
                         list_top_right.Add(new Tuple<float, float>((float)top_right.Item1, (float)top_right.Item2));
@@ -885,7 +885,7 @@ namespace GeometryFriendsAgents
                             x++;
                         }
                         if (levelMap[x, p.yTop] == PixelType.PLATFORM &&
-                            x - p.rightEdge > RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2 &&
+                            x - p.rightEdge > 1+RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2 &&
                             x - p.rightEdge < RectangleShape.width(RectangleShape.Shape.HORIZONTAL)) 
                         {
                             AddTrajectory(ref p, 1, MoveType.BIGHOLEADJ, (x + p.rightEdge) / 2 + 1, s, GetPlatform(x, p.yTop));
@@ -897,7 +897,7 @@ namespace GeometryFriendsAgents
                             x--;
                         }
                         if (levelMap[x, p.yTop] == PixelType.PLATFORM &&
-                            p.leftEdge - x > RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2 &&
+                            p.leftEdge - x > 1+RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2 &&
                             p.leftEdge - x < RectangleShape.width(RectangleShape.Shape.HORIZONTAL))
                         {
                             AddTrajectory(ref p, -1, MoveType.BIGHOLEADJ, (x + p.leftEdge) / 2 + 1, s, GetPlatform(x, p.yTop));

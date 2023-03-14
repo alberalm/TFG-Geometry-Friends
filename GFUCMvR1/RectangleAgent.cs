@@ -185,7 +185,7 @@ namespace GeometryFriendsAgents
         {
             levelMap.DrawLevelMap(ref newDebugInfo);
             levelMap.DrawConnections(ref newDebugInfo);
-            levelMap.DrawConnectionsVertex(ref newDebugInfo);            
+            //levelMap.DrawConnectionsVertex(ref newDebugInfo);            
             PlanDebug();
         }
 
@@ -371,7 +371,7 @@ namespace GeometryFriendsAgents
             }
             else if(levelMap.RectanglePlatform(rectangleInfo).id == -1)
             {
-                currentAction = Moves.MOVE_RIGHT;
+                currentAction = Moves.NO_ACTION;
             }
             else
             {

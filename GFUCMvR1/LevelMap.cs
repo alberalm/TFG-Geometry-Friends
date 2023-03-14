@@ -189,7 +189,9 @@ namespace GeometryFriendsAgents
 
         protected abstract bool EnoughSpaceToAccelerate(int leftEdge, int rigthEdge, int x, int vx);
 
-        public void DrawLevelMap(ref List<DebugInformation> debugInformation)
+
+
+            public void DrawLevelMap(ref List<DebugInformation> debugInformation)
         {
             for (int x = 0; x < GameInfo.LEVEL_MAP_WIDTH; x++)
             {

@@ -161,13 +161,13 @@
     <Description />
     <Tips />
     <BallStartingPosition X="-1000" Y="-1000" />
-    <SquareStartingPosition X="104" Y="184" />
+    <SquareStartingPosition X="104" Y="248" />
     <Collectibles>
       <Collectible X="88" Y="408" />
     </Collectibles>
     <GreenObstacles />
     <BlackObstacles>
-      <Obstacle width="416" height="32" X="40" Y="232" centered="false" />
+      <Obstacle width="416" height="32" X="40" Y="312" centered="false" />
     </BlackObstacles>
     <YellowObstacles />
     <GreenElevators />
