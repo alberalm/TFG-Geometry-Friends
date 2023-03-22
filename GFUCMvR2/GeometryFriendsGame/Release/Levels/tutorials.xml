@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Levels worldName="Tutorials">
+  <Level1>
+    <Description>
+      <Line value="Baby Steps..." />
+      <Line value="" />
+      <Line value="Wiimote 1 controls circle." />
+      <Line value="Wiimote 2 controls square." />
+      <Line value="Collect All purple diamonds" />
+      <Line value="to finish the level" />
+    </Description>
+    <Tips>
+      <Tip message="" tip="Tilt nunchuk right" X="200" Y="680" radius="120" />
+      <Tip message="" tip="Tilt wiimote left" X="680" Y="680" radius="120" />
+    </Tips>
+    <BallStartingPosition X="744" Y="664" />
+    <SquareStartingPosition X="120" Y="680" />
+    <Collectibles>
+      <Collectible X="1160" Y="664" />
+      <Collectible X="552" Y="680" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="48" height="720" X="616" Y="40" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <Medals>
+      <Medal star="***" desc="Awsome! You Rule." minvalue="0" maxvalue="3" />
+      <Medal star="**" desc="Good, but not enough." minvalue="4" maxvalue="7" />
+      <Medal star="*" desc="Not Bad, but neither good" minvalue="8" maxvalue="18" />
+      <Medal star="" desc="Weak! pfuh..." minvalue="19" />
+    </Medals>
+    <HighScores />
+  </Level1>
+  <Level2>
+    <Description>
+      <Line value="...Small Steps" />
+      <Line value="" />
+      <Line value="The circle can jump." />
+      <Line value="The square can morph." />
+      <Line value="Black obstacles " />
+      <Line value="cannot be crossed" />
+      <Line value="Finish fast" />
+      <Line value="to get a Hiscore" />
+    </Description>
+    <Tips>
+      <Tip message="" tip="Rotate Up to Stretch" X="104" Y="236" radius="75" />
+      <Tip message="" tip="Rotate Up to Jump" X="136" Y="664" radius="75" />
+      <Tip message="" tip="Rotate Faster to Jump Higher" X="236" Y="664" radius="75" />
+    </Tips>
+    <BallStartingPosition X="1144" Y="680" />
+    <SquareStartingPosition X="104" Y="136" />
+    <Collectibles>
+      <Collectible X="136" Y="360" />
+      <Collectible X="1192" Y="88" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="1200" height="48" X="40" Y="264" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <Medals>
+      <Medal star="***" desc="Awsome! You Rule." minvalue="0" maxvalue="7" />
+      <Medal star="**" desc="Good, but not enough." minvalue="8" maxvalue="15" />
+      <Medal star="*" desc="Not Bad, but neither good" minvalue="16" maxvalue="30" />
+      <Medal star="" desc="Weak! pfuh..." minvalue="31" />
+    </Medals>
+    <HighScores />
+  </Level2>
+  <Level3>
+    <Description>
+      <Line value="Color Code" />
+      <Line value="" />
+      <Line value="Shapes can pass" />
+      <Line value="through barriers" />
+      <Line value="of their color" />
+    </Description>
+    <Tips />
+    <BallStartingPosition X="392" Y="104" />
+    <SquareStartingPosition X="856" Y="104" />
+    <Collectibles>
+      <Collectible X="216" Y="664" />
+      <Collectible X="1080" Y="664" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle width="448" height="48" X="792" Y="488" centered="false" />
+      <Obstacle width="128" height="48" X="40" Y="168" centered="false" />
+    </GreenObstacles>
+    <BlackObstacles>
+      <Obstacle width="336" height="48" X="456" Y="488" centered="false" />
+      <Obstacle width="48" height="224" X="792" Y="536" centered="false" />
+      <Obstacle width="48" height="288" X="456" Y="40" centered="false" />
+      <Obstacle width="48" height="288" X="744" Y="40" centered="false" />
+      <Obstacle width="288" height="48" X="168" Y="168" centered="false" />
+      <Obstacle width="48" height="224" X="408" Y="536" centered="false" />
+      <Obstacle width="288" height="48" X="792" Y="168" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles>
+      <Obstacle width="416" height="48" X="40" Y="488" centered="false" />
+      <Obstacle width="160" height="48" X="1080" Y="168" centered="false" />
+    </YellowObstacles>
+    <GreenElevators />
+    <OrangeElevators />
+    <Medals>
+      <Medal star="***" desc="Awsome! You Rule." minvalue="0" maxvalue="10" />
+      <Medal star="**" desc="Good, but not enough." minvalue="11" maxvalue="15" />
+      <Medal star="*" desc="Not Bad, but neither good" minvalue="16" maxvalue="20" />
+      <Medal star="" desc="Weak! pfuh..." minvalue="21" />
+    </Medals>
+    <HighScores />
+  </Level3>
+  <Level4>
+    <Description>
+      <Line value="Up and Down" />
+      <Line value="" />
+      <Line value="There are elevators" />
+      <Line value="They work like colored" />
+      <Line value="barriers, but with movement" />
+    </Description>
+    <Tips>
+      <Tip message="" tip="Use the right color elevator to grab the collectibles" X="600" Y="700" radius="400" />
+    </Tips>
+    <BallStartingPosition X="408" Y="696" />
+    <SquareStartingPosition X="904" Y="696" />
+    <Collectibles>
+      <Collectible X="424" Y="88" />
+      <Collectible X="872" Y="88" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="48" height="160" X="504" Y="40" centered="false" />
+      <Obstacle width="48" height="160" X="776" Y="40" centered="false" />
+      <Obstacle width="320" height="48" X="232" Y="200" centered="false" />
+      <Obstacle width="256" height="48" X="776" Y="200" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators>
+      <Elevator width="192" height="48" startX="40" startY="188" endX="40" endY="760" collNeeded="0" repeatMov="true" direction="Vertical-Down" />
+    </GreenElevators>
+    <OrangeElevators>
+      <Elevator width="208" height="48" startX="1032" startY="200" endX="1032" endY="760" collNeeded="0" repeatMov="true" direction="Vertical-Down" />
+    </OrangeElevators>
+    <Medals>
+      <Medal star="***" desc="Awsome! You Rule." minvalue="0" maxvalue="20" />
+      <Medal star="**" desc="Good, but not enough." minvalue="21" maxvalue="30" />
+      <Medal star="*" desc="Not Bad, but neither good" minvalue="31" maxvalue="45" />
+      <Medal star="" desc="Weak! pfuh..." minvalue="46" />
+    </Medals>
+    <HighScores />
+  </Level4>
+  <Level5>
+    <Description>
+      <Line value="Powering Up!" />
+      <Line value="" />
+      <Line value="Some elevators need a" />
+      <Line value="certain number" />
+      <Line value=" of collectibles" />
+      <Line value="to be caught" />
+      <Line value="to start moving" />
+    </Description>
+    <Tips>
+      <Tip message="" tip="Grab the collectibles to unlock the elevators" X="600" Y="200" radius="600" />
+    </Tips>
+    <BallStartingPosition X="1160" Y="232" />
+    <SquareStartingPosition X="136" Y="232" />
+    <Collectibles>
+      <Collectible X="936" Y="232" />
+      <Collectible X="200" Y="664" />
+      <Collectible X="1080" Y="648" />
+      <Collectible X="248" Y="232" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle width="48" height="416" X="744" Y="344" centered="false" />
+    </GreenObstacles>
+    <BlackObstacles>
+      <Obstacle width="480" height="48" X="40" Y="296" centered="false" />
+      <Obstacle width="496" height="48" X="744" Y="296" centered="false" />
+      <Obstacle width="48" height="240" X="472" Y="344" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles>
+      <Obstacle width="224" height="48" X="520" Y="536" centered="false" />
+    </YellowObstacles>
+    <GreenElevators>
+      <Elevator width="48" height="256" startX="312" startY="40" endX="250" endY="-300" collNeeded="2" repeatMov="False" direction="Vertical-Up" />
+    </GreenElevators>
+    <OrangeElevators>
+      <Elevator width="48" height="256" startX="1032" startY="40" endX="1032" endY="-300" collNeeded="1" repeatMov="False" direction="Vertical-Up" />
+      <Elevator width="224" height="48" startX="520" startY="296" endX="520" endY="608" collNeeded="3" repeatMov="False" direction="Vertical-Up" />
+    </OrangeElevators>
+    <Medals>
+      <Medal star="***" desc="Awesome! You Rule." minvalue="0" maxvalue="20" />
+      <Medal star="**" desc="Good, but not enough." minvalue="21" maxvalue="25" />
+      <Medal star="*" desc="Not Bad, but neither good" minvalue="26" maxvalue="30" />
+      <Medal star="" desc="Weak! pfuh..." minvalue="31" />
+    </Medals>
+    <HighScores />
+  </Level5>
+  <Level6>
+    <Description>
+      <Line value="Growing" />
+      <Line value="" />
+      <Line value="The circle can grow," />
+      <Line value="altering its size and mass" />
+      <Line value="Hitting the square while big" />
+      <Line value="might make it reach" />
+      <Line value="inacessible places" />
+    </Description>
+    <Tips>
+      <Tip message="" tip="Grow circle after jumping" X="600" Y="750" radius="600" />
+    </Tips>
+    <BallStartingPosition X="568" Y="680" />
+    <SquareStartingPosition X="568" Y="440" />
+    <Collectibles>
+      <Collectible X="568" Y="152" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle width="256" height="48" X="440" Y="504" centered="false" />
+    </GreenObstacles>
+    <BlackObstacles>
+      <Obstacle width="48" height="720" X="392" Y="40" centered="false" />
+      <Obstacle width="48" height="720" X="696" Y="40" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles>
+      <Obstacle width="256" height="48" X="440" Y="184" centered="false" />
+    </YellowObstacles>
+    <GreenElevators />
+    <OrangeElevators />
+    <Medals>
+      <Medal star="***" desc="Awsome! You Rule." minvalue="0" maxvalue="9" />
+      <Medal star="**" desc="Good, but not enough." minvalue="10" maxvalue="20" />
+      <Medal star="*" desc="Not Bad, but neither good" minvalue="21" maxvalue="45" />
+      <Medal star="" desc="Weak! pfuh..." minvalue="46" />
+    </Medals>
+    <HighScores />
+  </Level6>
+  <Level7>
+    <Description>
+      <Line value="Tiny Detais..." />
+      <Line value="" />
+      <Line value="A single difference" />
+      <Line value="in a level makes all" />
+      <Line value="the difference in" />
+      <Line value="its solution." />
+      <Line value="Experiment new stuff!" />
+    </Description>
+    <Tips>
+      <Tip message="" tip="You have to try something different ;)" X="600" Y="750" radius="600" />
+    </Tips>
+    <BallStartingPosition X="568" Y="680" />
+    <SquareStartingPosition X="568" Y="440" />
+    <Collectibles>
+      <Collectible X="568" Y="152" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle width="256" height="48" X="440" Y="504" centered="false" />
+      <Obstacle width="256" height="48" X="440" Y="184" centered="false" />
+    </GreenObstacles>
+    <BlackObstacles>
+      <Obstacle width="48" height="720" X="392" Y="40" centered="false" />
+      <Obstacle width="48" height="720" X="696" Y="40" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <Medals>
+      <Medal star="***" desc="Awsome! You Rule." minvalue="0" maxvalue="10" />
+      <Medal star="**" desc="Good, but not enough." minvalue="11" maxvalue="15" />
+      <Medal star="*" desc="Not Bad, but neither good" minvalue="16" maxvalue="20" />
+      <Medal star="" desc="Weak! pfuh..." minvalue="21" />
+    </Medals>
+    <HighScores />
+  </Level7>
+  <Level8>
+    <Description>
+      <Line value="Lesson is over" />
+      <Line value="It is now time to put" />
+      <Line value="what you learned to" />
+      <Line value="good use." />
+      <Line value="Remember this game" />
+      <Line value="is all about teamwork" />
+    </Description>
+    <Tips>
+      <Tip message="The ball alone cant reach it. Its time for some teamwork!" tip="cooperation is needed" X="600" Y="680" radius="100" />
+    </Tips>
+    <BallStartingPosition X="1166" Y="106" />
+    <SquareStartingPosition X="97" Y="695" />
+    <Collectibles>
+      <Collectible X="1054" Y="521" />
+      <Collectible X="95" Y="544" />
+      <Collectible X="580" Y="203" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="48" height="176" X="1064" Y="40" centered="false" />
+      <Obstacle width="48" height="192" X="1032" Y="568" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators>
+      <Elevator width="48" height="384" startX="250" startY="376" endX="250" endY="700" collNeeded="2" repeatMov="False" direction="Vertical-Down" />
+    </GreenElevators>
+    <OrangeElevators>
+      <Elevator width="128" height="32" startX="1112" startY="184" endX="1300" endY="100" collNeeded="1" repeatMov="False" direction="Horizontal-Right" />
+    </OrangeElevators>
+    <Medals>
+      <Medal star="***" desc="Awsome! You Rule." minvalue="0" maxvalue="30" />
+      <Medal star="**" desc="Good, but not enough." minvalue="31" maxvalue="40" />
+      <Medal star="*" desc="Not Bad, but neither good" minvalue="41" maxvalue="60" />
+      <Medal star="" desc="Weak! pfuh..." minvalue="61" />
+    </Medals>
+    <HighScores />
+  </Level8>
+</Levels>
