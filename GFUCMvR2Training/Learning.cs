@@ -76,7 +76,18 @@ namespace GeometryFriendsAgents
                 count++;
             }
             archivo.Close();
-            
+
+            //In case there there are moves left for any state we add a 0
+            foreach(var pair in Q_table)
+            {
+                foreach(Moves m in possibleMoves)
+                {
+                    if (!Q_table[pair.Key].ContainsKey(m))
+                    {
+                        Q_table[pair.Key].Add(m, 0);
+                    }
+                }
+            }
         }
 
         public void SaveFile()

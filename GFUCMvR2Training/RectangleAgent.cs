@@ -403,6 +403,7 @@ namespace GeometryFriendsAgents
             }
         }
 
+
         //implements abstract rectangle interface: signals the agent the end of the current level
         public override void EndGame(int collectiblesCaught, int timeElapsed)
         {
