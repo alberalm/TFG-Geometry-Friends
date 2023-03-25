@@ -1,4 +1,5 @@
 ﻿using GeometryFriends.AI;
+using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,7 +57,7 @@ namespace GeometryFriendsAgents
 
                     double v = double.Parse(split[6]);
 
-                    if (s.distance_x <= GameInfo.MAX_DISTANCE)
+                    if (s.distance_x <= GameInfo.MAX_DISTANCE_RECTANGLE)
                     {
                         if (!Q_table.ContainsKey(s.ToString()))
                         {
@@ -72,7 +73,7 @@ namespace GeometryFriendsAgents
 
         public override void SaveFile()
         {
-            StreamWriter sw = new StreamWriter(GameInfo.Q_PATH_RECT + "15" + GameInfo.Q_PATH_EXTENSION);
+            /*StreamWriter sw = new StreamWriter(GameInfo.Q_PATH_RECT + "15" + GameInfo.Q_PATH_EXTENSION);
             sw.WriteLine("Distance_x;Distance_y;Current_velocity_x;Height;Hole_width;Action;Value");
             foreach (var pair in Q_table)
             {
@@ -85,7 +86,7 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
-            sw.Close();
+            sw.Close();*/
         }
 
         public override Moves ChooseMove(State _current, int hole_width)
@@ -93,29 +94,40 @@ namespace GeometryFriendsAgents
             StateRectangle current = (StateRectangle)_current;
             Moves action = Moves.NO_ACTION;
 
-            if (-Math.Sign(hole_width) * current.distance_x > GameInfo.MAX_DISTANCE)
+            if (-current.distance_x > GameInfo.MAX_DISTANCE_RECTANGLE)
             {
-                if (hole_width > 0)
+                if(-current.distance_x < 2 * GameInfo.MAX_DISTANCE_RECTANGLE)
                 {
                     if (current.current_velocity_x > 20)
                     {
                         return Moves.NO_ACTION;
                     }
-                    else
+                    else if (hole_width > 0)
                     {
                         return Moves.MOVE_RIGHT;
-                    }
-                }
-                else
-                {
-                    if (current.current_velocity_x < -20)
-                    {
-                        return Moves.NO_ACTION;
                     }
                     else
                     {
                         return Moves.MOVE_LEFT;
                     }
+                }
+                else
+                {
+                    action = ActionSelectorRectangle.getToPosition(current.distance_x * GameInfo.PIXEL_LENGTH,
+                        -2 * GameInfo.MAX_DISTANCE_RECTANGLE * GameInfo.PIXEL_LENGTH,
+                        current.current_velocity_x, 20, new MoveInformation(new Platform(-1)));
+                    if (hole_width < 0)
+                    {
+                        if (action == Moves.MOVE_LEFT)
+                        {
+                            action = Moves.MOVE_RIGHT;
+                        }
+                        else
+                        {
+                            action = Moves.MOVE_LEFT;
+                        }
+                    }
+                    return action;
                 }
             }
 

@@ -275,8 +275,7 @@ namespace GeometryFriendsAgents
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 400), "Next platform: " + actionSelector.next_platform.id.ToString(), GeometryFriends.XNAStub.Color.Orange));
             }
-            
-            if (plan[0] == null)
+            if (plan.Count == 0 || plan[0] == null)
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 500), "Next move: null", GeometryFriends.XNAStub.Color.Orange));
             }
@@ -378,7 +377,7 @@ namespace GeometryFriendsAgents
             }
             
             s = new State(distance_x, plan[0].departurePlatform.yTop - ((int)(rectangleInfo.Y / GameInfo.PIXEL_LENGTH)),
-                RectangleAgent.DiscreetVelocity(rectangleInfo.VelocityX), (int)(rectangleInfo.Height / (2 * GameInfo.PIXEL_LENGTH)), 15);
+                RectangleAgent.DiscreetVelocity(rectangleInfo.VelocityX), (int)(rectangleInfo.Height / (2 * GameInfo.PIXEL_LENGTH)), 14);
 
             if (s.IsFinal())
             {
@@ -386,7 +385,7 @@ namespace GeometryFriendsAgents
             }
             else
             {
-                currentAction = l.ChooseMove(s, 15);
+                currentAction = l.ChooseMove(s, 14);
             }
         }
 

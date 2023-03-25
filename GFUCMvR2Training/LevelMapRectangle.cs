@@ -1199,7 +1199,10 @@ namespace GeometryFriendsAgents
                                 Platform pMiddle = new Platform(platformList[platformList.Count - 1].id + 1, p1.yTop, p1.leftEdge, Math.Min(p1.rightEdge, p2.rightEdge), new List<MoveInformation>());
                                 Array.Copy(p2.shapes, pMiddle.shapes, p1.shapes.Length);
                                 pMiddle.CombineShapes(p1.shapes);
-                                platformList.Add(pMiddle);
+                                if(pMiddle.rightEdge > pMiddle.leftEdge)
+                                {
+                                    platformList.Add(pMiddle);
+                                }
                                 Platform pRight = new Platform(platformList[platformList.Count - 1].id + 1, p1.yTop, Math.Min(p1.rightEdge, p2.rightEdge), Math.Max(p1.rightEdge, p2.rightEdge), new List<MoveInformation>());
                                 if (p2.rightEdge > p1.rightEdge)
                                 {

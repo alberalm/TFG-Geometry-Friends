@@ -34,7 +34,7 @@ namespace GeometryFriendsAgents
         
         public void LoadFile()
         {
-            StreamReader archivo = new StreamReader(GameInfo.Q_PATH_RECT + "15" + GameInfo.Q_PATH_EXTENSION);
+            StreamReader archivo = new StreamReader(GameInfo.Q_PATH_RECT + "14" + GameInfo.Q_PATH_EXTENSION);
             string line = archivo.ReadLine();
             int count = 0;
             while ((line = archivo.ReadLine()) != null && line != "")
@@ -92,7 +92,7 @@ namespace GeometryFriendsAgents
 
         public void SaveFile()
         {
-            StreamWriter sw = new StreamWriter(GameInfo.Q_PATH_RECT + "15" + GameInfo.Q_PATH_EXTENSION);
+            StreamWriter sw = new StreamWriter(GameInfo.Q_PATH_RECT + "14" + GameInfo.Q_PATH_EXTENSION);
             sw.WriteLine("Distance_x;Distance_y;Current_velocity_x;Height;Hole_width;Action;Value");
             foreach (var pair in Q_table)
             {
@@ -112,7 +112,7 @@ namespace GeometryFriendsAgents
         {
             Moves action = Moves.NO_ACTION;
 
-            if(-Math.Sign(hole_width) * current.distance_x > GameInfo.MAX_DISTANCE)
+            if(-current.distance_x > GameInfo.MAX_DISTANCE)
             {
                 if (hole_width > 0)
                 {
@@ -127,7 +127,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    if (current.current_velocity_x < -20)
+                    if (current.current_velocity_x > 20)
                     {
                         return Moves.NO_ACTION;
                     }

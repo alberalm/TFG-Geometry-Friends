@@ -89,6 +89,7 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="4" />
     </HighScores>
   </Level4>
   <Level5>
@@ -127,7 +128,7 @@
     <Description />
     <Tips />
     <BallStartingPosition X="-1000" Y="-1000" />
-    <SquareStartingPosition X="376" Y="280" />
+    <SquareStartingPosition X="584" Y="312" />
     <Collectibles>
       <Collectible X="744" Y="712" />
     </Collectibles>
@@ -144,5 +145,12 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="4" />
+      <HighScore name="UCMAgent" value="5" />
+      <HighScore name="UCMAgent" value="7" />
+      <HighScore name="UCMAgent" value="7" />
+    </HighScores>
   </Level7>
 </Levels>

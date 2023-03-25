@@ -43,7 +43,7 @@ namespace GeometryFriendsAgents
                         m = Moves.NO_ACTION;
                     }
                     double v = double.Parse(split[4]);
-                    if (s.distance <= GameInfo.MAX_DISTANCE && Math.Abs(s.target_velocity) == GameInfo.VELOCITY_STEP_QLEARNING * i)
+                    if (s.distance <= GameInfo.MAX_DISTANCE_CIRCLE && Math.Abs(s.target_velocity) == GameInfo.VELOCITY_STEP_QLEARNING * i)
                     {
                         if (!Q_table.ContainsKey(s.ToString()))
                         {
@@ -77,7 +77,7 @@ namespace GeometryFriendsAgents
             StateCircle current = (StateCircle)_current;
             Moves action;
 
-            if(current.distance > GameInfo.MAX_DISTANCE)
+            if(current.distance > GameInfo.MAX_DISTANCE_CIRCLE)
             {
                 if (d > 0)
                 {

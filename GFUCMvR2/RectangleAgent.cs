@@ -27,6 +27,8 @@ namespace GeometryFriendsAgents
         private List<Moves> possibleMoves;
         private long lastMoveTime;
         private Random rnd;
+        private int update_counter = 0;
+
         //predictor of actions for the circle
 
         private ActionSimulator predictor = null;
@@ -395,6 +397,7 @@ namespace GeometryFriendsAgents
         //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
+
             if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 5 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 5)
             {
                 timesStuck++;
@@ -404,7 +407,7 @@ namespace GeometryFriendsAgents
                 lastRectangleInfo = rectangleInfo;
                 timesStuck = 0;
             }
-
+            
             UpdateDraw();
 
             /*t += elapsedGameTime.TotalMilliseconds;
@@ -430,9 +433,15 @@ namespace GeometryFriendsAgents
                 return;
             }
 
+            if (update_counter != 4 && actionSelector.move != null && actionSelector.move.moveType == MoveType.BIGHOLEDROP)
+            {
+                update_counter++;
+                return;
+            }
+            update_counter = 0;
+
             currentPlatform = levelMap.RectanglePlatform(rectangleInfo);
-
-
+            
             //Become horozintal asap when move=drop
             if (!hasFinishedDrop && plan.Count > 0 && !plan[0].landingPlatform.real)
             {
@@ -478,10 +487,10 @@ namespace GeometryFriendsAgents
                     return;
                 }
             }
-
             
-            if ((actionSelector.move != null && actionSelector.move.moveType == MoveType.FALL &&
+            if ((actionSelector.move != null && ((actionSelector.move.moveType == MoveType.FALL &&
                 Math.Abs(actionSelector.move.x * GameInfo.PIXEL_LENGTH - rectangleInfo.X) <= 2 * GameInfo.PIXEL_LENGTH)
+                || actionSelector.move.moveType == MoveType.BIGHOLEDROP))
                 || !levelMap.AtBorder(rectangleInfo, currentPlatform, ref currentAction, plan))
             {
                 if (currentPlatform.id == -1) // Rectangle is in the air
@@ -517,6 +526,23 @@ namespace GeometryFriendsAgents
                             {
                                 currentAction = Moves.NO_ACTION;
                             }
+                        }
+                        else if (actionSelector.move.moveType == MoveType.BIGHOLEDROP)
+                        {
+                            int distance_x = 0;
+                            if (actionSelector.move.velocityX > 0)
+                            {
+                                distance_x = ((int)(rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - actionSelector.move.departurePlatform.rightEdge;
+                            }
+                            else
+                            {
+                                distance_x = ((int)(rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - actionSelector.move.departurePlatform.leftEdge;
+                            }
+                            // Remember move.velocityX stores the hole's width
+                            StateRectangle state = new StateRectangle(distance_x, actionSelector.move.departurePlatform.yTop - ((int)(rectangleInfo.Y / GameInfo.PIXEL_LENGTH)),
+                                RectangleAgent.DiscreetVelocity(rectangleInfo.VelocityX), (int)(rectangleInfo.Height / (2 * GameInfo.PIXEL_LENGTH)), actionSelector.move.velocityX);
+
+                            currentAction = l.ChooseMove(state, actionSelector.move.velocityX);
                         }
                         else if (actionSelector.move.moveType == MoveType.FALL)
                         {

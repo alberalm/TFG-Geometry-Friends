@@ -32,7 +32,8 @@ namespace GeometryFriendsAgents
         public const float GAMMA = 0.95f;//Discount factor
         public const float EPSILON = 0.0f;
 
-        public const int MAX_DISTANCE = 25;
+        public const int MAX_DISTANCE_CIRCLE = 25;
+        public const int MAX_DISTANCE_RECTANGLE = 5;
         public const int NUM_VELOCITIES_PHISICS = 13;
         public const int NUM_VELOCITIES_QLEARNING = 7;
         public const int NUM_VELOCITIES_RECTANGLE = 10;
