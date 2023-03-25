@@ -432,6 +432,8 @@ namespace GeometryFriendsAgents
 
             currentPlatform = levelMap.RectanglePlatform(rectangleInfo);
 
+
+            //Become horozintal asap when move=drop
             if (!hasFinishedDrop && plan.Count > 0 && !plan[0].landingPlatform.real)
             {
                 if (rectangleInfo.Height < GameInfo.HORIZONTAL_RECTANGLE_HEIGHT + 5)
@@ -445,6 +447,7 @@ namespace GeometryFriendsAgents
                 }
             }
 
+            //Mantain action while tilting and check if tilt has finished
             if (actionSelector.move != null)
             {
                 int edge = actionSelector.move.velocityX > 0 ? actionSelector.move.landingPlatform.leftEdge : actionSelector.move.landingPlatform.rightEdge;
@@ -460,7 +463,7 @@ namespace GeometryFriendsAgents
                         return;
                     }
                 }
-
+                
                 if (actionSelector.move.moveType == MoveType.TILT && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH)
                 {
                     if (actionSelector.move.velocityX > 0)
@@ -486,6 +489,7 @@ namespace GeometryFriendsAgents
                     // TODO
                     if (actionSelector.move != null)
                     {
+                        //Become horozintal asap when move=drop
                         if (actionSelector.move.moveType == MoveType.DROP && levelMap.RectangleCanMorphDown(rectangleInfo))
                         {
                             currentAction = Moves.MORPH_DOWN;

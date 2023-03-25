@@ -274,6 +274,7 @@ namespace GeometryFriendsAgents
             {
                 return 0;
             }
+            
             if (Utilities.Contained(diamondsCollected, other.diamondsCollected) && Utilities.Contained(other.diamondsCollected, diamondsCollected)) //diamondsCollected=other.diamondsCollected
             {
                 if(moveType == MoveType.FALL && other.moveType == MoveType.FALL)
