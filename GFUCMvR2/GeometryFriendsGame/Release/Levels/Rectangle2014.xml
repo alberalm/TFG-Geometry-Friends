@@ -77,11 +77,11 @@
     <OrangeElevators />
     <TimeLimit value="80" />
     <HighScores>
+      <HighScore name="UCMAgent" value="21" />
       <HighScore name="UCMAgent" value="22" />
       <HighScore name="UCMAgent" value="22" />
-      <HighScore name="UCMAgent" value="23" />
-      <HighScore name="UCMAgent" value="24" />
-      <HighScore name="UCMAgent" value="24" />
+      <HighScore name="UCMAgent" value="22" />
+      <HighScore name="UCMAgent" value="22" />
     </HighScores>
   </Level3>
   <Level4>
@@ -138,11 +138,11 @@
     <OrangeElevators />
     <TimeLimit value="90" />
     <HighScores>
-      <HighScore name="UCMAgent" value="35" />
-      <HighScore name="UCMAgent" value="36" />
-      <HighScore name="UCMAgent" value="42" />
-      <HighScore name="UCMAgent" value="81" />
-      <HighScore name="UCMAgent" value="85" />
+      <HighScore name="UCMAgent" value="29" />
+      <HighScore name="UCMAgent" value="30" />
+      <HighScore name="UCMAgent" value="31" />
+      <HighScore name="UCMAgent" value="31" />
+      <HighScore name="UCMAgent" value="31" />
     </HighScores>
   </Level5>
   <Level6>
@@ -169,9 +169,9 @@
     <HighScores>
       <HighScore name="UCMAgent" value="14" />
       <HighScore name="UCMAgent" value="16" />
-      <HighScore name="UCMAgent" value="17" />
-      <HighScore name="UCMAgent" value="17" />
-      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="16" />
+      <HighScore name="UCMAgent" value="16" />
+      <HighScore name="UCMAgent" value="16" />
     </HighScores>
   </Level6>
   <Level7>
@@ -256,8 +256,8 @@
       <HighScore name="UCMAgent" value="11" />
       <HighScore name="UCMAgent" value="11" />
       <HighScore name="UCMAgent" value="11" />
-      <HighScore name="UCMAgent" value="12" />
-      <HighScore name="UCMAgent" value="12" />
+      <HighScore name="UCMAgent" value="11" />
+      <HighScore name="UCMAgent" value="11" />
     </HighScores>
   </Level9>
   <Level10>
@@ -287,9 +287,9 @@
     <HighScores>
       <HighScore name="UCMAgent" value="20" />
       <HighScore name="UCMAgent" value="20" />
+      <HighScore name="UCMAgent" value="20" />
       <HighScore name="UCMAgent" value="21" />
-      <HighScore name="No Name" value="21" />
-      <HighScore name="UCMAgent" value="22" />
+      <HighScore name="UCMAgent" value="21" />
     </HighScores>
   </Level10>
 </Levels>
