@@ -1,56 +1,56 @@
-Humano;;;;;;;;;;;;;;
-World: ;Circle2014;;;;;;;;;;;;;
-level;runs;collectibles average;collectibles available;time average;time limit;score average;;Óptimo;Optimum Score;;;;;
-1;10;2;2;4,6;20;970;Mejor imposible;4;1000;;;;;
-2;10;3;3;18,6;45;887;Se puede hacer mejor porque no lo he hecho todo a la primera pero lo he intentado hacer lo mejor que he podido. Lo óptimo sería hacerlo todas las veces en 14s;9;1100;;;;;
-3;10;3;3;19,1;60;982;Me he caido algunas veces en el pozo pero he conseguido salir todas;9;1150;;;;;
-4;10;4;4;15;80;1212;Lo ideal son 12s, pero es muy dificil hacer 12 todas las veces;12;1250;;;;;
-5;10;2;2;15,8;70;974;Lo ideal es 15 s;15;986;;;;;
-6;10;2;2;7;40;1025;Mejor imposible;7;1025;;;;;
-7;10;3;3;23;60;917;Lo ideal es 14-15s pero es muy dificil;12;1100;;;;;
-8;10;3;3;23,6;40;710;Dificil mejorarlo más;23;725;;;;;
-9;10;3;3;26,6;80;967;Lo ideal son 23s;22;1025;;;;;
-10;10;3;3;39,9;100;901;Lo ideal son unos 25 pero es dificil conseguirlo;21;1090;;;;;
-;;;;;;9545;;;10451;;;;;
-;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;
-;;;Vcollected;100;;;;;;;;;;
-;;;Vcompleted;1000;;;;;;;;;;
-;;;;;;;;;;;;;;
-Humano;;;;;;;;;;;;;;
-World: ;Circle2014;Miguel S.;Bea;Edurne;Javi;Aitor;JC;Miguel P.;Íñigo;Marta;Pablo T.;Óscar;;
-level;runs;collectibles 1;collectibles 2;collectibles 3;collectibles 4;collectibles 5;collectibles 6;collectibles 7;collectibles 8;collectibles 9;collectibles 10;collectibles 11;collectibles average;collectibles available
-1;10;2;2;2;2;2;2;2;2;2;2;2;;2
-2;10;3;3;2;3;3;3;3;3;3;3;3;;3
-3;10;3;3;1;3;3;3;3;3;2;2;3;;3
-4;10;4;4;4;4;4;4;4;4;4;4;4;;4
-5;10;2;2;2;2;2;2;2;2;2;2;2;;2
-6;10;2;2;2;2;2;2;2;2;2;2;2;;2
-7;10;3;3;1;2;2;3;3;1;3;3;2;;3
-8;10;3;3;3;3;3;2;3;3;3;3;3;;3
-9;10;3;3;3;3;3;3;3;3;3;3;3;;3
-10;10;3;3;3;0;0;3;3;0;1;3;3;;3
-;;time 1;time 2;time 3;time 4;time 5;time 6;time 7;time 8;time 9;time 10;time 11;time average;time limit
-;;4;5;6;6;6;5;5;6;5;5;6;;20
-;;14;21;45;9;18;13;21;16;11;19;13;;45
-;;15;27;60;20;11;21;18;27;60;60;38;;60
-;;21;24;31;23;33;19;28;23;20;25;22;;80
-;;18;40;18;31;18;20;17;30;17;17;22;;70
-;;7;7;9;8;10;7;7;8;29;7;21;;40
-;;29;19;60;60;60;49;28;60;33;35;60;;60
-;;24;25;25;25;24;40;24;25;26;24;24;;40
-;;27;27;34;29;25;26;31;35;23;32;24;;80
-;;44;68;27;100;100;49;59;100;100;37;46;;100
-;;score 1;score 2;score 3;score 4;score 5;score 6;score 7;score 8;score 9;score 10;score 11;score average;
-;;1000;950;900;900;900;950;950;900;950;950;900;;
-;;989;833;200;1100;900;1011;833;944;1056;878;1011;;
-;;1050;850;100;967;1117;950;1000;850;200;200;667;;
-;;1138;1100;1013;1113;988;1163;1050;1113;1150;1088;1125;;
-;;943;629;943;757;943;914;957;771;957;957;886;;
-;;1025;1025;975;1000;950;1025;1025;1000;475;1025;675;;
-;;817;983;100;200;200;483;833;100;750;717;200;;
-;;700;675;675;675;700;200;700;675;650;700;700;;
-;;963;963;875;938;988;975;913;863;1013;900;1000;;
-;;860;620;1030;0;0;810;710;0;100;930;840;;
-;total;9483;8628;6810;7649;7685;8481;8971;7216;7300;8344;8003;;
-;% sobre optimo;0,91;0,83;0,65;0,73;0,74;0,81;0,86;0,69;0,70;0,80;0,77;;
+Humano;;;;;;;;;;;;;;;
+World: ;Circle2014;;;;;;;;;;;;;;
+level;runs;collectibles average;collectibles available;time average;time limit;score average;;Óptimo;Optimum Score;;;;;;
+1;10;2;2;4,6;20;970;Mejor imposible;4;1000;;;;;;
+2;10;3;3;18,6;45;887;Se puede hacer mejor porque no lo he hecho todo a la primera pero lo he intentado hacer lo mejor que he podido. Lo óptimo sería hacerlo todas las veces en 14s;9;1100;;;;;;
+3;10;3;3;19,1;60;982;Me he caido algunas veces en el pozo pero he conseguido salir todas;9;1150;;;;;;
+4;10;4;4;15;80;1212;Lo ideal son 12s, pero es muy dificil hacer 12 todas las veces;12;1250;;;;;;
+5;10;2;2;15,8;70;974;Lo ideal es 15 s;15;986;;;;;;
+6;10;2;2;7;40;1025;Mejor imposible;7;1025;;;;;;
+7;10;3;3;23;60;917;Lo ideal es 14-15s pero es muy dificil;12;1100;;;;;;
+8;10;3;3;23,6;40;710;Dificil mejorarlo más;23;725;;;;;;
+9;10;3;3;26,6;80;967;Lo ideal son 23s;22;1025;;;;;;
+10;10;3;3;39,9;100;901;Lo ideal son unos 25 pero es dificil conseguirlo;21;1090;;;;;;
+;;;;;;9545;;;10451;;;;;;
+;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;
+;;;Vcollected;100;;;;;;;;;;;
+;;;Vcompleted;1000;;;;;;;;;;;
+;;;;;;;;;;;;;;;
+Humano;;;;;;;;;;;;;;;
+World: ;Circle2014;Miguel S.;Bea;Edurne;Javi;Aitor;JC;Miguel P.;Íñigo;Marta;Pablo T.;Óscar;Enrique;;
+level;runs;collectibles 1;collectibles 2;collectibles 3;collectibles 4;collectibles 5;collectibles 6;collectibles 7;collectibles 8;collectibles 9;collectibles 10;collectibles 11;collectibles 12;collectibles average;collectibles available
+1;10;2;2;2;2;2;2;2;2;2;2;2;2;;2
+2;10;3;3;2;3;3;3;3;3;3;3;3;3;;3
+3;10;3;3;1;3;3;3;3;3;2;2;3;2;;3
+4;10;4;4;4;4;4;4;4;4;4;4;4;4;;4
+5;10;2;2;2;2;2;2;2;2;2;2;2;2;;2
+6;10;2;2;2;2;2;2;2;2;2;2;2;2;;2
+7;10;3;3;1;2;2;3;3;1;3;3;2;3;;3
+8;10;3;3;3;3;3;2;3;3;3;3;3;3;;3
+9;10;3;3;3;3;3;3;3;3;3;3;3;3;;3
+10;10;3;3;3;0;0;3;3;0;1;3;3;3;;3
+;;time 1;time 2;time 3;time 4;time 5;time 6;time 7;time 8;time 9;time 10;time 11;time 12;time average;time limit
+;;4;5;6;6;6;5;5;6;5;5;6;5;;20
+;;14;21;45;9;18;13;21;16;11;19;13;21;;45
+;;15;27;60;20;11;21;18;27;60;60;38;60;;60
+;;21;24;31;23;33;19;28;23;20;25;22;21;;80
+;;18;40;18;31;18;20;17;30;17;17;22;21;;70
+;;7;7;9;8;10;7;7;8;29;7;21;8;;40
+;;29;19;60;60;60;49;28;60;33;35;60;17;;60
+;;24;25;25;25;24;40;24;25;26;24;24;23;;40
+;;27;27;34;29;25;26;31;35;23;32;24;31;;80
+;;44;68;27;100;100;49;59;100;100;37;46;44;;100
+;;score 1;score 2;score 3;score 4;score 5;score 6;score 7;score 8;score 9;score 10;score 11;score 12;score average;
+;;1000;950;900;900;900;950;950;900;950;950;900;950;;
+;;989;833;200;1100;900;1011;833;944;1056;878;1011;833;;
+;;1050;850;100;967;1117;950;1000;850;200;200;667;200;;
+;;1138;1100;1013;1113;988;1163;1050;1113;1150;1088;1125;1138;;
+;;943;629;943;757;943;914;957;771;957;957;886;900;;
+;;1025;1025;975;1000;950;1025;1025;1000;475;1025;675;1000;;
+;;817;983;100;200;200;483;833;100;750;717;200;1017;;
+;;700;675;675;675;700;200;700;675;650;700;700;725;;
+;;963;963;875;938;988;975;913;863;1013;900;1000;913;;
+;;860;620;1030;0;0;810;710;0;100;930;840;860;;
+;total;9483;8628;6810;7649;7685;8481;8971;7216;7300;8344;8003;8535;;
+;% sobre optimo;0,91;0,83;0,65;0,73;0,74;0,81;0,86;0,69;0,7;0,8;0,77;0,82;;
