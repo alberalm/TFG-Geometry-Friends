@@ -230,34 +230,23 @@ namespace GeometryFriendsAgents
                 if (n.numCaught == collectibles.Count)
                 {
                     n.plan.RemoveAt(0);
-                    if (previous_move == null)
+                    bool plan_is_risky = false;
+                    for (int i = 0; i < n.plan.Count && !plan_is_risky; i++)
+                    {
+                        plan_is_risky = plan_is_risky || n.plan[i].risky;
+                        if (previous_move != null && n.plan[i].IsEqual(previous_move))
+                        {
+                            plan_is_risky = true;
+                        }
+                    }
+                    if (!plan_is_risky)
                     {
                         PlanIsComplete = true;
                         return n.plan;
                     }
-                    else
+                    else if (reserve_plan == null)
                     {
-                        bool flag = false;
-                        foreach(MoveInformation m in n.plan)
-                        {
-                            if (m.IsEqual(previous_move))
-                            {
-                                flag = true;
-                                break;
-                            }
-                        }
-                        if (flag)
-                        {
-                            if  (reserve_plan == null)
-                            {
-                                reserve_plan = n.plan;
-                            }
-                        }
-                        else
-                        {
-                            PlanIsComplete = true;
-                            return n.plan;
-                        }
+                        reserve_plan = n.plan;
                     }
                 }
                 else

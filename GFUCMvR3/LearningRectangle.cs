@@ -113,7 +113,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    action = ActionSelectorRectangle.getToPosition(current.distance_x * GameInfo.PIXEL_LENGTH,
+                    action = ActionSelectorRectangle.GetToPosition(current.distance_x * GameInfo.PIXEL_LENGTH,
                         -2 * GameInfo.MAX_DISTANCE_RECTANGLE * GameInfo.PIXEL_LENGTH,
                         current.current_velocity_x, 20, new MoveInformation(new Platform(-1)));
                     if (hole_width < 0)

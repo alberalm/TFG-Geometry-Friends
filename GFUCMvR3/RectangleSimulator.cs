@@ -70,6 +70,57 @@ namespace GeometryFriendsAgents
             }
         }
 
+        // returns platforms <left,right>
+        public Tuple<Platform, Platform> AdjacentPlatforms(List<Platform> platformList, Platform currentPlatform)
+        {
+            Platform left = new Platform(-1);
+            Platform right = new Platform(-1);
+            foreach (Platform p in platformList)
+            {
+                if (p.rightEdge == currentPlatform.leftEdge - 1 && p.real && p.yTop == currentPlatform.yTop)
+                {
+                    left = p;
+                }
+                else if (p.leftEdge == currentPlatform.rightEdge + 1 && p.real && p.yTop == currentPlatform.yTop)
+                {
+                    right = p;
+                }
+            }
+            return new Tuple<Platform, Platform>(left, right);
+        }
+
+        public int CalculateMaxVelocity(List<Platform> platformList, Platform p, int edge)
+        {
+            Platform next_platform = AdjacentPlatforms(platformList, p).Item1;
+
+            // Squared, need to perform square root at the end
+            double target_velocity = 0; // do not count initial platform to leave some margin
+
+            while (next_platform.id != -1 && next_platform.shapes[(int)RectangleShape.Shape.VERTICAL])
+            {
+                target_velocity += 2 * GameInfo.RECTANGLE_ACCELERATION * (next_platform.rightEdge - next_platform.leftEdge);
+                next_platform = AdjacentPlatforms(platformList, next_platform).Item1;
+            }
+
+            return (int) Math.Sqrt(target_velocity) * GameInfo.PIXEL_LENGTH;
+        }
+
+        public int CalculateMinVelocity(List<Platform> platformList, Platform p, int edge)
+        {
+            Platform next_platform = AdjacentPlatforms(platformList, p).Item2;
+
+            // Squared, need to perform square root at the end
+            double target_velocity = 0; // do not count initial platform to leave some margin
+
+            while (next_platform.id != -1 && next_platform.shapes[(int)RectangleShape.Shape.VERTICAL])
+            {
+                target_velocity += 2 * GameInfo.RECTANGLE_ACCELERATION * (next_platform.rightEdge - next_platform.leftEdge);
+                next_platform = AdjacentPlatforms(platformList, next_platform).Item2;
+            }
+
+            return -(int)Math.Sqrt(target_velocity * GameInfo.PIXEL_LENGTH);
+        }
+
         public List<int> GetDiamondCollected(int x, int y, RectangleShape.Shape s)//x is the center of the rectangle and y is the base of the rectangle
         {
             List<int> ret = new List<int>();

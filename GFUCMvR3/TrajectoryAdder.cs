@@ -174,7 +174,8 @@ namespace GeometryFriendsAgents
             MoveInformation m = new MoveInformation(landing, p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10)
             {
                 xlandPoint = vx > 0 ? landing.leftEdge : landing.rightEdge,
-                shape = s
+                shape = s,
+                risky = moveType == MoveType.HIGHTILT
             };
 
             m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - RectangleShape.height(s) / 2) * GameInfo.PIXEL_LENGTH));
@@ -220,7 +221,8 @@ namespace GeometryFriendsAgents
         {
             MoveInformation m = new MoveInformation(landing, p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10)
             {
-                x = vx > 0 ? p.rightEdge : p.leftEdge
+                x = vx > 0 ? p.rightEdge : p.leftEdge,
+                risky = true
             };
 
             int collisionY = GameInfo.LEVEL_MAP_HEIGHT;

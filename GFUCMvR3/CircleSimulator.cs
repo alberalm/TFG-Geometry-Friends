@@ -177,7 +177,7 @@ namespace GeometryFriendsAgents
                     i--;
                 }
             }
-            m.RightEdgeIsDangerous = vx_0 > 0;
+            m.rightEdgeIsDangerous = vx_0 > 0;
             if (flag)
             {
                 parabolas.Add(m);

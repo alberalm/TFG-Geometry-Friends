@@ -128,17 +128,33 @@ namespace GeometryFriendsAgents
                 {
                     RectangleShape.Shape s = RectangleShape.Shape.VERTICAL;
                     // NOTE: Be aware 13 creates impossible moves
-                    if (p.yTop - p2.yTop > 0 && p.yTop - p2.yTop < 12)
+                    if (p.yTop - p2.yTop > 0 && p.yTop - p2.yTop < 14)
                     {
                         if (p2.leftEdge - p.rightEdge <= RectangleShape.width(RectangleShape.Shape.VERTICAL)
                             && p2.leftEdge - p.rightEdge >= 0)
                         {
-                            trajectoryAdder.AddTilt(ref platformList, ref p, 1, MoveType.TILT, p.rightEdge, s, p2);
+                            if(p.yTop - p2.yTop > 11)
+                            {
+                                int vx = trajectoryAdder.rectangleSimulator.CalculateMaxVelocity(platformList, p, p2.rightEdge);
+                                trajectoryAdder.AddTilt(ref platformList, ref p, vx, MoveType.HIGHTILT, p.rightEdge, s, p2);
+                            }
+                            else
+                            {
+                                trajectoryAdder.AddTilt(ref platformList, ref p, 1, MoveType.TILT, p.rightEdge, s, p2);
+                            }
                         }
                         else if (p.leftEdge - p2.rightEdge <= RectangleShape.width(RectangleShape.Shape.VERTICAL) + 1
                             && p.leftEdge - p2.rightEdge >= 0)
                         {
-                            trajectoryAdder.AddTilt(ref platformList, ref p, -1, MoveType.TILT, p.leftEdge, s, p2);
+                            if (p.yTop - p2.yTop > 11)
+                            {
+                                int vx = trajectoryAdder.rectangleSimulator.CalculateMinVelocity(platformList, p, p2.leftEdge);
+                                trajectoryAdder.AddTilt(ref platformList, ref p, vx, MoveType.HIGHTILT, p.leftEdge, s, p2);
+                            }
+                            else
+                            {
+                                trajectoryAdder.AddTilt(ref platformList, ref p, -1, MoveType.TILT, p.leftEdge, s, p2);
+                            }
                         }
                     }
                 }

@@ -266,22 +266,6 @@ namespace GeometryFriendsAgents
             return Math.Abs(m.landingPlatform.yTop + GameInfo.JUMP_VELOCITYY * GameInfo.JUMP_VELOCITYY / (2 * GameInfo.GRAVITY * GameInfo.PIXEL_LENGTH) - m.departurePlatform.yTop) <= 5;
         }
 
-        private Moves GoToPosition(int currentx, int targetx, bool jump)
-        {
-            if (Math.Abs(currentx - targetx) <= 1 && jump)
-            {
-                return Moves.JUMP;
-            }
-            else if (currentx < targetx)
-            {
-                return Moves.ROLL_RIGHT;
-            }
-            else
-            {
-                return Moves.ROLL_LEFT;
-            }
-        }
-
         public Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, double brake_distance, double acceleration_distance)
         {
             if (current_position >= target_position)//Circle on the right
@@ -370,34 +354,6 @@ namespace GeometryFriendsAgents
                 {
                     return Moves.NO_ACTION;
                 }
-            }
-        }
-
-
-        private Moves GoToPositionWithVelocity(int currentx, int currentvx, int targetx, int targetvx, bool jump)
-        {
-            if (Math.Abs(currentx - targetx) <= 1 && jump)
-            {
-                if (currentvx * targetvx < 0)
-                {
-                    if (currentvx > 0)
-                    {
-                        return Moves.ROLL_RIGHT;
-                    }
-                    else
-                    {
-                        return Moves.ROLL_LEFT;
-                    }
-                }
-                return Moves.JUMP;
-            }
-            else if (currentx < targetx)
-            {
-                return Moves.ROLL_RIGHT;
-            }
-            else
-            {
-                return Moves.ROLL_LEFT;
             }
         }
     }

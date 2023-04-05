@@ -17,8 +17,9 @@ namespace GeometryFriendsAgents
         public List<Tuple<float, float>> path;
         public int distanceToObstacle;
         public RectangleShape.Shape shape;
-        public bool RightEdgeIsDangerous;
+        public bool rightEdgeIsDangerous;
         public Moves moveDuringFlight;
+        public bool risky;
 
         public MoveInformation(MoveInformation other)
         {
@@ -32,8 +33,9 @@ namespace GeometryFriendsAgents
             this.path = other.path;
             this.distanceToObstacle = other.distanceToObstacle;
             this.shape = other.shape;
-            this.RightEdgeIsDangerous = other.RightEdgeIsDangerous;
+            this.rightEdgeIsDangerous = other.rightEdgeIsDangerous;
             this.moveDuringFlight = other.moveDuringFlight;
+            this.risky = other.risky;
         }
 
         public MoveInformation(Platform landingPlatform)
@@ -48,6 +50,7 @@ namespace GeometryFriendsAgents
             this.path = null;
             this.distanceToObstacle = 0;
             this.moveDuringFlight = Moves.NO_ACTION;
+            this.risky = false;
         }
 
         public MoveInformation(Platform landingPlatform, Platform departurePlatform, int x, int xlandPoint, int velocityX, MoveType moveType, List<int> diamondsCollected, List<Tuple<float, float>> path, int distanceToObstacle)
@@ -64,17 +67,18 @@ namespace GeometryFriendsAgents
             this.moveDuringFlight = Moves.NO_ACTION;
             if(velocityX > 0)
             {
-                RightEdgeIsDangerous = true;
+                rightEdgeIsDangerous = true;
             }
             else
             {
-                RightEdgeIsDangerous = false;
+                rightEdgeIsDangerous = false;
             }
+            this.risky = false;
         }
 
         public int DistanceToRollingEdge()
         {
-            if (RightEdgeIsDangerous)
+            if (rightEdgeIsDangerous)
             {
                 return landingPlatform.rightEdge - xlandPoint;
             }
@@ -86,7 +90,7 @@ namespace GeometryFriendsAgents
 
         public int DistanceToOtherEdge()
         {
-            if (RightEdgeIsDangerous)
+            if (rightEdgeIsDangerous)
             {
                 return xlandPoint - landingPlatform.leftEdge;
             }

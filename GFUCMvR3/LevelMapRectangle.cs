@@ -33,26 +33,41 @@ namespace GeometryFriendsAgents
 
         public Platform RectanglePlatform(RectangleRepresentation rI)
         {
-            RectangleShape.Shape s = RectangleShape.GetShape(rI);
+            Platform current_platform = new Platform(-1);
             for (int i = 0; i < platformList.Count; i++)
             {
-                if (rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 <= platformList[i].yTop + 3 &&
-                    rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.height(s) / 2 >= platformList[i].yTop - 3 &&
+                if ((rI.Y + rI.Height / 2) / GameInfo.PIXEL_LENGTH <= platformList[i].yTop + 3 &&
+                    (rI.Y + rI.Height / 2) / GameInfo.PIXEL_LENGTH >= platformList[i].yTop - 3 &&
                     rI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge - 1 && rI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge + 1)
                 {
-                    return platformList[i];
+                    // If height is less than square's height, it must be the right platform
+                    if (rI.Height < GameInfo.SQUARE_HEIGHT)
+                    {
+                        return platformList[i];
+                    }
+                    // Otherwise, it may be the height has not updated correctly
+                    else
+                    {
+                        current_platform = platformList[i];
+                        break;
+                    }
                 }
             }
+            RectangleShape.Shape s = RectangleShape.GetShape(rI);
             for (int i = 0; i < platformList.Count; i++)
             {
                 if (rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.width(s) / 2 <= platformList[i].yTop + 1 &&
                     rI.Y / GameInfo.PIXEL_LENGTH + RectangleShape.width(s) / 2 >= platformList[i].yTop - 10 &&
                     rI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge - 1 && rI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge + 1)
                 {
-                    return platformList[i];
+                    if (current_platform.id == -1 || platformList[i].yTop < current_platform.yTop)
+                    {
+                        current_platform = platformList[i];
+                    }
+                    return current_platform;
                 }
             }
-            return new Platform(-1);
+            return current_platform;
         }
 
         public override Platform GetPlatform(int x, int y)
@@ -105,7 +120,7 @@ namespace GeometryFriendsAgents
                         moveGenerator.GenerateNoMoveR(ref platformList, k, x);
                     });
 
-                    // TILT MOVES
+                    // TILT and HIGHTILT MOVES
                     Parallel.For(0, platformList.Count, i =>
                     {
                         moveGenerator.GenerateTilt(ref platformList, k, i);
@@ -562,20 +577,7 @@ namespace GeometryFriendsAgents
         // returns platforms <left,right>
         public Tuple<Platform, Platform> AdjacentPlatforms(Platform currentPlatform)
         {
-            Platform left = new Platform(-1);
-            Platform right = new Platform(-1);
-            foreach (Platform p in platformList)
-            {
-                if (p.rightEdge == currentPlatform.leftEdge - 1 && p.real && p.yTop == currentPlatform.yTop)
-                {
-                    left = p;
-                }
-                else if (p.leftEdge == currentPlatform.rightEdge + 1 && p.real && p.yTop == currentPlatform.yTop)
-                {
-                    right = p;
-                }
-            }
-            return new Tuple<Platform, Platform>(left, right);
+            return moveGenerator.trajectoryAdder.rectangleSimulator.AdjacentPlatforms(platformList, currentPlatform);
         }
 
         public bool HitsCeiling(RectangleRepresentation rI, Platform current_platform)

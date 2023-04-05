@@ -8,8 +8,6 @@ using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 
 namespace GeometryFriendsAgents
 {
@@ -372,7 +370,7 @@ namespace GeometryFriendsAgents
             t += elapsedGameTime.TotalMilliseconds;
             if(t < 1000)
             {
-                currentAction   =   Moves.MORPH_DOWN;
+                currentAction = Moves.MORPH_DOWN;
                 return;
             }
             if(t < 3000)
@@ -397,7 +395,6 @@ namespace GeometryFriendsAgents
         //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-
             if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 5 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 5)
             {
                 timesStuck++;
@@ -462,7 +459,10 @@ namespace GeometryFriendsAgents
                 int edge = actionSelector.move.velocityX > 0 ? actionSelector.move.landingPlatform.leftEdge : actionSelector.move.landingPlatform.rightEdge;
                 if (!hasFinishedTilt)
                 {
-                    if (Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH)
+                    if ((actionSelector.move.moveType == MoveType.TILT && 
+                        Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH) ||
+                        (actionSelector.move.moveType == MoveType.HIGHTILT &&
+                        Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 10 * GameInfo.PIXEL_LENGTH))
                     {
                         hasFinishedTilt = true;
                         actionSelector.tilt_height = 0;
@@ -473,7 +473,9 @@ namespace GeometryFriendsAgents
                     }
                 }
                 
-                if (actionSelector.move.moveType == MoveType.TILT && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH)
+                if ((actionSelector.move.moveType == MoveType.TILT && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH ) ||
+                    (actionSelector.move.moveType == MoveType.HIGHTILT && Math.Sign(rectangleInfo.VelocityX) == Math.Sign(actionSelector.move.velocityX)
+                    && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 7 * GameInfo.PIXEL_LENGTH))
                 {
                     if (actionSelector.move.velocityX > 0)
                     {
@@ -487,7 +489,8 @@ namespace GeometryFriendsAgents
                     return;
                 }
             }
-            
+
+            // Normal behaviour
             if ((actionSelector.move != null && ((actionSelector.move.moveType == MoveType.FALL &&
                 Math.Abs(actionSelector.move.x * GameInfo.PIXEL_LENGTH - rectangleInfo.X) <= 2 * GameInfo.PIXEL_LENGTH)
                 || actionSelector.move.moveType == MoveType.BIGHOLEDROP))

@@ -401,7 +401,7 @@ namespace GeometryFriendsAgents
         }
 
         //implememts abstract agent interface: send messages to the rectangle agent
-        public override List<GeometryFriends.AI.Communication.AgentMessage> GetAgentMessages()
+        public override List<AgentMessage> GetAgentMessages()
         {
             List<AgentMessage> toSent = new List<AgentMessage>(messages);
             messages.Clear();
@@ -409,7 +409,7 @@ namespace GeometryFriendsAgents
         }
 
         //implememts abstract agent interface: receives messages from the rectangle agent
-        public override void HandleAgentMessages(List<GeometryFriends.AI.Communication.AgentMessage> newMessages)
+        public override void HandleAgentMessages(List<AgentMessage> newMessages)
         {
             foreach (AgentMessage item in newMessages)
             {

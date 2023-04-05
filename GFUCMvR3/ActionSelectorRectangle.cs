@@ -1,15 +1,7 @@
 ﻿using GeometryFriends.AI;
-using GeometryFriends.AI.Debug;
 using GeometryFriends.AI.Perceptions.Information;
-using GeometryFriends.XNAStub;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using static GeometryFriendsAgents.RectangleShape;
 
 namespace GeometryFriendsAgents
@@ -21,13 +13,14 @@ namespace GeometryFriendsAgents
         public MoveInformation move;
         public Moves lastMove = Moves.NO_ACTION;
         public double tilt_height = 0;
+        public bool begin_high_tilt = false;
         
         public ActionSelectorRectangle(Dictionary<CollectibleRepresentation, int> collectibleId, LearningRectangle l, LevelMapRectangle levelMap, Graph graph) : base(collectibleId, l, graph)
         {
             this.levelMap = levelMap;
         }
 
-        public static Moves getToPosition(double current_position, double target_position, double current_velocity,double target_velocity, MoveInformation move)
+        public static Moves GetToPosition(double current_position, double target_position, double current_velocity, double target_velocity, MoveInformation move)
         {
             if (current_position >= target_position) // Rectangle on the right
             {
@@ -83,7 +76,7 @@ namespace GeometryFriendsAgents
             else
             {
                 move.velocityX *= -1;
-                Moves m = getToPosition((2 * target_position - current_position), target_position, -current_velocity, -target_velocity, move);
+                Moves m = GetToPosition((2 * target_position - current_position), target_position, -current_velocity, -target_velocity, move);
                 move.velocityX *= -1;
                 if (m == Moves.MOVE_LEFT)
                 {
@@ -110,9 +103,9 @@ namespace GeometryFriendsAgents
 
             if (move.moveType == MoveType.FALL || move.moveType == MoveType.NOMOVE || move.moveType == MoveType.ADJACENT)
             {
-                return getToPosition(current_position, target_position, current_velocity, target_velocity, move);
+                return GetToPosition(current_position, target_position, current_velocity, target_velocity, move);
             }
-            else if (move.moveType == MoveType.TILT)
+            else if (move.moveType == MoveType.TILT || move.moveType == MoveType.HIGHTILT)
             {
                 if (Math.Abs(current_position - target_position) > 3 * GameInfo.PIXEL_LENGTH &&
                     ((target_velocity < 0 && current_position < target_position) || (target_velocity > 0 && current_position > target_position)))
@@ -132,21 +125,30 @@ namespace GeometryFriendsAgents
                     {
                         return Moves.MOVE_RIGHT;
                     }
-                    else if(target_velocity > 0 && current_position > target_position)
+                    else if (target_velocity > 0 && current_position > target_position)
                     {
                         return Moves.MOVE_LEFT;
                     }
                 }
-                if (target_velocity > 0)
+                if (move.moveType == MoveType.TILT)
                 {
-                    return Moves.MOVE_RIGHT;
+                    if (target_velocity > 0)
+                    {
+                        return Moves.MOVE_RIGHT;
+                    }
+                    else
+                    {
+                        return Moves.MOVE_LEFT;
+                    }
                 }
                 else
                 {
-                    return Moves.MOVE_LEFT;
+                    // Going to edge because that is where we really want to go (also target_velocity has been calculated accordingly
+                    int edge = move.velocityX > 0 ? move.landingPlatform.leftEdge : move.landingPlatform.rightEdge;
+                    return GetToPosition(current_position, edge * GameInfo.PIXEL_LENGTH, current_velocity, target_velocity, move);
                 }
             }
-            else if (move.moveType == MoveType.MONOSIDEDROP ||move.moveType == MoveType.BIGHOLEADJ)
+            else if (move.moveType == MoveType.MONOSIDEDROP || move.moveType == MoveType.BIGHOLEADJ)
             {
                 if (Math.Abs(current_velocity) > 250)
                 {
@@ -163,7 +165,7 @@ namespace GeometryFriendsAgents
             }
             else if (move.moveType == MoveType.BIGHOLEDROP)
             {
-                int distance_x = 0;
+                int distance_x;
                 if (move.velocityX > 0)
                 {
                     distance_x = ((int)(rI.X / GameInfo.PIXEL_LENGTH)) - move.departurePlatform.rightEdge;
@@ -176,7 +178,7 @@ namespace GeometryFriendsAgents
                 // Remember move.velocityX stores the hole's width
                 StateRectangle state = new StateRectangle(distance_x, move.departurePlatform.yTop - ((int)(rI.Y / GameInfo.PIXEL_LENGTH)),
                     RectangleAgent.DiscreetVelocity(rI.VelocityX), (int)(rI.Height / (2 * GameInfo.PIXEL_LENGTH)), move.velocityX);
-                
+
                 return l.ChooseMove(state, move.velocityX);
             }
             else if (move.moveType == MoveType.DROP)
@@ -395,7 +397,7 @@ namespace GeometryFriendsAgents
             }
             else if (move.moveType == MoveType.BIGHOLEDROP)
             {
-                int distance_x = 0;
+                int distance_x;
                 if (move.velocityX > 0)
                 {
                     distance_x = move.departurePlatform.rightEdge - ((int)(rI.X / GameInfo.PIXEL_LENGTH));                  
@@ -440,7 +442,7 @@ namespace GeometryFriendsAgents
                 }
                 else if ((target_height == RectangleShape.fheight(RectangleShape.Shape.VERTICAL) ? target_height - 3 : target_height - 5) > rI.Height)
                 {
-                    if (move.moveType == MoveType.NOMOVE || move.moveType == MoveType.TILT || move.moveType == MoveType.DROP)
+                    if (move.moveType == MoveType.NOMOVE || move.moveType == MoveType.TILT || move.moveType == MoveType.DROP || move.moveType == MoveType.HIGHTILT)
                     {
                         if (levelMap.levelMap[(int)rI.X / GameInfo.PIXEL_LENGTH, (int)((rI.Y - 3 * rI.Height / 5) / GameInfo.PIXEL_LENGTH) - 1] != LevelMap.PixelType.OBSTACLE)
                         {
