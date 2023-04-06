@@ -202,6 +202,7 @@
     <OrangeElevators />
     <TimeLimit value="180" />
     <HighScores>
+      <HighScore name="UCMAgent" value="22" />
       <HighScore name="UCMAgent" value="25" />
       <HighScore name="UCMAgent" value="27" />
     </HighScores>
@@ -227,6 +228,7 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="23" />
+      <HighScore name="UCMAgent" value="25" />
     </HighScores>
   </Level9>
   <Level10>
@@ -249,6 +251,7 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent" value="12" />
       <HighScore name="UCMAgent" value="12" />
     </HighScores>
   </Level10>

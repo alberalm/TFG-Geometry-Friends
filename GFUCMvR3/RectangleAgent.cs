@@ -136,7 +136,7 @@ namespace GeometryFriendsAgents
             Platform initialPlatform = levelMap.PlatformBelowRectangle(rI);
             plan = graph.SearchAlgorithm(initialPlatform.id, colI, null);
 
-            if (!graph.PlanIsComplete)
+            if (!graph.planIsComplete)
             {
                 MoveInformation m_left = new MoveInformation(new Platform(-1), new Platform(-1), (int) rectangleInfo.X / GameInfo.PIXEL_LENGTH,(int) rectangleInfo.X / GameInfo.PIXEL_LENGTH, 0, MoveType.FALL, new List<int>(), new List<Tuple<float, float>>(), 10);
                 m_left.moveDuringFlight = Moves.MOVE_LEFT;
@@ -149,7 +149,7 @@ namespace GeometryFriendsAgents
                 if(m_left.landingPlatform.id >= 0 && levelMap.small_to_simplified[m_left.landingPlatform].id != initialPlatform.id)
                 {
                     List<MoveInformation> plan_left = graph.SearchAlgorithm(levelMap.small_to_simplified[m_left.landingPlatform].id, colI, null);
-                    if (graph.PlanIsComplete)
+                    if (graph.planIsComplete)
                     {
                         plan = plan_left;
                         currentAction = Moves.MOVE_LEFT;
@@ -158,7 +158,7 @@ namespace GeometryFriendsAgents
                 if (m_right.landingPlatform.id >= 0 && levelMap.small_to_simplified[m_right.landingPlatform].id != initialPlatform.id)
                 {
                     List<MoveInformation> plan_right = graph.SearchAlgorithm(levelMap.small_to_simplified[m_right.landingPlatform].id, colI, null);
-                    if (graph.PlanIsComplete)
+                    if (graph.planIsComplete)
                     {
                         if (currentAction == Moves.NO_ACTION || plan_right.Count < plan.Count)
                         {
