@@ -40,21 +40,17 @@ namespace GeometryFriendsAgents
             }
         }
 
-        public int V;
-        public int E;
         public List<Diamond> collectibles;
         public CollectibleRepresentation[] initialCollectibles;
         public List<Platform> platforms;
         public Stopwatch sw;
-        public bool PlanIsComplete = false;
+        public bool PlanIsComplete;
 
         public Graph(List<Platform> platforms, CollectibleRepresentation[] collectibles)
         {
             sw = new Stopwatch();
             this.platforms = platforms;
             this.initialCollectibles = collectibles;
-            V = platforms.Count();
-            E = 0;
             this.collectibles = new List<Diamond>();
             for(int i = 0; i < collectibles.Length; i++)
             {
@@ -69,7 +65,6 @@ namespace GeometryFriendsAgents
                 }
                 foreach (MoveInformation m in platforms[i].moveInfoList)
                 {
-                    E++;
                     for(int k = 0; k < m.diamondsCollected.Count; k++)
                     {
                         this.collectibles[k].moves.Add(m);
