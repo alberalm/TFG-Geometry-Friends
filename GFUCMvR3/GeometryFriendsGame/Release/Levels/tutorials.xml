@@ -32,7 +32,9 @@
       <Medal star="*" desc="Not Bad, but neither good" minvalue="8" maxvalue="18" />
       <Medal star="" desc="Weak! pfuh..." minvalue="19" />
     </Medals>
-    <HighScores />
+    <HighScores>
+      <HighScore name="No Name" value="3" />
+    </HighScores>
   </Level1>
   <Level2>
     <Description>
@@ -69,7 +71,9 @@
       <Medal star="*" desc="Not Bad, but neither good" minvalue="16" maxvalue="30" />
       <Medal star="" desc="Weak! pfuh..." minvalue="31" />
     </Medals>
-    <HighScores />
+    <HighScores>
+      <HighScore name="No Name" value="5" />
+    </HighScores>
   </Level2>
   <Level3>
     <Description>
@@ -111,7 +115,9 @@
       <Medal star="*" desc="Not Bad, but neither good" minvalue="16" maxvalue="20" />
       <Medal star="" desc="Weak! pfuh..." minvalue="21" />
     </Medals>
-    <HighScores />
+    <HighScores>
+      <HighScore name="No Name" value="13" />
+    </HighScores>
   </Level3>
   <Level4>
     <Description>
@@ -150,7 +156,9 @@
       <Medal star="*" desc="Not Bad, but neither good" minvalue="31" maxvalue="45" />
       <Medal star="" desc="Weak! pfuh..." minvalue="46" />
     </Medals>
-    <HighScores />
+    <HighScores>
+      <HighScore name="No Name" value="23" />
+    </HighScores>
   </Level4>
   <Level5>
     <Description>
@@ -197,7 +205,9 @@
       <Medal star="*" desc="Not Bad, but neither good" minvalue="26" maxvalue="30" />
       <Medal star="" desc="Weak! pfuh..." minvalue="31" />
     </Medals>
-    <HighScores />
+    <HighScores>
+      <HighScore name="No Name" value="31" />
+    </HighScores>
   </Level5>
   <Level6>
     <Description>
@@ -235,7 +245,9 @@
       <Medal star="*" desc="Not Bad, but neither good" minvalue="21" maxvalue="45" />
       <Medal star="" desc="Weak! pfuh..." minvalue="46" />
     </Medals>
-    <HighScores />
+    <HighScores>
+      <HighScore name="No Name" value="27" />
+    </HighScores>
   </Level6>
   <Level7>
     <Description>
@@ -272,7 +284,9 @@
       <Medal star="*" desc="Not Bad, but neither good" minvalue="16" maxvalue="20" />
       <Medal star="" desc="Weak! pfuh..." minvalue="21" />
     </Medals>
-    <HighScores />
+    <HighScores>
+      <HighScore name="No Name" value="7" />
+    </HighScores>
   </Level7>
   <Level8>
     <Description>
@@ -311,6 +325,8 @@
       <Medal star="*" desc="Not Bad, but neither good" minvalue="41" maxvalue="60" />
       <Medal star="" desc="Weak! pfuh..." minvalue="61" />
     </Medals>
-    <HighScores />
+    <HighScores>
+      <HighScore name="No Name" value="42" />
+    </HighScores>
   </Level8>
 </Levels>

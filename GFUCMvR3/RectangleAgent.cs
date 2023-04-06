@@ -600,6 +600,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
+                    // Check if height is really what we are told -> Generates up and down movement in falls
                     if (Math.Abs((rectangleInfo.Height + 2 * rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatform.yTop * 2) > 4)
                     {
                         if (rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)

@@ -3,35 +3,15 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeometryFriendsAgents
 {
     public class Graph
     {
-        public class Edge
-        {
-            public int to;
-            public List<MoveInformation> moves;
-
-            public Edge(int to)
-            {
-                this.to = to;
-                moves = new List<MoveInformation>();
-            }
-
-            public Edge(int to, MoveInformation m)
-            {
-                this.to = to;
-                moves = new List<MoveInformation>() { m };
-            }
-        }
-
         public class Diamond
         {
             public int id;
-            public List<int> isAbovePlatform; // -1 means there is no platform, if there are several platforms, we pick the highest one
+            public List<int> isAbovePlatform;
             public List<MoveInformation> moves;
             public List<Platform> platforms;
 
@@ -62,24 +42,11 @@ namespace GeometryFriendsAgents
 
         public int V;
         public int E;
-        public List<List<Edge>> adj;
         public List<Diamond> collectibles;
         public CollectibleRepresentation[] initialCollectibles;
         public List<Platform> platforms;
         public Stopwatch sw;
         public bool PlanIsComplete = false;
-
-        public Graph(int V)
-        {
-            sw = new Stopwatch();
-            this.V = V;
-            E = 0;
-            adj = new List<List<Edge>>();
-            for (int i = 0; i < V; i++)
-            {
-                adj.Add(new List<Edge>());
-            }
-        }
 
         public Graph(List<Platform> platforms, CollectibleRepresentation[] collectibles)
         {
@@ -88,7 +55,6 @@ namespace GeometryFriendsAgents
             this.initialCollectibles = collectibles;
             V = platforms.Count();
             E = 0;
-            adj = new List<List<Edge>>();
             this.collectibles = new List<Diamond>();
             for(int i = 0; i < collectibles.Length; i++)
             {
@@ -97,7 +63,6 @@ namespace GeometryFriendsAgents
             // Add every possible move to the directed graph
             for (int i = 0; i < platforms.Count(); i++)
             {
-                adj.Add(new List<Edge>());
                 foreach(int d in platforms[i].ReachableCollectiblesLandingInThisPlatform())
                 {
                     this.collectibles[d].isAbovePlatform.Add(i);
@@ -105,7 +70,6 @@ namespace GeometryFriendsAgents
                 foreach (MoveInformation m in platforms[i].moveInfoList)
                 {
                     E++;
-                    AddMove(m, i, m.landingPlatform.id);
                     for(int k = 0; k < m.diamondsCollected.Count; k++)
                     {
                         this.collectibles[k].moves.Add(m);
@@ -279,53 +243,5 @@ namespace GeometryFriendsAgents
                 return sol.plan;
             }
         }
-        
-        public void AddMove(MoveInformation move, int from, int to)
-        {
-            // Need the "to" vertex for the inverted graph
-            foreach(Edge e in adj[from])
-            {
-                if(e.to == to)
-                {
-                    e.moves.Add(move);
-                    return;
-                }
-            }
-            // There is still no Edge connecting from and to
-            adj[from].Add(new Edge(to, move));
-        }
-
-        public bool IsThereEdge(int from, int to)
-        {
-            if (from >= V || to >= V)
-            {
-                return false;
-            }
-            foreach (Edge e in adj[from])
-            {
-                if (e.to == to)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Graph Reverse()
-        {
-            // Does not contain real moves, just reverse adjacent vertices
-            Graph g = new Graph(V);
-            g.E = E;
-            MoveInformation move = null;
-            for (int i = 0; i < V; i++)
-            {
-                foreach (Edge w in adj[i])
-                {
-                    g.AddMove(move, w.to, i);
-                }
-            }
-            return g;
-        }
-        
     }
 }
