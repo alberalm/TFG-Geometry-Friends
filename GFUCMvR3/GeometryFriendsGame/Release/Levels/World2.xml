@@ -214,6 +214,7 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="UCMAgent" value="8" />
+      <HighScore name="UCMAgent" value="9" />
     </HighScores>
   </Level10>
   <Level11>
@@ -235,5 +236,8 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent" value="14" />
+    </HighScores>
   </Level11>
 </Levels>

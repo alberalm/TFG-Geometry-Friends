@@ -47,7 +47,14 @@ namespace GeometryFriendsAgents
                     }
                     pot *= 2;
                 }
-                return v;
+                if (is_risky)
+                {
+                    return -v;
+                }
+                else
+                {
+                    return v;
+                }
             }
         }
 
@@ -147,7 +154,7 @@ namespace GeometryFriendsAgents
                     }
                 }
                 Tuple<int, int> node_tuple = new Tuple<int, int>(n.plan[n.plan.Count - 1].landingPlatform.id, n.Value());
-                // If we already have been in this situation or enough time has passed, continue
+                // If we already have visited a similar node or enough time has passed, continue
                 if (seen.Contains(node_tuple) || sw.ElapsedMilliseconds >= 500)
                 {
                     continue;
@@ -184,10 +191,10 @@ namespace GeometryFriendsAgents
                             queue.Add(new Node(newPlan, newcaught, n.numCaught, new_node_is_risky));
                         }
                     }
-                }
-                if(not_risky_nodes == 0 && planIsComplete)
-                {
-                    return best_sol.plan;
+                    if (not_risky_nodes == 0 && planIsComplete)
+                    {
+                        return best_sol.plan;
+                    }
                 }
             }
             // If we only find risky solutions or incomplete ones, we return the one that catches the most diamonds possible
