@@ -241,19 +241,13 @@
     <Description />
     <Tips />
     <BallStartingPosition X="-5000" Y="-5000" />
-    <SquareStartingPosition X="1096" Y="392" />
+    <SquareStartingPosition X="408" Y="232" />
     <Collectibles>
-      <Collectible X="1192" Y="648" />
-      <Collectible X="568" Y="616" />
+      <Collectible X="184" Y="648" />
     </Collectibles>
     <GreenObstacles />
     <BlackObstacles>
-      <Obstacle width="208" height="32" X="248" Y="664" centered="false" />
-      <Obstacle width="32" height="96" X="424" Y="568" centered="false" />
-      <Obstacle width="288" height="32" X="424" Y="536" centered="false" />
-      <Obstacle width="32" height="96" X="680" Y="568" centered="false" />
-      <Obstacle width="224" height="32" X="680" Y="664" centered="false" />
-      <Obstacle width="32" height="64" X="872" Y="696" centered="false" />
+      <Obstacle width="336" height="64" X="40" Y="296" centered="false" />
     </BlackObstacles>
     <YellowObstacles />
     <GreenElevators />

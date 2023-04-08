@@ -498,10 +498,9 @@ namespace GeometryFriendsAgents
             {
                 if (currentPlatform.id == -1) // Rectangle is in the air
                 {
-                    // TODO
                     if (actionSelector.move != null)
                     {
-                        //Become horozintal asap when move=drop
+                        // Become horozintal asap when move=drop
                         if (actionSelector.move.moveType == MoveType.DROP && levelMap.RectangleCanMorphDown(rectangleInfo))
                         {
                             currentAction = Moves.MORPH_DOWN;
@@ -532,7 +531,7 @@ namespace GeometryFriendsAgents
                         }
                         else if (actionSelector.move.moveType == MoveType.BIGHOLEDROP)
                         {
-                            int distance_x = 0;
+                            int distance_x;
                             if (actionSelector.move.velocityX > 0)
                             {
                                 distance_x = ((int)(rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - actionSelector.move.departurePlatform.rightEdge;
@@ -619,7 +618,7 @@ namespace GeometryFriendsAgents
                         return;
                     }
 
-                    if (plan.Count == 0 || plan[0].departurePlatform.id != levelMap.small_to_simplified[currentPlatform].id) //CIRCLE IN LAST PLATFORM
+                    if (plan.Count == 0 || plan[0].departurePlatform.id != levelMap.small_to_simplified[currentPlatform].id) //RECTANGLE IN LAST PLATFORM
                     {
                         if (fullPlan.Count - plan.Count - 1 >= 0)
                         {

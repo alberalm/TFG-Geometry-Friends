@@ -14,6 +14,7 @@ namespace GeometryFriendsAgents
         public Dictionary<Platform, List<Platform>> simplified_to_small = new Dictionary<Platform, List<Platform>>();
         public Dictionary<Platform, Platform> small_to_simplified = new Dictionary<Platform, Platform>();
 
+        // Returns the highest real platform (remember simplified_platforms contains first all the real platforms and then the ficticious)
         public Platform PlatformBelowRectangle(RectangleRepresentation rI)
         {
             Platform p = new Platform(-1);

@@ -160,6 +160,11 @@ namespace GeometryFriendsAgents
                     continue;
                 }
                 seen.Add(node_tuple);
+                // To eliminate false move
+                if(n.plan[0].moveType == MoveType.NOMOVE)
+                {
+                    n.plan.RemoveAt(0);
+                }
                 // This is for incomplete solutions
                 if (n.numCaught > best_sol.numCaught || (n.numCaught == best_sol.numCaught && best_sol.is_risky && !n.is_risky))
                 {
@@ -167,7 +172,6 @@ namespace GeometryFriendsAgents
                 }
                 if (n.numCaught == collectibles.Count)
                 {
-                    n.plan.RemoveAt(0);
                     planIsComplete = true;
                     if (!n.is_risky || not_risky_nodes == 0)
                     {
