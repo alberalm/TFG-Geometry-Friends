@@ -96,7 +96,7 @@ namespace GeometryFriendsAgents
             {
                 flag = true;
             }
-            float dt = 0.005f;
+            float dt = 0.015f;
             float t = 0;
             float x_tfloat = x_0;
             float y_tfloat = y_0;

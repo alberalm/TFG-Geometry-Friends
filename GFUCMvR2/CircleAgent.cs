@@ -140,10 +140,10 @@ namespace GeometryFriendsAgents
         private void InitialDraw()
         {
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            levelMap.DrawLevelMap(ref newDebugInfo);
+            //levelMap.DrawLevelMap(ref newDebugInfo);
             levelMap.DrawConnections(ref newDebugInfo);
             //levelMap.DrawConnectionsVertex(ref newDebugInfo);
-            PlanDebug();
+            //PlanDebug();
         }
 
         private void UpdateDraw()
@@ -151,7 +151,7 @@ namespace GeometryFriendsAgents
             newDebugInfo.Clear();
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
             InitialDraw();
-            CircleDraw();
+            //CircleDraw();
             debugInfo = newDebugInfo.ToArray();
         }
 

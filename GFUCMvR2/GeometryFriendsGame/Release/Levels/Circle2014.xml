@@ -135,9 +135,10 @@
     <TimeLimit value="70" />
     <HighScores>
       <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="17" />
       <HighScore name="UCMAgent" value="18" />
       <HighScore name="UCMAgent" value="18" />
-      <HighScore name="UCMAgent" value="26" />
     </HighScores>
   </Level5>
   <Level6>
