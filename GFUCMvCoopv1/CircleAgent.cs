@@ -308,15 +308,8 @@ namespace GeometryFriendsAgents
                 {
                     if (setupMaker.planCircle.Count == 0 || setupMaker.planCircle[0].departurePlatform.id != currentPlatformCircle.id) //CIRCLE IN LAST PLATFORM
                     {
-                        if  (setupMaker.fullPlanCircle.Count - setupMaker.planCircle.Count - 1 >= 0)
-                        {
-                            setupMaker.planCircle = setupMaker.graphCircle.SearchAlgorithm(setupMaker.levelMapCircle.PlatformBelowCircle(setupMaker.circleInfo).id, setupMaker.collectiblesInfo, setupMaker.fullPlanCircle[setupMaker.fullPlanCircle.Count - setupMaker.planCircle.Count - 1]);
-                        }
-                        else
-                        {
-                            setupMaker.planCircle = setupMaker.graphCircle.SearchAlgorithm(setupMaker.levelMapCircle.PlatformBelowCircle(setupMaker.circleInfo).id, setupMaker.collectiblesInfo, null);
-                        }
-                        setupMaker.fullPlanCircle = new List<MoveInformation>(setupMaker.planCircle);
+                        // TODO: Add logic with failed move
+                        setupMaker.Replanning();
                     }
                     Tuple<Moves, Tuple<bool, bool>> tup;
                     if (GameInfo.PHYSICS)
@@ -336,8 +329,6 @@ namespace GeometryFriendsAgents
                 }
             }
         }
-
-                    
 
         //implements abstract circle interface: signals the agent the end of the current level
         public override void EndGame(int collectiblesCaught, int timeElapsed)

@@ -10,9 +10,6 @@ namespace GeometryFriendsAgents
 {
     public class LevelMapRectangle : LevelMap
     {
-        public List<Platform> simplified_platforms = new List<Platform>();
-        public Dictionary<Platform, List<Platform>> simplified_to_small = new Dictionary<Platform, List<Platform>>();
-        public Dictionary<Platform, Platform> small_to_simplified = new Dictionary<Platform, Platform>();
 
         // Returns the highest real platform (remember simplified_platforms contains first all the real platforms and then the ficticious)
         public Platform PlatformBelowRectangle(RectangleRepresentation rI)

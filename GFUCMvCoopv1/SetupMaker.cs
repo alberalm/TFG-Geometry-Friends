@@ -32,9 +32,10 @@ namespace GeometryFriendsAgents
         public LevelMapRectangle levelMapRectangle;
         public LevelMapCooperative levelMapCooperative;
 
+
+        public Dictionary<int, int> circle_to_rectangle;
         // Planning
-        public Graph graphCircle;
-        public Graph graphRectangle;
+        public Graph graph;
         public List<MoveInformation> planCircle;
         public List<MoveInformation> planRectangle;
 
@@ -67,7 +68,8 @@ namespace GeometryFriendsAgents
 
             lCircle = new LearningCircle();
             lRectangle = new LearningRectangle();
-
+            circle_to_rectangle = new Dictionary<int, int>();
+            
             collectibleId = new Dictionary<CollectibleRepresentation, int>();
             for (int i = 0; i < colI.Length; i++)
             {
@@ -75,69 +77,40 @@ namespace GeometryFriendsAgents
             }
         }
         
-        public void SetUp(){
-
+        public void SetUp()
+        {
             levelMapCircle.CreateLevelMap(collectiblesInfo, obstaclesInfo, greenObstaclesInfo);
             levelMapRectangle.CreateLevelMap(collectiblesInfo, obstaclesInfo, yellowObstaclesInfo);
 
             levelMapCooperative = new LevelMapCooperative(levelMapCircle, levelMapRectangle);
 
-            levelMapCooperative.CreateLevelMap();
+            levelMapCooperative.CreateLevelMap(ref circle_to_rectangle);
+
+            graph = new Graph(levelMapCircle.simplified_platforms, levelMapRectangle.simplified_platforms, circle_to_rectangle, collectiblesInfo);
+            graph.SearchAlgorithm(levelMapCircle.small_to_simplified[levelMapCircle.PlatformBelowCircle(circleInfo)].id, levelMapRectangle.PlatformBelowRectangle(rectangleInfo).id, collectiblesInfo);
 
             // Circle
 
-            graphCircle = new Graph(levelMapCircle.GetPlatforms(), collectiblesInfo);
-
-            planCircle = graphCircle.SearchAlgorithm(levelMapCircle.PlatformBelowCircle(circleInfo).id, collectiblesInfo, null);
+            planCircle = graph.GetCirclePlan();
             fullPlanCircle = new List<MoveInformation>(planCircle);
 
-            actionSelectorCircle = new ActionSelectorCircle(collectibleId, lCircle, levelMapCircle, graphCircle);
+            actionSelectorCircle = new ActionSelectorCircle(collectibleId, lCircle, levelMapCircle, graph);
 
             // Rectangle
             
-            graphRectangle = new Graph(levelMapRectangle.simplified_platforms, collectiblesInfo);
-
-            Platform initialPlatformRectangle = levelMapRectangle.PlatformBelowRectangle(rectangleInfo);
-
-            planRectangle = graphRectangle.SearchAlgorithm(initialPlatformRectangle.id, collectiblesInfo, null);
-
-            if (!graphRectangle.planIsComplete)
-            {
-                MoveInformation m_left = new MoveInformation(new Platform(-1), new Platform(-1), (int)rectangleInfo.X / GameInfo.PIXEL_LENGTH, (int)rectangleInfo.X / GameInfo.PIXEL_LENGTH, 0, MoveType.FALL, new List<int>(), new List<Tuple<float, float>>(), 10);
-                m_left.moveDuringFlight = Moves.MOVE_LEFT;
-                levelMapRectangle.moveGenerator.trajectoryAdder.rectangleSimulator.SimulateMove(ref levelMapRectangle.platformList, rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_left, RectangleShape.GetShape(rectangleInfo));
-
-                MoveInformation m_right = new MoveInformation(new Platform(-1), new Platform(-1), (int)rectangleInfo.X / GameInfo.PIXEL_LENGTH, (int)rectangleInfo.X / GameInfo.PIXEL_LENGTH, 0, MoveType.FALL, new List<int>(), new List<Tuple<float, float>>(), 10);
-                m_right.moveDuringFlight = Moves.MOVE_RIGHT;
-                levelMapRectangle.moveGenerator.trajectoryAdder.rectangleSimulator.SimulateMove(ref levelMapRectangle.platformList, rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_right, RectangleShape.GetShape(rectangleInfo));
-
-                if (m_left.landingPlatform.id >= 0 && levelMapRectangle.small_to_simplified[m_left.landingPlatform].id != initialPlatformRectangle.id)
-                {
-                    List<MoveInformation> plan_left = graphRectangle.SearchAlgorithm(levelMapRectangle.small_to_simplified[m_left.landingPlatform].id, collectiblesInfo, null);
-                    if (graphRectangle.planIsComplete)
-                    {
-                        planRectangle = plan_left;
-                        rectangleAgent.currentAction = Moves.MOVE_LEFT;
-                    }
-                }
-                if (m_right.landingPlatform.id >= 0 && levelMapRectangle.small_to_simplified[m_right.landingPlatform].id != initialPlatformRectangle.id)
-                {
-                    List<MoveInformation> plan_right = graphRectangle.SearchAlgorithm(levelMapRectangle.small_to_simplified[m_right.landingPlatform].id, collectiblesInfo, null);
-                    if (graphRectangle.planIsComplete)
-                    {
-                        if (rectangleAgent.currentAction == Moves.NO_ACTION || plan_right.Count < planRectangle.Count)
-                        {
-                            planRectangle = plan_right;
-                            rectangleAgent.currentAction = Moves.MOVE_RIGHT;
-                        }
-                    }
-                }
-
-            }
-
+            planRectangle = graph.GetRectanglePlan();
             fullPlanRectangle = new List<MoveInformation>(planRectangle);
 
-            actionSelectorRectangle = new ActionSelectorRectangle(collectibleId, lRectangle, levelMapRectangle, graphRectangle);
+            actionSelectorRectangle = new ActionSelectorRectangle(collectibleId, lRectangle, levelMapRectangle, graph);
+        }
+
+        public void Replanning()
+        {
+            graph.SearchAlgorithm(levelMapCircle.small_to_simplified[levelMapCircle.PlatformBelowCircle(circleInfo)].id, levelMapRectangle.PlatformBelowRectangle(rectangleInfo).id, collectiblesInfo);
+            planCircle = graph.GetCirclePlan();
+            fullPlanCircle = new List<MoveInformation>(planCircle);
+            planRectangle = graph.GetRectanglePlan();
+            fullPlanRectangle = new List<MoveInformation>(planRectangle);
         }
     }
 }

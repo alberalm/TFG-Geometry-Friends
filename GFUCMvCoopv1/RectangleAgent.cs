@@ -538,25 +538,10 @@ namespace GeometryFriendsAgents
 
                     if (setupMaker.planRectangle.Count == 0 || setupMaker.planRectangle[0].departurePlatform.id != setupMaker.levelMapRectangle.small_to_simplified[currentPlatformRectangle].id) //RECTANGLE IN LAST PLATFORM
                     {
-                        if (setupMaker.fullPlanRectangle.Count - setupMaker.planRectangle.Count - 1 >= 0)
-                        {
-                            setupMaker.planRectangle = setupMaker.graphRectangle.SearchAlgorithm(setupMaker.levelMapRectangle.small_to_simplified[setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo)].id, setupMaker.collectiblesInfo, setupMaker.fullPlanRectangle[setupMaker.fullPlanRectangle.Count - setupMaker.planRectangle.Count - 1]);
-                        }
-                        else
-                        {
-                            setupMaker.planRectangle = setupMaker.graphRectangle.SearchAlgorithm(setupMaker.levelMapRectangle.small_to_simplified[setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo)].id, setupMaker.collectiblesInfo, null);
-                        }
-                        setupMaker.fullPlanRectangle = new List<MoveInformation>(setupMaker.planRectangle);
+                        // TODO: Add logic with failed move
+                        setupMaker.Replanning();
                     }
-
-                    if (GameInfo.PHYSICS)
-                    {
-                        currentAction = setupMaker.actionSelectorRectangle.nextActionPhisics(ref setupMaker.planRectangle, remaining, setupMaker.rectangleInfo, currentPlatformRectangle);
-                    }
-                    else
-                    {
-                        //tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
-                    }
+                    currentAction = setupMaker.actionSelectorRectangle.nextActionPhisics(ref setupMaker.planRectangle, remaining, setupMaker.rectangleInfo, currentPlatformRectangle);
                     setupMaker.actionSelectorRectangle.lastMove = currentAction;
                 }
             }

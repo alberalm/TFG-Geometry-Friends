@@ -19,6 +19,17 @@ namespace GeometryFriendsAgents
         {
         }
 
+        public Platform(Platform other)
+        {
+            this.id = other.id;
+            this.yTop = other.yTop;
+            this.leftEdge = other.leftEdge;
+            this.rightEdge = other.rightEdge;
+            this.shapes = other.shapes; 
+            this.moveInfoList = new List<MoveInformation> (other.moveInfoList);
+            this.real = other.real;
+        }
+
         public Platform(int id, int yTop, int leftEdge, int rightEdge, List<MoveInformation> moveInfoList)
         {
             this.id = id;
@@ -66,12 +77,31 @@ namespace GeometryFriendsAgents
             return true;
         }
 
-        public List<int> ReachableCollectiblesLandingInThisPlatform()
+        public List<int> ReachableCollectiblesLandingInThisPlatformWithoutCooperation()
         {
             List<int> rc = new List<int>();
             foreach (MoveInformation m in moveInfoList)
             {
-                if (m.departurePlatform.id == m.landingPlatform.id)
+                if (m.departurePlatform.id == m.landingPlatform.id && m.departurePlatform.real)
+                {
+                    foreach (int d in m.diamondsCollected)
+                    {
+                        if (!rc.Contains(d))
+                        {
+                            rc.Add(d);
+                        }
+                    }
+                }
+            }
+            return rc;
+        }
+
+        public List<int> ReachableCollectiblesLandingInThisPlatformWithCooperation()
+        {
+            List<int> rc = new List<int>();
+            foreach (MoveInformation m in moveInfoList)
+            {
+                if (m.departurePlatform.id == m.landingPlatform.id && !m.departurePlatform.real)
                 {
                     foreach (int d in m.diamondsCollected)
                     {

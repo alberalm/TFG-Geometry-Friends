@@ -31,6 +31,9 @@ namespace GeometryFriendsAgents
         };
 
         public List<Platform> platformList;
+        public List<Platform> simplified_platforms = new List<Platform>();
+        public Dictionary<Platform, List<Platform>> simplified_to_small = new Dictionary<Platform, List<Platform>>();
+        public Dictionary<Platform, Platform> small_to_simplified = new Dictionary<Platform, Platform>();
 
         public PixelType[,] levelMap = new PixelType[GameInfo.LEVEL_MAP_WIDTH, GameInfo.LEVEL_MAP_HEIGHT]; //x=i, y=j
 
@@ -280,7 +283,7 @@ namespace GeometryFriendsAgents
 
         public void DrawConnections(ref List<DebugInformation> debugInformation)
         {
-            foreach (Platform p in platformList)
+            foreach (Platform p in simplified_platforms)
             {
                 foreach (MoveInformation m in p.moveInfoList)
                 {

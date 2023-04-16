@@ -17,12 +17,13 @@ namespace GeometryFriendsAgents
             this.levelMapRectangle = levelMapRectangle;
         }
 
-        public void CreateLevelMap()
+        public void CreateLevelMap(ref Dictionary<int, int> circle_to_rectangle)
         {
             levelMapCircle.AddCooperative(levelMapRectangle);
             //levelMapRectangle.AddCooperative(levelMapCircle);
             levelMapCircle.GenerateMoveInformation();
             levelMapRectangle.GenerateMoveInformation();
+            levelMapCircle.MergeCooperative(levelMapRectangle, ref circle_to_rectangle);
         }
     }
 }

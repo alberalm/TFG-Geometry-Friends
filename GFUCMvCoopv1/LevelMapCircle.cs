@@ -274,17 +274,17 @@ namespace GeometryFriendsAgents
 
                 // Parabolic JUMPS
 
-                //Parallel.For(p.leftEdge + 1, p.rightEdge, x =>
-                for (int x = p.leftEdge + 1; x < p.rightEdge; x++)
+                Parallel.For(p.leftEdge + 1, p.rightEdge, x =>
+                //for (int x = p.leftEdge + 1; x < p.rightEdge; x++)
                 {
                     if (p.real)
                     {
-                        //Parallel.For(0, num_velocities + 1, i =>
-                        for (int i = 0; i < num_velocities + 1; i++)
+                        Parallel.For(0, num_velocities + 1, i =>
+                        //for (int i = 0; i < num_velocities + 1; i++)
                         {
                             moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step);
-                        //});
-                        }
+                        });
+                        //}
                     }
                     else
                     {
@@ -293,8 +293,8 @@ namespace GeometryFriendsAgents
                             moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step);
                         });
                     }
-                //});
-                }
+                });
+                //}
 
                 Parallel.For(p.leftEdge, p.rightEdge + 1, x =>
                 {
@@ -334,9 +334,9 @@ namespace GeometryFriendsAgents
 
         public void AddCooperative(LevelMapRectangle levelMapRectangle)
         {
-            foreach(Platform p in levelMapRectangle.platformList)
+            foreach (Platform p in levelMapRectangle.platformList)
             {
-                foreach(RectangleShape.Shape s in GameInfo.SHAPES)
+                foreach (RectangleShape.Shape s in GameInfo.SHAPES)
                 {
                     if (p.shapes[(int)s])
                     {
@@ -349,7 +349,7 @@ namespace GeometryFriendsAgents
                             CollisionType col = moveGenerator.trajectoryAdder.circleSimulator.CircleIntersectsWithObstacle(x, new_platform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH);
                             if (col != CollisionType.None && col != CollisionType.Diamond && col != CollisionType.Agent)
                             {
-                                if(new_platform.leftEdge != 0)
+                                if (new_platform.leftEdge != 0)
                                 {
                                     platformList.Add(new_platform);
                                     new_platform = new Platform(platformList.Count);
@@ -360,7 +360,7 @@ namespace GeometryFriendsAgents
                             }
                             else
                             {
-                                if(new_platform.leftEdge == 0)
+                                if (new_platform.leftEdge == 0)
                                 {
                                     new_platform.leftEdge = x;
                                 }
@@ -368,14 +368,119 @@ namespace GeometryFriendsAgents
                                 levelMap[x, new_platform.yTop] = PixelType.RECTANGLE;
                             }
                         }
-                        if(new_platform.leftEdge != 0)
+                        if (new_platform.leftEdge != 0)
                         {
                             platformList.Add(new_platform);
                         }
                     }
                 }
             }
+
             PlatformUnion();
+        }
+
+        public void MergeCooperative(LevelMapRectangle levelMapRectangle, ref Dictionary<int,int> circle_to_rectangle)
+        {
+            foreach (Platform p in platformList)
+            {
+                if (p.real)
+                {
+                    simplified_platforms.Add(new Platform(p) { id = simplified_platforms.Count });
+                    simplified_to_small.Add(simplified_platforms[simplified_platforms.Count - 1], new List<Platform> { p });
+                    small_to_simplified.Add(p, simplified_platforms[simplified_platforms.Count - 1]);
+                }
+            }
+
+            foreach (Platform p_rect_simp in levelMapRectangle.simplified_platforms)
+            {
+                Platform simplified_p = new Platform(simplified_platforms.Count, 0, GameInfo.LEVEL_MAP_WIDTH, 0, new List<MoveInformation>());
+                simplified_p.real = false;
+                List<Platform> small_list_not_real = new List<Platform>();
+                
+                foreach (Platform small in levelMapRectangle.simplified_to_small[p_rect_simp])
+                {
+                    for(int x = small.leftEdge; x <= small.rightEdge; x++)
+                    {
+                        foreach (RectangleShape.Shape s in GameInfo.SHAPES)
+                        {
+                            if (small.shapes[(int)s])
+                            {
+                                CircleRepresentation circle = new CircleRepresentation(x * GameInfo.PIXEL_LENGTH,
+                                    (small.yTop - RectangleShape.height(s)) * GameInfo.PIXEL_LENGTH - GameInfo.CIRCLE_RADIUS,
+                                    0, 0, GameInfo.CIRCLE_RADIUS);
+
+                                Platform platform = PlatformBelowCircle(circle);
+
+                                if(platform.id != -1 && !platform.real && !small_list_not_real.Contains(platform))
+                                {
+                                    if (platform.yTop > simplified_p.yTop)
+                                    {
+                                        simplified_p.yTop = platform.yTop;
+                                    }
+                                    if (platform.leftEdge < simplified_p.leftEdge)
+                                    {
+                                        simplified_p.leftEdge = platform.leftEdge;
+                                    }
+                                    if (platform.rightEdge > simplified_p.rightEdge)
+                                    {
+                                        simplified_p.rightEdge = platform.rightEdge;
+                                    }
+                                    foreach (MoveInformation m in platform.moveInfoList)
+                                    {
+                                        simplified_p.moveInfoList.Add(new MoveInformation(m));
+                                    }
+
+                                    small_list_not_real.Add(platform);
+                                    small_to_simplified.Add(platform, simplified_p);
+                                }
+                            }
+                        }
+                    }
+                }
+                simplified_to_small.Add(simplified_p, small_list_not_real);
+                simplified_platforms.Add(simplified_p);
+                circle_to_rectangle.Add(simplified_p.id, p_rect_simp.id);
+            }
+
+            foreach (Platform simplified_p in simplified_platforms)
+            {
+                for (int i = 0; i < simplified_p.moveInfoList.Count; i++)
+                {
+                    MoveInformation m = simplified_p.moveInfoList[i];
+                    m.landingPlatform = small_to_simplified[m.landingPlatform];
+                    m.departurePlatform = simplified_p;
+                    if((m.landingPlatform.id == m.departurePlatform.id && m.diamondsCollected.Count == 0)
+                        || (m.landingPlatform.id != m.departurePlatform.id && !m.landingPlatform.real && !m.departurePlatform.real))
+                    {
+                        simplified_p.moveInfoList.RemoveAt(i);
+                        i--;
+                    }
+                }
+            }
+
+            foreach (Platform simplified_p in simplified_platforms)
+            {
+                for (int i = 0; i < simplified_p.moveInfoList.Count; i++)
+                {
+                    MoveInformation m1 = simplified_p.moveInfoList[i];
+                    for (int j = i + 1; j < simplified_p.moveInfoList.Count; j++)
+                    {
+                        MoveInformation m2 = simplified_p.moveInfoList[j];
+                        int comp = m1.CompareCircle(m2, initialCollectiblesInfo, simplified_platforms);
+                        if (comp == 1)
+                        {
+                            simplified_p.moveInfoList.RemoveAt(j);
+                            j--;
+                        }
+                        else if (comp == -1)
+                        {
+                            simplified_p.moveInfoList.RemoveAt(i);
+                            i--;
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -40,6 +40,28 @@ namespace GeometryFriendsAgents
                             {
                                 if  (diamond.id == d)
                                 {
+                                    /*foreach (Tuple<int, string> tuple in collectibles[i].isAbovePlatform)
+                                    {
+                                        if (tuple.Item1 == move_circle.landingPlatform.id && tuple.Item2.Equals("c"))
+                                        {
+                                            n.caught[i] = true;
+                                            n.numCaught++;
+                                        }
+                                        if (tuple.Item1 == move_circle.landingPlatform.id
+                                            && move_rectangle.landingPlatform.id == circle_to_rectangle[move_circle.landingPlatform.id]
+                                            && tuple.Item2.Equals("cr"))
+                                        {
+                                            n.caught[i] = true;
+                                            n.numCaught++;
+                                        }
+                                        if (tuple.Item1 == move_rectangle.landingPlatform.id && tuple.Item2.Equals("r"))
+                                        {
+                                            n.caught[i] = true;
+                                            n.numCaught++;
+                                        }
+                                    }
+
+
                                     if (diamond.isAbovePlatform.Contains(p.id))
                                     {
                                         if (Math.Abs(m.x - agentX) < mindistance && (next_move == null || !next_move.diamondsCollected.Contains(d)))
@@ -48,6 +70,7 @@ namespace GeometryFriendsAgents
                                             mindistance = Math.Abs(m.x - agentX);
                                         }
                                     }
+                                    */
                                 }
                             }
                         }

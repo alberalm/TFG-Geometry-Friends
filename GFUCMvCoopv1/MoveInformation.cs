@@ -30,7 +30,7 @@ namespace GeometryFriendsAgents
             this.velocityX = other.velocityX;
             this.moveType = other.moveType;
             this.diamondsCollected = other.diamondsCollected;
-            this.path = other.path;
+            this.path = new List<Tuple<float, float>> (other.path);
             this.distanceToObstacle = other.distanceToObstacle;
             this.shape = other.shape;
             this.rightEdgeIsDangerous = other.rightEdgeIsDangerous;
@@ -40,14 +40,14 @@ namespace GeometryFriendsAgents
 
         public MoveInformation(Platform landingPlatform)
         {
-            this.departurePlatform = null;
+            this.departurePlatform = landingPlatform;
             this.landingPlatform = landingPlatform;
             this.x = 0;
             this.xlandPoint = 0;
             this.velocityX = 0;
             this.moveType = MoveType.NOMOVE;
             this.diamondsCollected = new List<int>();
-            this.path = null;
+            this.path = new List<Tuple<float, float>>();
             this.distanceToObstacle = 0;
             this.moveDuringFlight = Moves.NO_ACTION;
             this.risky = false;
@@ -117,12 +117,13 @@ namespace GeometryFriendsAgents
 
         // Returns 1 is this is better, -1 if other is better, 0 if not clear or not comparable
         public int CompareCircle(MoveInformation other, CollectibleRepresentation[] initialCollectiblesInfo, List<Platform> platformList)
-        {
+        {   
             // Here is where we filter movements
             if (landingPlatform.id != other.landingPlatform.id || departurePlatform.id != other.departurePlatform.id)
             {
                 return 0;
             }
+
             if (moveType == MoveType.NOMOVE && other.moveType == MoveType.NOMOVE && diamondsCollected[0] == other.diamondsCollected[0])
             {
                 if (Math.Abs(x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH) < Math.Abs(other.x - initialCollectiblesInfo[diamondsCollected[0]].X / GameInfo.PIXEL_LENGTH))
@@ -145,12 +146,42 @@ namespace GeometryFriendsAgents
                 // Symmetric
                 return -1;
             }
-            if (moveType == MoveType.NOMOVE) // In general, we want to store these moves, since they don't really afect other moves
+            if (moveType == MoveType.NOMOVE || other.moveType == MoveType.NOMOVE) // In general, we want to store these moves, since they don't really afect other moves
             {
                 return 0;
             }
             if (Utilities.Contained(diamondsCollected, other.diamondsCollected) && Utilities.Contained(other.diamondsCollected, diamondsCollected)) //diamondsCollected=other.diamondsCollected
             {
+                // Departure not real
+                if (!departurePlatform.real)
+                {
+                    int y1 = (int)path[0].Item2 / GameInfo.PIXEL_LENGTH;
+                    int y2 = (int)other.path[0].Item2 / GameInfo.PIXEL_LENGTH;
+                    if (y1 > y2)
+                    {
+                        return 1;
+                    }
+                    else if(y1 < y2)
+                    {
+                        return -1;
+                    }
+                }
+
+                // Landing not real
+                if (!landingPlatform.real)
+                {
+                    int y1 = (int)path[path.Count - 1].Item2 / GameInfo.PIXEL_LENGTH;
+                    int y2 = (int)other.path[other.path.Count - 1].Item2 / GameInfo.PIXEL_LENGTH;
+                    if (y1 > y2)
+                    {
+                        return 1;
+                    }
+                    else if (y1 < y2)
+                    {
+                        return -1;
+                    }
+                }
+
                 int m = GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH;
                 if (other.DistanceToOtherEdge() > m && other.DistanceToRollingEdge() > m && (DistanceToOtherEdge() <= m || DistanceToRollingEdge() <= m))
                 {
