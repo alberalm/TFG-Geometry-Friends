@@ -29,7 +29,7 @@ namespace GeometryFriendsAgents
             this.xlandPoint = other.xlandPoint;
             this.velocityX = other.velocityX;
             this.moveType = other.moveType;
-            this.diamondsCollected = other.diamondsCollected;
+            this.diamondsCollected = new List<int>(other.diamondsCollected);
             this.path = new List<Tuple<float, float>> (other.path);
             this.distanceToObstacle = other.distanceToObstacle;
             this.shape = other.shape;

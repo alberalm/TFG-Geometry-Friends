@@ -199,7 +199,7 @@ namespace GeometryFriendsAgents
                                 n.caught[i] = true;
                                 n.numCaught++;
                             }
-                            if (tuple.Item1 == move_circle.landingPlatform.id
+                            if (tuple.Item1 == move_circle.landingPlatform.id && !move_circle.landingPlatform.real
                                 && move_rectangle.landingPlatform.id == circle_to_rectangle[move_circle.landingPlatform.id]
                                 && tuple.Item2.Equals("cr"))
                             {
@@ -251,34 +251,29 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    List<MoveInformation> circle_moves = move_circle.landingPlatform.moveInfoList;
-                    circle_moves.Add(new MoveInformation(move_circle.landingPlatform) { moveType = MoveType.COOPMOVE });
+                    List<MoveInformation> circle_moves = new List<MoveInformation>(move_circle.landingPlatform.moveInfoList);
+                    circle_moves.Insert(0, new MoveInformation(move_circle.landingPlatform) { moveType = MoveType.COOPMOVE });
 
-                    List<MoveInformation> rectangle_moves = move_rectangle.landingPlatform.moveInfoList;
-                    rectangle_moves.Add(new MoveInformation(move_rectangle.landingPlatform) { moveType = MoveType.COOPMOVE });
+                    List<MoveInformation> rectangle_moves = new List<MoveInformation>(move_rectangle.landingPlatform.moveInfoList);
+                    rectangle_moves.Insert(0, new MoveInformation(move_rectangle.landingPlatform) { moveType = MoveType.COOPMOVE });
 
                     foreach (MoveInformation mc in circle_moves)
                     {
                         foreach (MoveInformation mr in rectangle_moves)
                         {
-                            if (mc.departurePlatform.id != mc.landingPlatform.id || mr.departurePlatform.id != mr.landingPlatform.id)
+                            if (AreCompatible(mc, mr))
                             {
-                                if((mc.departurePlatform.real && mc.landingPlatform.real)
-                                    || (!mc.departurePlatform.real && mr.moveType == MoveType.COOPMOVE && circle_to_rectangle[mc.departurePlatform.id] == mr.departurePlatform.id)
-                                    || (!mc.landingPlatform.real && mr.moveType == MoveType.COOPMOVE && circle_to_rectangle[mc.landingPlatform.id] == mr.landingPlatform.id))
+                                List<MoveInformation> newCirclePlan = new List<MoveInformation>(n.plan_circle);
+                                List<MoveInformation> newRectanglePlan = new List<MoveInformation>(n.plan_rectangle);
+                                List<bool> newcaught = new List<bool>(n.caught);
+                                newCirclePlan.Add(mc);
+                                newRectanglePlan.Add(mr);
+                                bool new_node_is_risky = n.is_risky || mc.risky || mr.risky /*|| (previous_move != null && m.IsEqual(previous_move))*/;
+                                if (!new_node_is_risky)
                                 {
-                                    List<MoveInformation> newCirclePlan = new List<MoveInformation>(n.plan_circle);
-                                    List<MoveInformation> newRectanglePlan = new List<MoveInformation>(n.plan_rectangle);
-                                    List<bool> newcaught = new List<bool>(n.caught);
-                                    newCirclePlan.Add(mc);
-                                    newRectanglePlan.Add(mr);
-                                    bool new_node_is_risky = n.is_risky || mc.risky || mr.risky /*|| (previous_move != null && m.IsEqual(previous_move))*/;
-                                    if (!new_node_is_risky)
-                                    {
-                                        not_risky_nodes++;
-                                    }
-                                    queue.Add(new Node(newCirclePlan, newRectanglePlan, newcaught, n.numCaught, new_node_is_risky));
+                                    not_risky_nodes++;
                                 }
+                                queue.Add(new Node(newCirclePlan, newRectanglePlan, newcaught, n.numCaught, new_node_is_risky));
                             }
                         }
                         if (not_risky_nodes == 0 && planIsComplete)
@@ -290,6 +285,44 @@ namespace GeometryFriendsAgents
             }
             // If we only find risky solutions or incomplete ones, we return the one that catches the most diamonds possible
             return;
+        }
+
+        private bool AreCompatible(MoveInformation mc, MoveInformation mr)
+        {
+            if(mc.moveType == MoveType.ADJACENT && mr.moveType == MoveType.ADJACENT)
+            {
+                int a =  0;
+            }
+            if (mc.departurePlatform.id == mc.landingPlatform.id && mr.departurePlatform.id == mr.landingPlatform.id)
+            {
+                return false;
+            }
+            if (mc.departurePlatform.id == mc.landingPlatform.id && mc.moveType != MoveType.COOPMOVE)
+            {
+                return false;
+            }
+            if (mr.departurePlatform.id == mr.landingPlatform.id && mr.moveType != MoveType.COOPMOVE)
+            {
+                return false;
+            }
+            if(mc.departurePlatform.real && mc.landingPlatform.real)
+            {
+                return true;
+            }
+            if (!mc.departurePlatform.real && mr.moveType == MoveType.COOPMOVE && circle_to_rectangle[mc.departurePlatform.id] == mr.departurePlatform.id)
+            {
+                return true;
+            }
+            if (!mc.landingPlatform.real && mr.moveType == MoveType.COOPMOVE && circle_to_rectangle[mc.landingPlatform.id] == mr.landingPlatform.id)
+            {
+                return true;
+            }
+            if (mc.moveType == MoveType.ADJACENT && mr.moveType == MoveType.ADJACENT && circle_to_rectangle[mc.departurePlatform.id] == mr.departurePlatform.id
+                && mc.velocityX * mr.velocityX > 0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

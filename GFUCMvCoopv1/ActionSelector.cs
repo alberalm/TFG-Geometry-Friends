@@ -29,7 +29,7 @@ namespace GeometryFriendsAgents
         {
             int mindistance = 4000;
             MoveInformation move = null;
-            foreach (MoveInformation m in p.moveInfoList)
+            /*foreach (MoveInformation m in p.moveInfoList)
             {
                 if (m.landingPlatform.id == p.id){
                     foreach(int d in m.diamondsCollected)
@@ -70,13 +70,13 @@ namespace GeometryFriendsAgents
                                             mindistance = Math.Abs(m.x - agentX);
                                         }
                                     }
-                                    */
                                 }
                             }
                         }
                     }
                 }
             }
+            */
             return move;
         }
 

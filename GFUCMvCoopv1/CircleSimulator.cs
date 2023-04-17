@@ -202,13 +202,13 @@ namespace GeometryFriendsAgents
             {
                 MoveInformation newm = new MoveInformation(m);
                 int y = y_t;
+
                 while (y_t == y) { 
                     t += dt;
                     x_tfloat = x_0 + vx_0 * t;
                     y_tfloat = (float)(y_0 - vy_0 * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2);
                     x_t = (int)(x_tfloat / GameInfo.PIXEL_LENGTH);
                     y_t = (int)(y_tfloat / GameInfo.PIXEL_LENGTH);
-
                 }
                 
                 moves = SimulateMove(ref platformList, x_tfloat, y_tfloat, vx_0, vy_0 - t * GameInfo.GRAVITY, ref newm);

@@ -30,4 +30,21 @@
     <GreenElevators />
     <OrangeElevators />
   </Level2>
+  <Level3>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="1096" Y="120" />
+    <SquareStartingPosition X="1096" Y="232" />
+    <Collectibles>
+      <Collectible X="72" Y="56" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle width="688" height="48" X="40" Y="328" centered="false" />
+      <Obstacle width="416" height="48" X="824" Y="328" centered="false" />
+    </GreenObstacles>
+    <BlackObstacles />
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+  </Level3>
 </Levels>

@@ -84,7 +84,7 @@ namespace GeometryFriendsAgents
 
             levelMapCooperative = new LevelMapCooperative(levelMapCircle, levelMapRectangle);
 
-            levelMapCooperative.CreateLevelMap(ref circle_to_rectangle);
+            levelMapCooperative.CreateLevelMap(ref circle_to_rectangle, levelMapRectangle.small_to_simplified);
 
             graph = new Graph(levelMapCircle.simplified_platforms, levelMapRectangle.simplified_platforms, circle_to_rectangle, collectiblesInfo);
             graph.SearchAlgorithm(levelMapCircle.small_to_simplified[levelMapCircle.PlatformBelowCircle(circleInfo)].id, levelMapRectangle.PlatformBelowRectangle(rectangleInfo).id, collectiblesInfo);

@@ -125,6 +125,9 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="No Name" value="16" />
+    </HighScores>
   </Level6>
   <Level7>
     <TimeLimit value="60" />
