@@ -88,10 +88,10 @@ namespace GeometryFriendsAgents
         private void InitialDraw()
         {
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            setupMaker.levelMapCircle.DrawLevelMap(ref newDebugInfo);
-            setupMaker.levelMapCircle.DrawConnections(ref newDebugInfo);
+            setupMaker.DrawLevelMap(ref newDebugInfo);
+            //setupMaker.levelMapCircle.DrawConnections(ref newDebugInfo);
             //levelMapCircle.DrawConnectionsVertex(ref newDebugInfo);
-            PlanDebug();
+            setupMaker.PlanDebug(ref newDebugInfo);
         }
 
         private void UpdateDraw()
@@ -99,26 +99,11 @@ namespace GeometryFriendsAgents
             newDebugInfo.Clear();
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
             InitialDraw();
-            CircleDraw();
+            //CircleDraw();
             debugInfo = newDebugInfo.ToArray();
         }
 
-        private void PlanDebug()
-        {
-            int step = 1;
-            foreach (MoveInformation m in setupMaker.fullPlanCircle)
-            {
-                foreach (Tuple<float, float> tup in m.path)
-                {
-                    newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.Red));
-                }
-                if (m.path.Count > 0)
-                {
-                    newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(m.path[m.path.Count / 2].Item1, m.path[m.path.Count / 2].Item2), step.ToString(), GeometryFriends.XNAStub.Color.Black));
-                }
-                step++;
-            }
-        }
+        
 
         private void CircleDraw()
         {

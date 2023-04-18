@@ -97,7 +97,7 @@ namespace GeometryFriendsAgents
 
         private void InitialDraw()
         {
-            setupMaker.levelMapRectangle.DrawLevelMap(ref newDebugInfo);
+            //setupMaker.levelMapRectangle.DrawLevelMap(ref newDebugInfo);
             setupMaker.levelMapRectangle.DrawConnections(ref newDebugInfo);
             //levelMapCircle.DrawConnectionsVertex(ref newDebugInfo);            
             PlanDebug();
