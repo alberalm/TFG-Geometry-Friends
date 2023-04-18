@@ -315,7 +315,20 @@ namespace GeometryFriendsAgents
                     }
                     else
                     {
-                        Parallel.For(0, 2, i =>
+                        int l = 0;
+                        if (p.shapes[(int)RectangleShape.Shape.VERTICAL])
+                        {
+                            l = 3;
+                        }
+                        else if(p.shapes[(int)RectangleShape.Shape.SQUARE])
+                        {
+                            l = 7;
+                        }
+                        else
+                        {
+                            l = 11;
+                        }
+                        Parallel.For(0, l, i =>
                         {
                             moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step);
                         });

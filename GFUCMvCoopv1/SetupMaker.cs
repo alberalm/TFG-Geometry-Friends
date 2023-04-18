@@ -106,11 +106,20 @@ namespace GeometryFriendsAgents
 
         public void Replanning()
         {
-            graph.SearchAlgorithm(levelMapCircle.small_to_simplified[levelMapCircle.PlatformBelowCircle(circleInfo)].id, levelMapRectangle.PlatformBelowRectangle(rectangleInfo).id, collectiblesInfo);
-            planCircle = graph.GetCirclePlan();
-            fullPlanCircle = new List<MoveInformation>(planCircle);
-            planRectangle = graph.GetRectanglePlan();
-            fullPlanRectangle = new List<MoveInformation>(planRectangle);
+            currentPlatformCircle = levelMapCircle.PlatformBelowCircle(circleInfo);
+            currentPlatformRectangle = levelMapRectangle.PlatformBelowRectangle(rectangleInfo);
+            
+            if (currentPlatformCircle.id != -1 && currentPlatformRectangle.id != -1)
+            {
+                if(currentPlatformCircle.id == 10){
+                    int a =  0;
+                }
+                graph.SearchAlgorithm(levelMapCircle.small_to_simplified[currentPlatformCircle].id, currentPlatformRectangle.id, collectiblesInfo);
+                planCircle = graph.GetCirclePlan();
+                fullPlanCircle = new List<MoveInformation>(planCircle);
+                planRectangle = graph.GetRectanglePlan();
+                fullPlanRectangle = new List<MoveInformation>(planRectangle);
+            }
         }
     }
 }

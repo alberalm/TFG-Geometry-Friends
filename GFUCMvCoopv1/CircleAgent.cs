@@ -310,7 +310,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    if (setupMaker.planCircle.Count == 0 || setupMaker.planCircle[0].departurePlatform.id != currentPlatformCircle.id) //CIRCLE IN LAST PLATFORM
+                    if (setupMaker.planCircle.Count == 0 || setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id) //CIRCLE IN LAST PLATFORM
                     {
                         // TODO: Add logic with failed move
                         setupMaker.Replanning();

@@ -222,7 +222,7 @@ namespace GeometryFriendsAgents
                     );
 
                 // If we already have visited a similar node or enough time has passed, continue
-                if (seen.Contains(node_tuple) || sw.ElapsedMilliseconds >= 500)
+                if (seen.Contains(node_tuple) /*|| sw.ElapsedMilliseconds >= 500*/)
                 {
                     continue;
                 }

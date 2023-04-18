@@ -134,5 +134,8 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="No Name" value="46" />
+    </HighScores>
   </Level6>
 </Levels>
