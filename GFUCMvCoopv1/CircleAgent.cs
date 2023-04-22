@@ -135,10 +135,10 @@ namespace GeometryFriendsAgents
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X - 20, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X + 40, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X - 20, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
-            /*
+            
             //Circle velocity
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH, setupMaker.circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Black));
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + setupMaker.circleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH, setupMaker.circleInfo.Y), 10, GeometryFriends.XNAStub.Color.Black));
+            /*newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + setupMaker.circleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 150), "Velocidad objetivo: " + setupMaker.actionSelectorCircle.target_velocity, GeometryFriends.XNAStub.Color.Orange));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 200), "Distancia: " + Math.Abs(setupMaker.circleInfo.X/ GameInfo.PIXEL_LENGTH - setupMaker.actionSelectorCircle.target_position), GeometryFriends.XNAStub.Color.Orange));
 
@@ -169,7 +169,7 @@ namespace GeometryFriendsAgents
                 newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), "-1", GeometryFriends.XNAStub.Color.Black));
 
             }
-            /*
+            
         //Current Action
         if (currentAction == Moves.NO_ACTION)
         {
@@ -186,7 +186,7 @@ namespace GeometryFriendsAgents
         else if (currentAction == Moves.JUMP)
         {
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 250), 10, GeometryFriends.XNAStub.Color.Yellow));
-        }*/
+        }
         }
 
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
@@ -304,7 +304,8 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    if (setupMaker.planCircle.Count == 0 || setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id) //CIRCLE IN LAST PLATFORM
+                    if (setupMaker.planCircle.Count == 0 || ((setupMaker.planCircle[0].landingPlatform.real || Math.Abs(setupMaker.circleInfo.Y - setupMaker.planCircle[0].path[setupMaker.planCircle[0].path.Count - 1].Item2) < 2 * GameInfo.PIXEL_LENGTH) &&
+                            setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id)) //CIRCLE IN LAST PLATFORM
                     {
                         // TODO: Add logic with failed move
                         setupMaker.Replanning();

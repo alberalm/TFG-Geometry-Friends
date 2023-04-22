@@ -141,7 +141,7 @@ namespace GeometryFriendsAgents
             double current_velocity = rI.VelocityX;
             double target_velocity = move.velocityX;
 
-            if (move.moveType == MoveType.FALL || move.moveType == MoveType.NOMOVE || move.moveType == MoveType.ADJACENT)
+            if (move.moveType == MoveType.FALL || move.moveType == MoveType.NOMOVE || move.moveType == MoveType.ADJACENT || move.moveType == MoveType.COOPMOVE)
             {
                 return GetToPosition(current_position, target_position, current_velocity, target_velocity, move);
             }
@@ -311,7 +311,6 @@ namespace GeometryFriendsAgents
             {
                 if (plan.Count > 0)
                 {
-                    setupMaker.rectangleAgentReadyForCoop = false;
                     move = plan[0];
                     target_position = plan[0].x;
                     target_velocity = plan[0].velocityX;
@@ -327,6 +326,84 @@ namespace GeometryFriendsAgents
                         Moves.MORPH_UP
                     };
                     return possibleMoves[rnd.Next(possibleMoves.Count)];
+                }
+            }
+
+            if(move.moveType == MoveType.COOPMOVE)
+            {
+                // Circle wants to be above rectangle
+                if (!setupMaker.planCircle[0].landingPlatform.real)
+                {
+                    float height = currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.planCircle[0].path[setupMaker.planCircle[0].path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS);
+                    move.shape = RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, height));
+                    float width = GameInfo.RECTANGLE_AREA / height;
+                    float minx = setupMaker.planCircle[0].xlandPoint * GameInfo.PIXEL_LENGTH - width / 2;
+                    float maxx = setupMaker.planCircle[0].xlandPoint * GameInfo.PIXEL_LENGTH + width / 2;
+                    float miny = setupMaker.planCircle[0].path[setupMaker.planCircle[0].path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS;
+                    float maxy = miny + height;
+                    bool intersects = false;
+                    foreach (Tuple<float, float> tup in setupMaker.planCircle[0].path)
+                    {
+                        if (tup.Item1 > minx && tup.Item1 < maxx && tup.Item2 > miny && tup.Item2 < maxy)
+                        {
+                            intersects = true;
+                            break;
+                        }
+                    }
+
+                    if (intersects)
+                    {
+
+                    }
+                    else
+                    {
+                        move.x = setupMaker.planCircle[0].xlandPoint;
+                        move.velocityX = 0;
+                        if (Math.Abs(move.x - rI.X / GameInfo.PIXEL_LENGTH) < 2 && Math.Abs(rI.VelocityX) < 50)
+                        {
+                            setupMaker.rectangleAgentReadyForCoop = true;
+                        }
+
+                        if (setupMaker.planCircle.Count > 0 && (setupMaker.currentPlatformCircle.id == -1 ||
+                            setupMaker.levelMapCircle.small_to_simplified[setupMaker.currentPlatformCircle].id != setupMaker.planCircle[0].departurePlatform.id)
+                            && setupMaker.planCircle[0].distanceToObstacle > 0)
+                        {
+                            MoveInformation m2 = new MoveInformation(setupMaker.planCircle[0]);
+                            List<MoveInformation> l = setupMaker.levelMapCircle.SimulateMove(setupMaker.circleInfo.X, setupMaker.circleInfo.Y, setupMaker.circleInfo.VelocityX, -setupMaker.circleInfo.VelocityY, ref m2);
+                            foreach (MoveInformation move_l in l)
+                            {
+                                if (setupMaker.planCircle[0].landingPlatform.id == setupMaker.levelMapCircle.small_to_simplified[move_l.landingPlatform].id &&
+                                    Math.Abs(move_l.path[move_l.path.Count - 1].Item2 - setupMaker.planCircle[0].path[setupMaker.planCircle[0].path.Count - 1].Item2) < 2 * GameInfo.PIXEL_LENGTH)
+                                {
+                                    setupMaker.planCircle[0].xlandPoint = move_l.xlandPoint;
+                                    setupMaker.planCircle[0].distanceToObstacle = -1; // -1 means it has already been simulated
+                                    break;
+                                }
+                            }
+                            //return;
+                        }
+                    }
+                    /*else if (!setupMaker.rectangleAgentReadyForCoop)
+                    {
+                        // Rectangle is not ready to cooperate
+                        move.x = setupMaker.planCircle[0].xlandPoint;
+                        move.velocityX = 0;
+                        if (Math.Abs(move.x - rI.X / GameInfo.PIXEL_LENGTH) < 2 && Math.Abs(rI.VelocityX) < 50)
+                        {
+                            setupMaker.rectangleAgentReadyForCoop = true;
+                        }
+                    }
+                    else if (setupMaker.currentPlatformCircle.id != setupMaker.planCircle[0].departurePlatform.id)
+                    {
+                        // Rectangle is ready to follow circle
+                        move.x = (int)(setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH);
+                    }
+                    else
+                    {
+                        // Circle has not left departure platform
+                        move.x = setupMaker.planCircle[0].xlandPoint;
+                        move.velocityX = 0;
+                    }*/
                 }
             }
 
@@ -491,7 +568,7 @@ namespace GeometryFriendsAgents
                 }
                 else if ((target_height == RectangleShape.fheight(RectangleShape.Shape.VERTICAL) ? target_height - 3 : target_height - 5) > rI.Height)
                 {
-                    if (move.moveType == MoveType.NOMOVE || move.moveType == MoveType.TILT || move.moveType == MoveType.DROP || move.moveType == MoveType.HIGHTILT)
+                    if (move.moveType == MoveType.COOPMOVE || move.moveType == MoveType.NOMOVE || move.moveType == MoveType.TILT || move.moveType == MoveType.DROP || move.moveType == MoveType.HIGHTILT)
                     {
                         if (levelMap.levelMap[(int)rI.X / GameInfo.PIXEL_LENGTH, (int)((rI.Y - 3 * rI.Height / 5) / GameInfo.PIXEL_LENGTH) - 1] != LevelMap.PixelType.OBSTACLE)
                         {
@@ -523,7 +600,7 @@ namespace GeometryFriendsAgents
                 {
                     bool canKeepShape = true;
                     Platform next= levelMap.AdjacentPlatforms(current_platform).Item2;
-                    while (move.x > next.leftEdge)
+                    while (next.id != -1 && move.x > next.leftEdge)
                     {
                         if (!next.shapes[(int)move_shape])
                         {
@@ -541,7 +618,7 @@ namespace GeometryFriendsAgents
                 {
                     bool canKeepShape = true;
                     Platform next = levelMap.AdjacentPlatforms(current_platform).Item1;
-                    while (move.x < next.rightEdge)
+                    while (next.id != 1 && move.x < next.rightEdge)
                     {
                         if (!next.shapes[(int)move_shape])
                         {

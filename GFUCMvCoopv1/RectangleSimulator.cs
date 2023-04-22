@@ -102,7 +102,7 @@ namespace GeometryFriendsAgents
                 next_platform = AdjacentPlatforms(platformList, next_platform).Item1;
             }
 
-            return (int) Math.Sqrt(target_velocity) * GameInfo.PIXEL_LENGTH;
+            return (int) Math.Sqrt(target_velocity * GameInfo.PIXEL_LENGTH);
         }
 
         public int CalculateMinVelocity(List<Platform> platformList, Platform p, int edge)

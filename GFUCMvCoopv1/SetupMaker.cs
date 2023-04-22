@@ -123,6 +123,8 @@ namespace GeometryFriendsAgents
                 fullPlanCircle = new List<MoveInformation>(planCircle);
                 planRectangle = graph.GetRectanglePlan();
                 fullPlanRectangle = new List<MoveInformation>(planRectangle);
+                rectangleAgentReadyForCoop = false;
+                circleAgentReadyForCoop = false;
             }
         }
 

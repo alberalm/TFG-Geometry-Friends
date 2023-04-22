@@ -240,7 +240,7 @@ namespace GeometryFriendsAgents
                     if (plan[0].moveType == MoveType.COOPMOVE && setupMaker.planRectangle[0].moveType == MoveType.CIRCLETILT)
                     {
                         target_position = setupMaker.planRectangle[0].x;
-                        target_position += target_position * GameInfo.PIXEL_LENGTH > cI.X ? 7 : -7;
+                        target_position += target_position * GameInfo.PIXEL_LENGTH > cI.X ? 2 : -2;
                         target_velocity = 0;
                         acceleration_distance = target_velocity * target_velocity / (2 * GameInfo.CIRCLE_ACCELERATION);
                         if (Math.Sign(rI.X - cI.X) == Math.Sign(target_position * GameInfo.PIXEL_LENGTH - rI.X) &&
@@ -248,12 +248,24 @@ namespace GeometryFriendsAgents
                         {
                             return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, false));
                         }
+                        return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                     }
+                    if (!plan[0].landingPlatform.real && setupMaker.planRectangle[0].moveType == MoveType.COOPMOVE)
+                    {
+                        if (!setupMaker.rectangleAgentReadyForCoop)
+                        {
+                            /*float real_target = target_position * GameInfo.PIXEL_LENGTH + (target_velocity < 0 ? 1 : -1) * acceleration_distance;
+                            target_position = (int)(real_target / GameInfo.PIXEL_LENGTH);
+                            return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, real_target,
+                                cI.VelocityX, 0, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));*/
+                            return new Tuple<Moves, Tuple<bool, bool>>(Moves.NO_ACTION, new Tuple<bool, bool>(false, false));
+                        }
+                    }
+
                     if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= GameInfo.TARGET_POINT_ERROR * GameInfo.PIXEL_LENGTH)
                     {
                         if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHISICS) == target_velocity)
                         {
-                            plan.RemoveAt(0);
                             if (moveType == MoveType.JUMP)
                             {
                                 return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(aux_move)));

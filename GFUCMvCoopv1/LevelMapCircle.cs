@@ -66,7 +66,7 @@ namespace GeometryFriendsAgents
             for (int i = 0; i < platformList.Count; i++)
             {
                 if (cI.Y / GameInfo.PIXEL_LENGTH + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH <= platformList[i].yTop + 1 &&
-                    cI.Y / GameInfo.PIXEL_LENGTH + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH >= platformList[i].yTop - 10 &&
+                    cI.Y / GameInfo.PIXEL_LENGTH + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH >= platformList[i].yTop - 5 &&
                     cI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge - 1 && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge + 1)
                 {
                     return platformList[i];
@@ -83,12 +83,12 @@ namespace GeometryFriendsAgents
                 {
                     return false;
                 }
-                if (Math.Abs(p.rightEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1) // Ball at right edge
+                if (Math.Abs(p.rightEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1 && levelMap[p.rightEdge + 1, p.yTop] == PixelType.EMPTY) // Ball at right edge
                 {
                     currentAction = Moves.ROLL_LEFT;
                     return true;
                 }
-                else if (Math.Abs(p.leftEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1) // Ball at left edge
+                else if (Math.Abs(p.leftEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1 && levelMap[p.leftEdge - 1, p.yTop] == PixelType.EMPTY) // Ball at left edge
                 {
                     currentAction = Moves.ROLL_RIGHT;
                     return true;
