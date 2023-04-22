@@ -18,7 +18,8 @@ namespace GeometryFriendsAgents
         {
             for (int i = 0; i < platformList.Count; i++)
             {
-                if (cI.Y / GameInfo.PIXEL_LENGTH < platformList[i].yTop && cI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge)
+                if (cI.Y / GameInfo.PIXEL_LENGTH < platformList[i].yTop && cI.X / GameInfo.PIXEL_LENGTH >= platformList[i].leftEdge 
+                    && cI.X / GameInfo.PIXEL_LENGTH <= platformList[i].rightEdge)
                 {
                     return platformList[i];
                 }
@@ -453,7 +454,15 @@ namespace GeometryFriendsAgents
                         continue;
                     }
 
-                    Platform simplified_p = new Platform(simplified_platforms.Count, p.yTop, p.leftEdge, p.rightEdge, new List<MoveInformation>(p.moveInfoList));
+                    List<MoveInformation> auxlist = new List<MoveInformation>();
+
+                    foreach (MoveInformation m in p.moveInfoList)
+                    {
+                        auxlist.Add(new MoveInformation(m));
+                    }
+
+                    Platform simplified_p = new Platform(simplified_platforms.Count, p.yTop, p.leftEdge, p.rightEdge, auxlist);
+                    
                     simplified_p.real = false;
                     List<Platform> small_list_not_real = new List<Platform>{ p };
                     small_to_simplified.Add(p, simplified_p);
@@ -468,6 +477,20 @@ namespace GeometryFriendsAgents
                                 small_to_simplified_rectangle[small_circle_to_small_rectangle[p.id]] == small_to_simplified_rectangle[small_circle_to_small_rectangle[platform.id]]
                                 && !small_list_not_real.Contains(platform) && platform.rightEdge >= simplified_p.leftEdge && platform.leftEdge <= simplified_p.rightEdge)
                             {
+                                bool can_be_merged = true;
+                                foreach (Platform other_platform in platformList)
+                                {
+                                    if(other_platform.real && other_platform.rightEdge >= platform.rightEdge &&
+                                        other_platform.leftEdge <= platform.leftEdge &&
+                                        Math.Sign(other_platform.yTop - platform.yTop) == Math.Sign(simplified_p.yTop - other_platform.yTop))
+                                    {
+                                        can_be_merged = false;
+                                    }
+                                }
+                                if (!can_be_merged)
+                                {
+                                    break;
+                                }
                                 if (platform.yTop > simplified_p.yTop)
                                 {
                                     simplified_p.yTop = platform.yTop;

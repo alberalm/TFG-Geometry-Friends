@@ -118,7 +118,7 @@ namespace GeometryFriendsAgents
                         moveGenerator.GenerateNoMoveR(ref platformList, k, x);
                     });
 
-                    // TILT and HIGHTILT MOVES
+                    // TILT, CIRCLETILT and HIGHTILT MOVES
                     Parallel.For(0, platformList.Count, i =>
                     {
                         moveGenerator.GenerateTilt(ref platformList, k, i);

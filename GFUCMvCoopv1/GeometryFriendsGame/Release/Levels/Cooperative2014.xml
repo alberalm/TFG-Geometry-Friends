@@ -197,6 +197,11 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="22" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="44" />
+    </HighScores>
   </Level9>
   <Level10>
     <Description />

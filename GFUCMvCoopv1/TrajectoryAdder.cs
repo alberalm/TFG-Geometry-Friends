@@ -175,7 +175,7 @@ namespace GeometryFriendsAgents
             {
                 xlandPoint = vx > 0 ? landing.leftEdge : landing.rightEdge,
                 shape = s,
-                risky = moveType == MoveType.HIGHTILT
+                risky = Math.Abs(vx) > 1
             };
 
             m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - RectangleShape.height(s) / 2) * GameInfo.PIXEL_LENGTH));

@@ -99,7 +99,7 @@ namespace GeometryFriendsAgents
             newDebugInfo.Clear();
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
             InitialDraw();
-            //CircleDraw();
+            CircleDraw();
             debugInfo = newDebugInfo.ToArray();
         }
 
@@ -107,6 +107,7 @@ namespace GeometryFriendsAgents
 
         private void CircleDraw()
         {
+            /*
             //Circle Silhouette
             int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
             for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
@@ -119,14 +120,14 @@ namespace GeometryFriendsAgents
                     newDebugInfo.Add(di);
                 }
             }
-
+            *//*
             //Circle trajectory
             trajectory.Add(setupMaker.circleInfo);
             for (int i = Math.Max(0, trajectory.Count - 200); i < trajectory.Count; i++)
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(trajectory[i].X, trajectory[i].Y), 4, GeometryFriends.XNAStub.Color.Orange));
             }
-
+            */
             //Circle velocity
             newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), new PointF(  setupMaker.circleInfo.X + setupMaker.circleInfo.VelocityX, setupMaker.circleInfo.Y), GeometryFriends.XNAStub.Color.Red));
             newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), new PointF(  setupMaker.circleInfo.X, setupMaker.circleInfo.Y + setupMaker.circleInfo.VelocityY), GeometryFriends.XNAStub.Color.Blue));
@@ -134,7 +135,7 @@ namespace GeometryFriendsAgents
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X - 20, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X + 40, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X - 20, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
-            
+            /*
             //Circle velocity
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH, setupMaker.circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Black));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + setupMaker.circleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
@@ -156,28 +157,36 @@ namespace GeometryFriendsAgents
             else {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X - setupMaker.actionSelectorCircle.brake_distance, setupMaker.circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Gray));
             }
-
+            */
             //Platform
             setupMaker.currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), setupMaker.currentPlatformCircle.id.ToString(), GeometryFriends.XNAStub.Color.Black));
+            if (setupMaker.levelMapCircle.small_to_simplified.ContainsKey(setupMaker.currentPlatformCircle))
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), setupMaker.levelMapCircle.small_to_simplified[setupMaker.currentPlatformCircle].id.ToString(), GeometryFriends.XNAStub.Color.Black));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), "-1", GeometryFriends.XNAStub.Color.Black));
 
-            //Current Action
-            if (currentAction == Moves.NO_ACTION)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 300), 10, GeometryFriends.XNAStub.Color.Blue));
             }
-            else if (currentAction == Moves.ROLL_LEFT)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(550, 300), 10, GeometryFriends.XNAStub.Color.Green));
-            }
-            else if (currentAction == Moves.ROLL_RIGHT)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(650, 300), 10, GeometryFriends.XNAStub.Color.Purple));
-            }
-            else if (currentAction == Moves.JUMP)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 250), 10, GeometryFriends.XNAStub.Color.Yellow));
-            }
+            /*
+        //Current Action
+        if (currentAction == Moves.NO_ACTION)
+        {
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 300), 10, GeometryFriends.XNAStub.Color.Blue));
+        }
+        else if (currentAction == Moves.ROLL_LEFT)
+        {
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(550, 300), 10, GeometryFriends.XNAStub.Color.Green));
+        }
+        else if (currentAction == Moves.ROLL_RIGHT)
+        {
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(650, 300), 10, GeometryFriends.XNAStub.Color.Purple));
+        }
+        else if (currentAction == Moves.JUMP)
+        {
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 250), 10, GeometryFriends.XNAStub.Color.Yellow));
+        }*/
         }
 
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
@@ -303,11 +312,11 @@ namespace GeometryFriendsAgents
                     Tuple<Moves, Tuple<bool, bool>> tup;
                     if (GameInfo.PHYSICS)
                     {
-                        tup = setupMaker.actionSelectorCircle.nextActionPhisics(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, currentPlatformCircle);
+                        tup = setupMaker.actionSelectorCircle.nextActionPhisics(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformCircle);
                     }
                     else
                     {
-                        tup = setupMaker.actionSelectorCircle.nextActionQTable(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, currentPlatformCircle);
+                        //tup = setupMaker.actionSelectorCircle.nextActionQTable(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformCircle);
                     }
                     currentAction = tup.Item1;
                     if (tup.Item2.Item1)

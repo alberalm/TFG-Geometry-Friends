@@ -49,11 +49,13 @@ namespace GeometryFriendsAgents
         public ActionSelectorRectangle actionSelectorRectangle;
         public Platform currentPlatformCircle;
         public Platform currentPlatformRectangle;
+        public bool circleAgentReadyForCoop;
+        public bool rectangleAgentReadyForCoop;
 
         // Learning
         public LearningCircle lCircle;
         public LearningRectangle lRectangle;
-
+        
         public SetupMaker(CountInformation nI, RectangleRepresentation rI, CircleRepresentation cI, ObstacleRepresentation[] oI, ObstacleRepresentation[] rPI, ObstacleRepresentation[] cPI, CollectibleRepresentation[] colI)
         {
             numbersInfo = nI;
@@ -77,6 +79,9 @@ namespace GeometryFriendsAgents
             {
                 collectibleId[colI[i]] = i;
             }
+
+            circleAgentReadyForCoop = false;
+            rectangleAgentReadyForCoop = false;
         }
         
         public void SetUp()
@@ -96,26 +101,23 @@ namespace GeometryFriendsAgents
             planCircle = graph.GetCirclePlan();
             fullPlanCircle = new List<MoveInformation>(planCircle);
 
-            actionSelectorCircle = new ActionSelectorCircle(collectibleId, lCircle, levelMapCircle, graph);
+            actionSelectorCircle = new ActionSelectorCircle(collectibleId, lCircle, levelMapCircle, graph, this);
 
             // Rectangle
             
             planRectangle = graph.GetRectanglePlan();
             fullPlanRectangle = new List<MoveInformation>(planRectangle);
 
-            actionSelectorRectangle = new ActionSelectorRectangle(collectibleId, lRectangle, levelMapRectangle, graph);
+            actionSelectorRectangle = new ActionSelectorRectangle(collectibleId, lRectangle, levelMapRectangle, graph, this);
         }
 
         public void Replanning()
         {
-            currentPlatformCircle = levelMapCircle.PlatformBelowCircle(circleInfo);
+            currentPlatformCircle = levelMapCircle.CirclePlatform(circleInfo);
             currentPlatformRectangle = levelMapRectangle.PlatformBelowRectangle(rectangleInfo);
             
             if (currentPlatformCircle.id != -1 && currentPlatformRectangle.id != -1)
             {
-                if(currentPlatformCircle.id == 10){
-                    int a =  0;
-                }
                 graph.SearchAlgorithm(levelMapCircle.small_to_simplified[currentPlatformCircle].id, currentPlatformRectangle.id, collectiblesInfo);
                 planCircle = graph.GetCirclePlan();
                 fullPlanCircle = new List<MoveInformation>(planCircle);

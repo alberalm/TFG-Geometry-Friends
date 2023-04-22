@@ -157,6 +157,36 @@ namespace GeometryFriendsAgents
                             }
                         }
                     }
+                    if(p.yTop - p2.yTop > 11 && p.yTop - p2.yTop < 19)
+                    {
+                        if (p2.leftEdge - p.rightEdge <= RectangleShape.width(RectangleShape.Shape.VERTICAL)
+                            && p2.leftEdge - p.rightEdge >= 0)
+                        {
+                            if (p.yTop - p2.yTop <= 14)
+                            {
+                                trajectoryAdder.AddTilt(ref platformList, ref p, 1, MoveType.CIRCLETILT, p.rightEdge, s, p2);
+                            }
+                            else
+                            {
+                                int vx = trajectoryAdder.rectangleSimulator.CalculateMaxVelocity(platformList, p, p2.rightEdge);
+                                trajectoryAdder.AddTilt(ref platformList, ref p, vx, MoveType.CIRCLETILT, p.rightEdge, s, p2);
+                            }
+                        }
+                         else if (p.leftEdge - p2.rightEdge <= RectangleShape.width(RectangleShape.Shape.VERTICAL) + 1
+                            && p.leftEdge - p2.rightEdge >= 0)
+                        {
+                            if (p.yTop - p2.yTop <= 14)
+                            {
+                                
+                                trajectoryAdder.AddTilt(ref platformList, ref p, -1, MoveType.CIRCLETILT, p.leftEdge, s, p2);
+                            }
+                            else
+                            {
+                                int vx = trajectoryAdder.rectangleSimulator.CalculateMinVelocity(platformList, p, p2.leftEdge);
+                                trajectoryAdder.AddTilt(ref platformList, ref p, vx, MoveType.CIRCLETILT, p.leftEdge, s, p2);
+                            }
+                        }
+                    }
                 }
                 else if (p.shapes[(int)RectangleShape.Shape.SQUARE])
                 {

@@ -81,14 +81,14 @@ namespace GeometryFriendsAgents
             this.initial_collectibles = collectibles;
             this.circle_to_rectangle = circle_to_rectangle;
             this.collectibles = new List<Diamond>();
-            for(int i = 0; i < collectibles.Length; i++)
+            for (int i = 0; i < collectibles.Length; i++)
             {
                 this.collectibles.Add(new Diamond(i));
             }
             // Add every possible move to the directed graph
             for (int i = 0; i < this.circle_platforms.Count(); i++)
             {
-                foreach(int d in this.circle_platforms[i].ReachableCollectiblesLandingInThisPlatformWithoutCooperation())
+                foreach (int d in this.circle_platforms[i].ReachableCollectiblesLandingInThisPlatformWithoutCooperation())
                 {
                     this.collectibles[d].isAbovePlatform.Add(new Tuple<int, string>(i, "c"));
                 }
@@ -109,10 +109,10 @@ namespace GeometryFriendsAgents
 
         public int GetDiamondID(CollectibleRepresentation c)
         {
-            for(int i = 0; i < initial_collectibles.Length; i++)
+            for (int i = 0; i < initial_collectibles.Length; i++)
             {
                 CollectibleRepresentation other = initial_collectibles[i];
-                if(c.X == other.X && c.Y == other.Y)
+                if (c.X == other.X && c.Y == other.Y)
                 {
                     return i;
                 }
@@ -138,9 +138,9 @@ namespace GeometryFriendsAgents
             foreach (CollectibleRepresentation c in uncaught)
             {
                 int index = GetDiamondID(c);
-                if(index != -1)
+                if (index != -1)
                 {
-                    foreach(Diamond d in collectibles) {
+                    foreach (Diamond d in collectibles) {
                         if (d.id == index) {
                             newList.Add(d);
                             diamonds[index] = newList.Count - 1;
@@ -192,7 +192,7 @@ namespace GeometryFriendsAgents
                 {
                     if (!n.caught[i])
                     {
-                        foreach(Tuple<int, string> tuple in collectibles[i].isAbovePlatform)
+                        foreach (Tuple<int, string> tuple in collectibles[i].isAbovePlatform)
                         {
                             if (tuple.Item1 == move_circle.landingPlatform.id && tuple.Item2.Equals("c"))
                             {
@@ -214,10 +214,10 @@ namespace GeometryFriendsAgents
                         }
                     }
                 }
-                
+
                 Tuple<Tuple<int, int>, int> node_tuple = new Tuple<Tuple<int, int>, int>
                     (
-                    new Tuple<int,int>(n.plan_circle[n.plan_circle.Count - 1].landingPlatform.id, n.plan_rectangle[n.plan_rectangle.Count - 1].landingPlatform.id),
+                    new Tuple<int, int>(n.plan_circle[n.plan_circle.Count - 1].landingPlatform.id, n.plan_rectangle[n.plan_rectangle.Count - 1].landingPlatform.id),
                     n.Value()
                     );
 
@@ -228,7 +228,7 @@ namespace GeometryFriendsAgents
                 }
                 seen.Add(node_tuple);
                 // To eliminate false move
-                if(n.plan_circle[0].moveType == MoveType.NOMOVE)
+                if (n.plan_circle[0].moveType == MoveType.NOMOVE)
                 {
                     n.plan_circle.RemoveAt(0);
                 }
@@ -289,10 +289,7 @@ namespace GeometryFriendsAgents
 
         private bool AreCompatible(MoveInformation mc, MoveInformation mr)
         {
-            if(mc.moveType == MoveType.ADJACENT && mr.moveType == MoveType.ADJACENT)
-            {
-                int a =  0;
-            }
+
             if (mc.departurePlatform.id == mc.landingPlatform.id && mr.departurePlatform.id == mr.landingPlatform.id)
             {
                 return false;
@@ -305,7 +302,22 @@ namespace GeometryFriendsAgents
             {
                 return false;
             }
-            if(mc.departurePlatform.real && mc.landingPlatform.real)
+            if (mr.moveType == MoveType.CIRCLETILT)
+            {
+                if(mc.moveType != MoveType.COOPMOVE || mc.departurePlatform.yTop != mr.departurePlatform.yTop)
+                {
+                    return false;
+                }
+                if(mr.velocityX > 0 && !(mc.departurePlatform.rightEdge + 5 > mr.x && mc.departurePlatform.leftEdge < mr.x))
+                {
+                    return false;
+                }
+                if (mr.velocityX < 0 && !(mc.departurePlatform.leftEdge - 5 < mr.x && mc.departurePlatform.rightEdge > mr.x))
+                {
+                    return false;
+                }
+            }
+            if (mc.departurePlatform.real && mc.landingPlatform.real)
             {
                 return true;
             }

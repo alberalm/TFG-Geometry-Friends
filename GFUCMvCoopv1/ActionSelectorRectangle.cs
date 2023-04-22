@@ -2,6 +2,7 @@
 using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static GeometryFriendsAgents.RectangleShape;
 
 namespace GeometryFriendsAgents
@@ -15,9 +16,48 @@ namespace GeometryFriendsAgents
         public double tilt_height = 0;
         public bool begin_high_tilt = false;
         
-        public ActionSelectorRectangle(Dictionary<CollectibleRepresentation, int> collectibleId, LearningRectangle l, LevelMapRectangle levelMap, Graph graph) : base(collectibleId, l, graph)
+        public ActionSelectorRectangle(Dictionary<CollectibleRepresentation, int> collectibleId, LearningRectangle l, LevelMapRectangle levelMap, Graph graph,SetupMaker setupMaker) : base(collectibleId, l, graph,setupMaker)
         {
             this.levelMap = levelMap;
+        }
+
+        protected override MoveInformation DiamondsCanBeCollectedFrom(CircleRepresentation cI, RectangleRepresentation rI, Platform p, List<CollectibleRepresentation> remaining, int agentX)
+        {
+            int mindistance = 4000;
+            MoveInformation move = null;
+            MoveInformation next_move_circle = setupMaker.planCircle.Count > 0 ? setupMaker.planCircle[0] : null;
+            MoveInformation next_move_rectangle = setupMaker.planRectangle.Count > 0 ? setupMaker.planRectangle[0] : null;
+            foreach (MoveInformation m in p.moveInfoList)
+            {
+                if (m.landingPlatform.id == p.id)
+                {
+                    foreach (int d in m.diamondsCollected)
+                    {
+                        if (CollectiblesIds(remaining).Contains(d))
+                        {
+                            foreach (Graph.Diamond diamond in graph.collectibles)
+                            {
+                                if (diamond.id == d)
+                                {
+                                    foreach (Tuple<int, string> tuple in diamond.isAbovePlatform)
+                                    {
+                                        if (tuple.Item1 == m.landingPlatform.id && tuple.Item2.Equals("r"))
+                                        {
+                                            if (Math.Abs(m.x - agentX) < mindistance && (next_move_circle == null || (!next_move_circle.diamondsCollected.Contains(d) && !next_move_rectangle.diamondsCollected.Contains(d))))
+                                            {
+                                                move = m;
+                                                mindistance = Math.Abs(m.x - agentX);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return move;
         }
 
         public static Moves GetToPosition(double current_position, double target_position, double current_velocity, double target_velocity, MoveInformation move)
@@ -105,7 +145,7 @@ namespace GeometryFriendsAgents
             {
                 return GetToPosition(current_position, target_position, current_velocity, target_velocity, move);
             }
-            else if (move.moveType == MoveType.TILT || move.moveType == MoveType.HIGHTILT)
+            else if (move.moveType == MoveType.TILT || move.moveType == MoveType.HIGHTILT || move.moveType == MoveType.CIRCLETILT)
             {
                 if (Math.Abs(current_position - target_position) > 3 * GameInfo.PIXEL_LENGTH &&
                     ((target_velocity < 0 && current_position < target_position) || (target_velocity > 0 && current_position > target_position)))
@@ -130,7 +170,7 @@ namespace GeometryFriendsAgents
                         return Moves.MOVE_LEFT;
                     }
                 }
-                if (move.moveType == MoveType.TILT)
+                if (move.moveType == MoveType.TILT || (move.moveType == MoveType.CIRCLETILT && Math.Abs(move.velocityX) == 1))
                 {
                     if (target_velocity > 0)
                     {
@@ -257,28 +297,21 @@ namespace GeometryFriendsAgents
             }
         }
         
-        public Moves nextActionPhisics(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, RectangleRepresentation rI, Platform currentPlatform)
+        public Moves nextActionPhisics(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI,RectangleRepresentation rI, Platform currentPlatform)
         {
-            //returns the next move, a first boolean indicating whether the move will lead to an air situation (Jump or fall) and a second boolean indicating whether the ball has to rotate in the
-            //same direction of the velocity or in the oposite (in general will be oposite unless the jump lands near the vertix of the parabolla)
+            move = DiamondsCanBeCollectedFrom(cI, rI, levelMap.small_to_simplified[currentPlatform], remaining, (int)(rI.X / GameInfo.PIXEL_LENGTH));
             
-            if (plan.Count > 0)
-            {
-                move = DiamondsCanBeCollectedFrom(levelMap.small_to_simplified[currentPlatform], remaining, (int)(rI.X / GameInfo.PIXEL_LENGTH), plan[0]);
-            }
-            else
-            {
-                move = DiamondsCanBeCollectedFrom(levelMap.small_to_simplified[currentPlatform], remaining, (int)(rI.X / GameInfo.PIXEL_LENGTH), null);
-            }
             if (move != null)
             {
                 target_position = move.x;
                 target_velocity = move.velocityX;
+                setupMaker.rectangleAgentReadyForCoop = false;
             }
             else
             {
                 if (plan.Count > 0)
                 {
+                    setupMaker.rectangleAgentReadyForCoop = false;
                     move = plan[0];
                     target_position = plan[0].x;
                     target_velocity = plan[0].velocityX;
@@ -427,6 +460,22 @@ namespace GeometryFriendsAgents
             }
             else if (move.moveType != MoveType.DROP || (Math.Abs(rI.X / GameInfo.PIXEL_LENGTH - move.x) <= 1 && Math.Abs(rI.VelocityX) <= 20))
             {
+                if (move.moveType == MoveType.CIRCLETILT)
+                {
+                    if (setupMaker.circleAgentReadyForCoop)
+                    {
+                        if (Math.Sign(rI.X - cI.X) == Math.Sign(target_position * GameInfo.PIXEL_LENGTH - rI.X) ||
+                            Math.Abs(cI.X - target_position * GameInfo.PIXEL_LENGTH) > 10 * GameInfo.PIXEL_LENGTH)
+                        {
+                            return GetToPosition(rI.X, move.velocityX > 0 ? (move.departurePlatform.leftEdge + 5) * GameInfo.PIXEL_LENGTH : (move.departurePlatform.rightEdge - 5) * GameInfo.PIXEL_LENGTH,
+                                rI.VelocityX, 0, move);
+                        }
+                    }
+                    else
+                    {
+                        return Moves.NO_ACTION;
+                    }
+                }
                 // Check shape
                 if (move.moveType == MoveType.TILT && (next_platform == null || next_platform.id == -1 || target_shape == RectangleShape.Shape.VERTICAL))
                 {

@@ -380,7 +380,9 @@ namespace GeometryFriendsAgents
                     if ((setupMaker.actionSelectorRectangle.move.moveType == MoveType.TILT && 
                         Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH) ||
                         (setupMaker.actionSelectorRectangle.move.moveType == MoveType.HIGHTILT &&
-                        Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 10 * GameInfo.PIXEL_LENGTH))
+                        Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 10 * GameInfo.PIXEL_LENGTH) ||
+                        (setupMaker.actionSelectorRectangle.move.moveType == MoveType.CIRCLETILT &&
+                        Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 20 * GameInfo.PIXEL_LENGTH))
                     {
                         hasFinishedTilt = true;
                         setupMaker.actionSelectorRectangle.tilt_height = 0;
@@ -393,7 +395,10 @@ namespace GeometryFriendsAgents
                 
                 if ((setupMaker.actionSelectorRectangle.move.moveType == MoveType.TILT && Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH ) ||
                     (setupMaker.actionSelectorRectangle.move.moveType == MoveType.HIGHTILT && Math.Sign(setupMaker.rectangleInfo.VelocityX) == Math.Sign(setupMaker.actionSelectorRectangle.move.velocityX)
-                    && Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 7 * GameInfo.PIXEL_LENGTH))
+                    && Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 7 * GameInfo.PIXEL_LENGTH) ||
+                    (setupMaker.actionSelectorRectangle.move.moveType == MoveType.CIRCLETILT && Math.Sign(setupMaker.rectangleInfo.VelocityX) == Math.Sign(setupMaker.actionSelectorRectangle.move.velocityX)
+                    && Math.Sign(setupMaker.circleInfo.X - setupMaker.rectangleInfo.X) == Math.Sign(edge * GameInfo.PIXEL_LENGTH - setupMaker.circleInfo.X) &&
+                    Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 18 * GameInfo.PIXEL_LENGTH))
                 {
                     if (setupMaker.actionSelectorRectangle.move.velocityX > 0)
                     {
@@ -541,7 +546,7 @@ namespace GeometryFriendsAgents
                         // TODO: Add logic with failed move
                         setupMaker.Replanning();
                     }
-                    currentAction = setupMaker.actionSelectorRectangle.nextActionPhisics(ref setupMaker.planRectangle, remaining, setupMaker.rectangleInfo, currentPlatformRectangle);
+                    currentAction = setupMaker.actionSelectorRectangle.nextActionPhisics(ref setupMaker.planRectangle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformRectangle);
                     setupMaker.actionSelectorRectangle.lastMove = currentAction;
                 }
             }
