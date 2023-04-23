@@ -106,8 +106,8 @@
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="4" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="5" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="5" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="6" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="13" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="13" />
     </HighScores>
   </Level5>
@@ -200,5 +200,51 @@
     </YellowObstacles>
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="8" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="8" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="8" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="8" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="9" />
+    </HighScores>
   </Level9>
+  <Level10>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="872" Y="696" />
+    <SquareStartingPosition X="1096" Y="712" />
+    <Collectibles>
+      <Collectible X="200" Y="168" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="640" height="96" X="56" Y="664" centered="false" />
+      <Obstacle width="768" height="112" X="56" Y="648" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="21" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="22" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="23" />
+    </HighScores>
+  </Level10>
+  <Level11>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="552" Y="392" />
+    <SquareStartingPosition X="568" Y="504" />
+    <Collectibles>
+      <Collectible X="264" Y="72" />
+      <Collectible X="856" Y="72" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle width="1200" height="48" X="40" Y="568" centered="false" />
+    </GreenObstacles>
+    <BlackObstacles />
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+  </Level11>
 </Levels>

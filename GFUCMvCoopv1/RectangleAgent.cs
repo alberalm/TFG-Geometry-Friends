@@ -333,7 +333,8 @@ namespace GeometryFriendsAgents
             }
             t = 0;*/
 
-            if (t_0 > 0 || timesStuck > 30)
+            if ((t_0 > 0 || timesStuck > 30) &&
+                (setupMaker.actionSelectorRectangle.move == null || setupMaker.actionSelectorRectangle.move.moveType != MoveType.COOPMOVE))
             {
                 t_0 += elapsedGameTime.TotalMilliseconds;
                 if (timesStuck > 30 && t_0 > 200)

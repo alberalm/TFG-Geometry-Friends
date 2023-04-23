@@ -7,7 +7,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using static GeometryFriendsAgents.LevelMap;
+using Size = System.Drawing.Size;
 
 namespace GeometryFriendsAgents
 {
@@ -49,6 +51,7 @@ namespace GeometryFriendsAgents
         public ActionSelectorRectangle actionSelectorRectangle;
         public Platform currentPlatformCircle;
         public Platform currentPlatformRectangle;
+        public bool circleAgentReadyForCircleTilt;
         public bool circleAgentReadyForCoop;
         public bool rectangleAgentReadyForCoop;
 
@@ -82,6 +85,7 @@ namespace GeometryFriendsAgents
 
             circleAgentReadyForCoop = false;
             rectangleAgentReadyForCoop = false;
+            circleAgentReadyForCircleTilt = false;
         }
         
         public void SetUp()
@@ -123,8 +127,6 @@ namespace GeometryFriendsAgents
                 fullPlanCircle = new List<MoveInformation>(planCircle);
                 planRectangle = graph.GetRectanglePlan();
                 fullPlanRectangle = new List<MoveInformation>(planRectangle);
-                rectangleAgentReadyForCoop = false;
-                circleAgentReadyForCoop = false;
             }
         }
 
@@ -184,6 +186,7 @@ namespace GeometryFriendsAgents
                 }
             }
         }
+
         private void DrawLegend(ref List<DebugInformation> debugInformation)
         {
             debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(0, 0), new Size(GameInfo.LEVEL_WIDTH, 5 * GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Black));
@@ -197,6 +200,7 @@ namespace GeometryFriendsAgents
             debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(850, 10), "Vertical+Horizontal", GeometryFriends.XNAStub.Color.Red));
             debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1100, 10), "All", GeometryFriends.XNAStub.Color.Blue));
         }
+
         private void DrawRectangleSmallPlatforms(ref List<DebugInformation> debugInformation)
         {
             foreach (Platform p in levelMapRectangle.platformList)
@@ -241,6 +245,7 @@ namespace GeometryFriendsAgents
                 //debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2, p.yTop * GameInfo.PIXEL_LENGTH), p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
             }
         }
+
         private void DrawRectangleSmallPlatformsNumbers(ref List<DebugInformation> debugInformation)
         {
             foreach (Platform p in levelMapRectangle.platformList)
@@ -253,6 +258,7 @@ namespace GeometryFriendsAgents
                     p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
             }
         }
+
         private void DrawRectangleSimplifiedPlatformsNumbers(ref List<DebugInformation> debugInformation)
         {
             foreach (Platform p in levelMapRectangle.simplified_platforms)
@@ -265,6 +271,7 @@ namespace GeometryFriendsAgents
                     p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
             }
         }
+
         private void DrawCircleSimplifiedPlatforms(ref List<DebugInformation> debugInformation)
         {
             foreach (Platform p in levelMapCircle.simplified_platforms)
@@ -317,9 +324,9 @@ namespace GeometryFriendsAgents
 
             }
         }
+
         private void DrawCircleSimplifiedPlatformsNumbers(ref List<DebugInformation> debugInformation)
         {
-
             foreach (Platform p in levelMapCircle.simplified_platforms)
             {
                 int tam = 20 + (p.id / 10) * 15;
@@ -345,6 +352,7 @@ namespace GeometryFriendsAgents
 
             }
         }
+
         private void DrawCollectibles(ref List<DebugInformation> debugInformation)
         {
             int count = 0;
@@ -375,10 +383,16 @@ namespace GeometryFriendsAgents
             DrawCollectibles(ref debugInformation);
         }
 
+        public bool CircleAboveRectangle()
+        {
+            double width = GameInfo.RECTANGLE_AREA / rectangleInfo.Height;
+            return circleInfo.X <= rectangleInfo.X + width / 2 &&
+                circleInfo.X >= rectangleInfo.X - width / 2 &&
+                Math.Abs(circleInfo.Y + GameInfo.CIRCLE_RADIUS + rectangleInfo.Height / 2 - rectangleInfo.Y) < 2 * GameInfo.PIXEL_LENGTH;
+        }
 
         public void PlanDebug(ref List<DebugInformation> newDebugInfo)
         {
-
             int x = 900;
             int y = 50;
             int step = 1;

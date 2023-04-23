@@ -22,7 +22,7 @@ namespace GeometryFriendsAgents
             MoveInformation move = null;
             MoveInformation next_move_circle = setupMaker.planCircle.Count > 0 ? setupMaker.planCircle[0] : null;
             MoveInformation next_move_rectangle = setupMaker.planRectangle.Count > 0 ? setupMaker.planRectangle[0] : null;
-            foreach (MoveInformation m in p.moveInfoList)
+            foreach (MoveInformation m in levelMap.small_to_simplified[p].moveInfoList)
             {
                 if (m.landingPlatform.id == levelMap.small_to_simplified[p].id)
                 {
@@ -36,7 +36,7 @@ namespace GeometryFriendsAgents
                                 {
                                     foreach (Tuple<int, string> tuple in diamond.isAbovePlatform)
                                     {
-                                        if (tuple.Item1 == m.landingPlatform.id && (tuple.Item2.Equals("c") || tuple.Item2.Equals("cr")))
+                                        if (tuple.Item1 == m.departurePlatform.id && (tuple.Item2.Equals("c") || tuple.Item2.Equals("cr")))
                                         {
                                             if (Math.Abs(m.x - agentX) < mindistance && (next_move_circle == null || (!next_move_circle.diamondsCollected.Contains(d) && !next_move_rectangle.diamondsCollected.Contains(d))))
                                             {
@@ -181,9 +181,42 @@ namespace GeometryFriendsAgents
             int min_distance = 3 * GameInfo.CIRCLE_RADIUS / (GameInfo.PIXEL_LENGTH * 5);
             nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(cI, rI, currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH));
             
+            if(plan.Count == 0 || plan[0].moveType != MoveType.COOPMOVE || setupMaker.planRectangle[0].moveType != MoveType.CIRCLETILT)
+            {
+                setupMaker.circleAgentReadyForCircleTilt = false;
+            }
+
+
             if (nextMoveInThisPlatform != null)
             {
-                setupMaker.circleAgentReadyForCoop = false;
+                move = nextMoveInThisPlatform;
+            }
+            else if (plan.Count > 0)
+            {
+                move = plan[0];
+            }
+            if (move != null)
+            {
+                target_position = move.x;
+            }
+
+            if (setupMaker.CircleAboveRectangle())
+            {
+                setupMaker.circleAgentReadyForCoop = true;
+                brake_distance = (cI.VelocityX - rI.VelocityX) * (cI.VelocityX - rI.VelocityX) / (2 * GameInfo.CIRCLE_ACCELERATION);
+                
+                if (!setupMaker.rectangleAgentReadyForCoop)
+                {
+                    return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, rI.X, cI.VelocityX - rI.VelocityX, 0, brake_distance, 0), new Tuple<bool, bool>(false, false));
+                }
+            }
+
+            if (nextMoveInThisPlatform != null)
+            {
+                if (!setupMaker.CircleAboveRectangle())
+                {
+                    setupMaker.circleAgentReadyForCoop = false;
+                }
                 target_position = nextMoveInThisPlatform.x;
                 target_velocity = nextMoveInThisPlatform.velocityX;
                 moveType = nextMoveInThisPlatform.moveType;
@@ -195,6 +228,7 @@ namespace GeometryFriendsAgents
                     {
                         if (moveType == MoveType.JUMP)
                         {
+                            setupMaker.circleAgentReadyForCoop = false;
                             return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(nextMoveInThisPlatform)));
                         }
                         else
@@ -229,7 +263,6 @@ namespace GeometryFriendsAgents
             {
                 if (plan.Count > 0)
                 {
-                    setupMaker.circleAgentReadyForCoop = true;
                     MoveInformation aux_move = plan[0];
                     target_position = plan[0].x;
                     target_velocity = plan[0].velocityX;
@@ -248,8 +281,13 @@ namespace GeometryFriendsAgents
                         {
                             return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, false));
                         }
+                        if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= 5*GameInfo.PIXEL_LENGTH && Math.Abs(cI.VelocityX) < 30)
+                        {
+                            setupMaker.circleAgentReadyForCircleTilt = true;
+                        }
                         return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                     }
+                    
                     if (!plan[0].landingPlatform.real && setupMaker.planRectangle[0].moveType == MoveType.COOPMOVE)
                     {
                         if (!setupMaker.rectangleAgentReadyForCoop)

@@ -17,6 +17,7 @@ namespace GeometryFriendsAgents
         public float acceleration_distance = 0;
         public Graph graph;
         public SetupMaker setupMaker;
+        public MoveInformation move;
 
         public ActionSelector(Dictionary<CollectibleRepresentation, int> collectibleId, Learning l, Graph graph, SetupMaker setupMaker)
         {

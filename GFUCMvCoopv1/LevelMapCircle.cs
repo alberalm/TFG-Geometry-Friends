@@ -12,7 +12,7 @@ namespace GeometryFriendsAgents
 {
     public class LevelMapCircle : LevelMap
     {
-        Dictionary<int, Platform> small_circle_to_small_rectangle = new Dictionary<int, Platform>();
+        public Dictionary<int, Platform> small_circle_to_small_rectangle = new Dictionary<int, Platform>();
 
         public Platform PlatformBelowCircle(CircleRepresentation cI)
         {

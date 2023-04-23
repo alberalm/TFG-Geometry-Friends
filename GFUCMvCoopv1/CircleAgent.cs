@@ -98,7 +98,7 @@ namespace GeometryFriendsAgents
         {
             newDebugInfo.Clear();
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            InitialDraw();
+            //InitialDraw();
             CircleDraw();
             debugInfo = newDebugInfo.ToArray();
         }
@@ -169,9 +169,38 @@ namespace GeometryFriendsAgents
                 newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), "-1", GeometryFriends.XNAStub.Color.Black));
 
             }
-            
-        //Current Action
-        if (currentAction == Moves.NO_ACTION)
+            if (setupMaker.CircleAboveRectangle())
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y + GameInfo.CIRCLE_RADIUS),6, GeometryFriends.XNAStub.Color.Red));
+            }
+
+            if (!setupMaker.rectangleAgentReadyForCoop)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.rectangleInfo.X, setupMaker.rectangleInfo.Y), 6, GeometryFriends.XNAStub.Color.Red));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.rectangleInfo.X, setupMaker.rectangleInfo.Y), 6, GeometryFriends.XNAStub.Color.Green));
+            }
+
+            if (!setupMaker.circleAgentReadyForCoop)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), 6, GeometryFriends.XNAStub.Color.Red));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), 6, GeometryFriends.XNAStub.Color.Green));
+            }
+            if (setupMaker.circleAgentReadyForCircleTilt)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 50), "circleAgentReadyForCircleTilt", GeometryFriends.XNAStub.Color.Green));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 50), "circleAgentNOTReadyForCircleTilt", GeometryFriends.XNAStub.Color.Red));
+            }
+            //Current Action
+            if (currentAction == Moves.NO_ACTION)
         {
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 300), 10, GeometryFriends.XNAStub.Color.Blue));
         }
@@ -304,7 +333,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    if (setupMaker.planCircle.Count == 0 || ((setupMaker.planCircle[0].landingPlatform.real || Math.Abs(setupMaker.circleInfo.Y - setupMaker.planCircle[0].path[setupMaker.planCircle[0].path.Count - 1].Item2) < 2 * GameInfo.PIXEL_LENGTH) &&
+                    if (setupMaker.planCircle.Count == 0 || ((currentPlatformCircle.real || setupMaker.CircleAboveRectangle()) &&
                             setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id)) //CIRCLE IN LAST PLATFORM
                     {
                         // TODO: Add logic with failed move
@@ -326,6 +355,10 @@ namespace GeometryFriendsAgents
                     }
                     flag = tup.Item2.Item2;
                 }
+            }
+            if(currentAction == Moves.JUMP)
+            {
+                setupMaker.circleAgentReadyForCoop = false;
             }
         }
 
