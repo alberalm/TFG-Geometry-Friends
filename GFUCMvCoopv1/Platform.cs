@@ -55,6 +55,10 @@ namespace GeometryFriendsAgents
             this.leftEdge = 0;
             this.rightEdge = 0;
             this.moveInfoList = new List<MoveInformation>();
+            if(id < 0)
+            {
+                this.real = false;
+            }
         }
 
         public void CombineShapes(bool[] others)

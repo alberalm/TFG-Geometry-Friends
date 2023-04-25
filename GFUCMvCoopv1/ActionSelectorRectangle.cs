@@ -2,6 +2,7 @@
 using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using static GeometryFriendsAgents.RectangleShape;
 
@@ -15,6 +16,9 @@ namespace GeometryFriendsAgents
         public double tilt_height = 0;
         public bool begin_high_tilt = false;
         public bool waitingForCircleToLand = false;
+        public int count = -1;
+        public int circle_flying_velocity = 1000;
+        public bool hasFinishedReplanning = true;
         
         public ActionSelectorRectangle(Dictionary<CollectibleRepresentation, int> collectibleId, LearningRectangle l, LevelMapRectangle levelMap, Graph graph,SetupMaker setupMaker) : base(collectibleId, l, graph,setupMaker)
         {
@@ -301,6 +305,13 @@ namespace GeometryFriendsAgents
         {
             MoveInformation move2 = DiamondsCanBeCollectedFrom(cI, rI, levelMap.small_to_simplified[currentPlatform], remaining, (int)(rI.X / GameInfo.PIXEL_LENGTH));
 
+            if(setupMaker.circleInAir && setupMaker.currentPlatformCircle.real && (int) cI.VelocityX/10 != circle_flying_velocity/10)
+            {
+                setupMaker.rectangleAgentReadyForCoop = false;
+                waitingForCircleToLand = false;
+                setupMaker.circleInAir = false;
+            }
+
             if (!waitingForCircleToLand)
             {
                 if (move2 != null)
@@ -337,24 +348,57 @@ namespace GeometryFriendsAgents
                 }
             }
 
+            if (count < 100 && count >= 0)
+            {
+                move.x = (int)setupMaker.circleInfo.X/GameInfo.PIXEL_LENGTH;
+                move.shape = RectangleShape.Shape.HORIZONTAL;
+                setupMaker.rectangleAgentReadyForCoop = false;
+                move.velocityX = 0;
+                count++;
+            }
+            else if (count == 100)
+            {
+                count = -1;
+            }
+
             if (lastMove == Moves.MORPH_UP && move.moveType == MoveType.DROP)
             {
                 return Moves.MORPH_UP;
             }
             Moves m = getPhisicsMove(rI, move);
-            if (setupMaker.CircleAboveRectangle())
+            if (setupMaker.CircleAboveRectangle() && count == -1)
             {
+                setupMaker.circleInAir = false;
                 setupMaker.rectangleAgentReadyForCoop = false;
-                waitingForCircleToLand = false;
-                move.x = setupMaker.actionSelectorCircle.move.x;
+                circle_flying_velocity = 1000;
+                if (waitingForCircleToLand)
+                {
+                    count = 0;
+                    waitingForCircleToLand = false;
+                }
+                int w = RectangleShape.width(RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[0].Item2 + GameInfo.CIRCLE_RADIUS))));
+                
+                if (setupMaker.actionSelectorCircle.move.velocityX == 0)
+                {
+                    move.x = setupMaker.actionSelectorCircle.move.x;
+                }
+                else if(setupMaker.actionSelectorCircle.move.velocityX > 0)
+                {
+                    move.x = setupMaker.actionSelectorCircle.move.x - w / 2 + 1;
+                }
+                else
+                {
+                    move.x = setupMaker.actionSelectorCircle.move.x + w / 2 - 1;
+                }
+                
                 move.shape = RectangleShape.Shape.HORIZONTAL;
                 move.velocityX = 0;
                 move.moveType = MoveType.COOPMOVE;
                 m = getPhisicsMove(rI, move);
-                if (m == Moves.MOVE_LEFT && rI.VelocityX < -100 || m == Moves.MOVE_RIGHT && rI.VelocityX > 100)
+                /*if (m == Moves.MOVE_LEFT && rI.VelocityX < -150 || m == Moves.MOVE_RIGHT && rI.VelocityX > 150)
                 {
                     m = Moves.NO_ACTION;
-                }
+                }*/
                 if(Math.Abs(setupMaker.rectangleInfo.X - move.x * GameInfo.PIXEL_LENGTH) < 2 * GameInfo.PIXEL_LENGTH
                     && Math.Abs(setupMaker.rectangleInfo.VelocityX) < 50)
                 {
@@ -388,10 +432,21 @@ namespace GeometryFriendsAgents
                             float height = currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[setupMaker.actionSelectorCircle.move.path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS);
                             move.shape = RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, height));                          
                             waitingForCircleToLand = true;
+                            if (setupMaker.circleInfo.VelocityY < 0)
+                            {
+                                setupMaker.circleInAir = true;
+                            }
                         }
                         else
                         {
-                            //Todo 
+                            PrepareForCircleLanding();
+                            float height = currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[setupMaker.actionSelectorCircle.move.path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS);
+                            move.shape = RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, height));
+                            waitingForCircleToLand = true;
+                            if (setupMaker.circleInfo.VelocityY < 0)
+                            {
+                                setupMaker.circleInAir = true;
+                            }
                         }                        
                     }
                 }
@@ -399,9 +454,18 @@ namespace GeometryFriendsAgents
 
             if (move.moveType == MoveType.COOPMOVE)
             {
+                if (setupMaker.circleInAir && setupMaker.actionSelectorCircle.move != null)
+                {
+                    PrepareForCircleLanding();
+                }
+
                 // Circle wants to be above rectangle
                 if (setupMaker.planCircle.Count > 0 && !setupMaker.planCircle[0].landingPlatform.real && setupMaker.planCircle[0].departurePlatform.real)
                 {
+                    if (!setupMaker.circleInAir && (setupMaker.currentPlatformCircle.id == -1 || (!setupMaker.currentPlatformCircle.real && !setupMaker.CircleAboveRectangle())))
+                    {
+                        setupMaker.circleInAir = true;
+                    }
                     float height = currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.planCircle[0].path[setupMaker.planCircle[0].path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS);
                     move.shape = RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, height));
                     float width = GameInfo.RECTANGLE_AREA / height;
@@ -427,6 +491,10 @@ namespace GeometryFriendsAgents
                         if (setupMaker.actionSelectorCircle.move != null)
                         {
                             PrepareForCircleLanding();
+                            if (Math.Abs(move.x - setupMaker.rectangleInfo.X / GameInfo.PIXEL_LENGTH) < 2 && Math.Abs(setupMaker.rectangleInfo.VelocityX) < 50)
+                            {
+                                setupMaker.rectangleAgentReadyForCoop = true;
+                            }
                         }
                     }
                     /*else if (!setupMaker.rectangleAgentReadyForCoop)
@@ -627,9 +695,13 @@ namespace GeometryFriendsAgents
 
         private void PrepareForCircleLanding()
         {
+            hasFinishedReplanning = false;
             move.x = setupMaker.actionSelectorCircle.move.xlandPoint;
             move.velocityX = 0;
-            
+            circle_flying_velocity = (int)setupMaker.circleInfo.VelocityX;
+
+            setupMaker.actionSelectorCircle.move.distanceToObstacle++;
+
             if (setupMaker.actionSelectorCircle.move != null && (setupMaker.currentPlatformCircle.id == -1 ||
                 setupMaker.levelMapCircle.small_to_simplified[setupMaker.currentPlatformCircle].id != setupMaker.actionSelectorCircle.move.departurePlatform.id)
                 && setupMaker.actionSelectorCircle.move.distanceToObstacle > 0)
@@ -642,15 +714,13 @@ namespace GeometryFriendsAgents
                         Math.Abs(move_l.path[move_l.path.Count - 1].Item2 - setupMaker.actionSelectorCircle.move.path[setupMaker.actionSelectorCircle.move.path.Count - 1].Item2) < 2 * GameInfo.PIXEL_LENGTH)
                     {
                         setupMaker.actionSelectorCircle.move.xlandPoint = move_l.xlandPoint;
-                        setupMaker.actionSelectorCircle.move.distanceToObstacle = -1; // -1 means it has already been simulated
+                        setupMaker.actionSelectorCircle.move.distanceToObstacle = -5; // -1 means it has already been simulated
                         break;
                     }
                 }
             }
-            else if (Math.Abs(move.x - setupMaker.rectangleInfo.X / GameInfo.PIXEL_LENGTH) < 2 && Math.Abs(setupMaker.rectangleInfo.VelocityX) < 50)
-            {
-                setupMaker.rectangleAgentReadyForCoop = true;
-            }
+            
+            hasFinishedReplanning = true;
         }
 
         public RectangleShape.Shape BestShape(Platform current_platform, Platform next_platform, RectangleShape.Shape move_shape, RectangleShape.Shape current_shape)

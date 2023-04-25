@@ -88,7 +88,7 @@ namespace GeometryFriendsAgents
         private void InitialDraw()
         {
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            setupMaker.DrawLevelMap(ref newDebugInfo);
+            //setupMaker.DrawLevelMap(ref newDebugInfo);
             //setupMaker.levelMapCircle.DrawConnections(ref newDebugInfo);
             //levelMapCircle.DrawConnectionsVertex(ref newDebugInfo);
             setupMaker.PlanDebug(ref newDebugInfo);
@@ -98,7 +98,7 @@ namespace GeometryFriendsAgents
         {
             newDebugInfo.Clear();
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            //InitialDraw();
+            InitialDraw();
             CircleDraw();
             debugInfo = newDebugInfo.ToArray();
         }
@@ -138,6 +138,11 @@ namespace GeometryFriendsAgents
             
             //Circle velocity
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH, setupMaker.circleInfo.Y), 10, GeometryFriends.XNAStub.Color.Black));
+            if (setupMaker.actionSelectorRectangle.move != null)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.actionSelectorRectangle.move.x * GameInfo.PIXEL_LENGTH, setupMaker.rectangleInfo.Y), 10, GeometryFriends.XNAStub.Color.Black));
+            }
+
             /*newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + setupMaker.circleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 150), "Velocidad objetivo: " + setupMaker.actionSelectorCircle.target_velocity, GeometryFriends.XNAStub.Color.Orange));
             newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 200), "Distancia: " + Math.Abs(setupMaker.circleInfo.X/ GameInfo.PIXEL_LENGTH - setupMaker.actionSelectorCircle.target_position), GeometryFriends.XNAStub.Color.Orange));
@@ -198,6 +203,24 @@ namespace GeometryFriendsAgents
             else
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 50), "circleAgentNOTReadyForCircleTilt", GeometryFriends.XNAStub.Color.Red));
+            }
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 75), setupMaker.actionSelectorRectangle.count.ToString(), GeometryFriends.XNAStub.Color.Black));
+            if (setupMaker.circleInAir)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 100), "circleInAir", GeometryFriends.XNAStub.Color.Green));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 100), "circleNOTInAir", GeometryFriends.XNAStub.Color.Red));
+            }
+
+            if (setupMaker.actionSelectorRectangle.hasFinishedReplanning)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 125), "NO Replanificando", GeometryFriends.XNAStub.Color.Green));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 125), "Replanificando", GeometryFriends.XNAStub.Color.Red));
             }
             //Current Action
             if (currentAction == Moves.NO_ACTION)
@@ -306,6 +329,18 @@ namespace GeometryFriendsAgents
             currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
             if (!setupMaker.levelMapCircle.AtBorder(setupMaker.circleInfo, currentPlatformCircle, ref currentAction, setupMaker.planCircle))
             {
+                if (currentPlatformCircle.id == -1 && setupMaker.CircleAboveRectangle())
+                {
+                    Platform rectangle_platform = setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo);
+                    foreach(int id in setupMaker.levelMapCircle.small_circle_to_small_rectangle.Keys)
+                    {
+                        if(setupMaker.levelMapCircle.small_circle_to_small_rectangle[id].id == rectangle_platform.id)
+                        {
+                            currentPlatformCircle = setupMaker.levelMapCircle.platformList[id];
+                            break;
+                        }
+                    }
+                }
                 if (currentPlatformCircle.id == -1) // Ball is in the air
                 {
                     if (!flag)

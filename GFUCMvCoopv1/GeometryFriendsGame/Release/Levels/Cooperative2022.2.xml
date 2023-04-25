@@ -102,7 +102,7 @@
     <OrangeElevators />
     <TimeLimit value="120" />
   </Level5>
-<Level6>
+  <Level6>
     <Description />
     <Tips />
     <BallStartingPosition X="1160" Y="488" />
@@ -131,6 +131,9 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="19" />
+    </HighScores>
   </Level6>
   <Level7>
     <Description />
@@ -234,4 +237,4 @@
     <OrangeElevators />
     <TimeLimit value="120" />
   </Level10>
-  </Levels>
+</Levels>

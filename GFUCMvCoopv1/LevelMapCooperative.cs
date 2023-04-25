@@ -19,10 +19,10 @@ namespace GeometryFriendsAgents
 
         public void CreateLevelMap(ref Dictionary<int, int> circle_to_rectangle, Dictionary<Platform, Platform> small_to_simplified_rectangle)
         {
+            levelMapRectangle.GenerateMoveInformation();
             levelMapCircle.AddCooperative(levelMapRectangle.platformList);
             //levelMapRectangle.AddCooperative(levelMapCircle);
             levelMapCircle.GenerateMoveInformation();
-            levelMapRectangle.GenerateMoveInformation();
             levelMapCircle.MergeCooperative(ref circle_to_rectangle, small_to_simplified_rectangle);
         }
     }

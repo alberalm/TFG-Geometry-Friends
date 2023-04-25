@@ -49,11 +49,12 @@ namespace GeometryFriendsAgents
         // Execution
         public ActionSelectorCircle actionSelectorCircle;
         public ActionSelectorRectangle actionSelectorRectangle;
-        public Platform currentPlatformCircle;
-        public Platform currentPlatformRectangle;
+        public Platform currentPlatformCircle = new Platform(-1);
+        public Platform currentPlatformRectangle = new Platform(-1);
         public bool circleAgentReadyForCircleTilt;
         public bool circleAgentReadyForCoop;
         public bool rectangleAgentReadyForCoop;
+        public bool circleInAir = false;
 
         // Learning
         public LearningCircle lCircle;

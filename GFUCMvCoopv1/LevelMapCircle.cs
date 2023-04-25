@@ -473,6 +473,14 @@ namespace GeometryFriendsAgents
                         change = false;
                         foreach(Platform platform in platformList)
                         {
+                            if (!platform.real)
+                            {
+                                Platform p1 = small_circle_to_small_rectangle[p.id];
+                                Platform p2 = small_to_simplified_rectangle[p1];
+                                Platform p3 = small_circle_to_small_rectangle[platform.id];
+                                Platform p4 = small_to_simplified_rectangle[p3];
+                            }
+                            
                             if (!platform.real &&
                                 small_to_simplified_rectangle[small_circle_to_small_rectangle[p.id]] == small_to_simplified_rectangle[small_circle_to_small_rectangle[platform.id]]
                                 && !small_list_not_real.Contains(platform) && platform.rightEdge >= simplified_p.leftEdge && platform.leftEdge <= simplified_p.rightEdge)

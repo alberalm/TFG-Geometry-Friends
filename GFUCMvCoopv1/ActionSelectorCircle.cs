@@ -22,6 +22,10 @@ namespace GeometryFriendsAgents
             MoveInformation move = null;
             MoveInformation next_move_circle = setupMaker.planCircle.Count > 0 ? setupMaker.planCircle[0] : null;
             MoveInformation next_move_rectangle = setupMaker.planRectangle.Count > 0 ? setupMaker.planRectangle[0] : null;
+            if (!levelMap.small_to_simplified.ContainsKey(p))
+            {
+                int a =  0;
+            }
             foreach (MoveInformation m in levelMap.small_to_simplified[p].moveInfoList)
             {
                 if (m.landingPlatform.id == levelMap.small_to_simplified[p].id)
@@ -176,6 +180,7 @@ namespace GeometryFriendsAgents
         {
             //returns the next move, a first boolean indicating whether the move will lead to an air situation (Jump or fall) and a second boolean indicating whether the ball has to rotate in the
             //same direction of the velocity or in the oposite (in general will be oposite unless the jump lands near the vertix of the parabolla)
+            
             MoveType moveType = MoveType.NOMOVE;
             MoveInformation nextMoveInThisPlatform;
             int min_distance = 3 * GameInfo.CIRCLE_RADIUS / (GameInfo.PIXEL_LENGTH * 5);
@@ -185,8 +190,7 @@ namespace GeometryFriendsAgents
             {
                 setupMaker.circleAgentReadyForCircleTilt = false;
             }
-
-
+            
             if (nextMoveInThisPlatform != null)
             {
                 move = nextMoveInThisPlatform;
@@ -242,15 +246,22 @@ namespace GeometryFriendsAgents
                         {
                             return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                         }
+                        
                         MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
-                        levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
-                        if (m.landingPlatform.id == currentPlatform.id && Utilities.Contained(nextMoveInThisPlatform.diamondsCollected, m.diamondsCollected))
+                        
+                        List<MoveInformation> moves = levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
+                        foreach (MoveInformation move in moves)
                         {
-                            if (nextMoveInThisPlatform.DistanceToRollingEdge() < min_distance || m.DistanceToRollingEdge() >= min_distance)
+                            if (move.landingPlatform.id == currentPlatform.id && Utilities.Contained(nextMoveInThisPlatform.diamondsCollected, move.diamondsCollected))
                             {
-                                return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                                if (nextMoveInThisPlatform.DistanceToRollingEdge() < min_distance || move.DistanceToRollingEdge() >= min_distance)
+                                {
+                                    return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(move)));
+                                }
                             }
+
                         }
+                        
                         return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                     }
                 }
@@ -323,12 +334,12 @@ namespace GeometryFriendsAgents
                             List<MoveInformation> moves=levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                             foreach (MoveInformation move in moves)
                             {
-                                if (move.landingPlatform.id == plan[0].landingPlatform.id && Utilities.Contained(aux_move.diamondsCollected, m.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO
+                                if (move.landingPlatform.id == plan[0].landingPlatform.id && Utilities.Contained(aux_move.diamondsCollected, move.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO
                                 {
                                     if (aux_move.DistanceToRollingEdge() < min_distance || move.DistanceToRollingEdge() >= min_distance)
                                     {
                                         plan.RemoveAt(0);
-                                        return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
+                                        return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(move)));
                                     }
                                 }
                             }
