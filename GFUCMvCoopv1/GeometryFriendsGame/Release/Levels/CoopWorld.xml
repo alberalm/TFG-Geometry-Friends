@@ -15,11 +15,18 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="22" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="23" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="26" />
+    </HighScores>
   </Level1>
   <Level2>
     <Description />
     <Tips />
-    <BallStartingPosition X="248" Y="632" />
+    <BallStartingPosition X="1192" Y="664" />
     <SquareStartingPosition X="904" Y="680" />
     <Collectibles>
       <Collectible X="600" Y="184" />
@@ -29,6 +36,10 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="18" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="18" />
+    </HighScores>
   </Level2>
   <Level3>
     <Description />
@@ -279,6 +290,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="16" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="19" />
     </HighScores>
   </Level12>

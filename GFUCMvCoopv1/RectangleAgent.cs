@@ -51,7 +51,7 @@ namespace GeometryFriendsAgents
         private bool hasFinishedTilt = true;
         private double t = 0;
         private double t_0 = 0;
-
+        private bool finished_changing = true;
         //Debug
         private DebugInformation[] debugInfo = null;
         private List<DebugInformation> newDebugInfo;
@@ -357,6 +357,7 @@ namespace GeometryFriendsAgents
             update_counter = 0;
 
             currentPlatformRectangle = setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo);
+            setupMaker.currentPlatformRectangle = currentPlatformRectangle;
             
             //Become horozintal asap when move=drop
             if (!hasFinishedDrop && setupMaker.planRectangle.Count > 0 && !setupMaker.planRectangle[0].landingPlatform.real)
@@ -415,6 +416,18 @@ namespace GeometryFriendsAgents
             }
 
             // Normal behaviour
+            if (!finished_changing)
+            {
+                if (Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) < GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + GameInfo.CIRCLE_RADIUS)
+                {
+                    return;
+                }
+                else
+                {
+                    finished_changing = true;
+                }
+            }
+
             if ((setupMaker.actionSelectorRectangle.move != null && ((setupMaker.actionSelectorRectangle.move.moveType == MoveType.FALL &&
                 Math.Abs(setupMaker.actionSelectorRectangle.move.x * GameInfo.PIXEL_LENGTH - setupMaker.rectangleInfo.X) <= 2 * GameInfo.PIXEL_LENGTH)
                 || setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEDROP))
@@ -523,7 +536,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
-                    // Check if height is really what we are told -> Generates up and down movement in falls
+                    // Check if height is really what we are told -> Generates up and down movement in falls and changing positions
                     if (Math.Abs((setupMaker.rectangleInfo.Height + 2 * setupMaker.rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatformRectangle.yTop * 2) > 4)
                     {
                         if (setupMaker.rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
@@ -547,6 +560,42 @@ namespace GeometryFriendsAgents
                         // TODO: Add logic with failed move
                         setupMaker.Replanning();
                     }
+
+                    if (setupMaker.changing)
+                    {
+                        if (setupMaker.rectangleInfo.Height < GameInfo.VERTICAL_RECTANGLE_HEIGHT - 20)
+                        {
+                            currentAction = Moves.MORPH_UP;
+                        }
+                        else if (setupMaker.rectangleInfo.X > setupMaker.circleInfo.X)
+                        {
+                            if (setupMaker.rectangleInfo.VelocityX < -100)
+                            {
+                                currentAction = Moves.NO_ACTION;
+                            }
+                            else
+                            {
+                                currentAction = Moves.MOVE_LEFT;
+                            }
+                        }
+                        else
+                        {
+                            if (setupMaker.rectangleInfo.VelocityX > 100)
+                            {
+                                currentAction = Moves.NO_ACTION;
+                            }
+                            else
+                            {
+                                currentAction = Moves.MOVE_RIGHT;
+                            }
+                        }
+                        if(Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) < GameInfo.PIXEL_LENGTH)
+                        {
+                            finished_changing = false;
+                        }
+                        return;
+                    }
+
                     currentAction = setupMaker.actionSelectorRectangle.nextActionPhisics(ref setupMaker.planRectangle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformRectangle);
                     setupMaker.actionSelectorRectangle.lastMove = currentAction;
                 }

@@ -181,7 +181,17 @@ namespace GeometryFriendsAgents
                         return -1;
                     }
                 }
-
+                if (!departurePlatform.real)
+                {
+                    if (Math.Abs(velocityX)< Math.Abs(other.velocityX))
+                    {
+                        return 1;
+                    }
+                    else if (Math.Abs(velocityX) > Math.Abs(other.velocityX))
+                    {
+                        return -1;
+                    }
+                }
                 int m = GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH;
                 if (other.DistanceToOtherEdge() > m && other.DistanceToRollingEdge() > m && (DistanceToOtherEdge() <= m || DistanceToRollingEdge() <= m))
                 {

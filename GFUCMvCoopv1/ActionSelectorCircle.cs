@@ -182,9 +182,12 @@ namespace GeometryFriendsAgents
             //same direction of the velocity or in the oposite (in general will be oposite unless the jump lands near the vertix of the parabolla)
             
             MoveType moveType = MoveType.NOMOVE;
-            MoveInformation nextMoveInThisPlatform;
+            MoveInformation nextMoveInThisPlatform=null;
             int min_distance = 3 * GameInfo.CIRCLE_RADIUS / (GameInfo.PIXEL_LENGTH * 5);
-            nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(cI, rI, currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH));
+            if(currentPlatform.real || setupMaker.CircleAboveRectangle())
+            {
+                nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(cI, rI, currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH));
+            }
             
             if(plan.Count == 0 || plan[0].moveType != MoveType.COOPMOVE || setupMaker.planRectangle[0].moveType != MoveType.CIRCLETILT)
             {

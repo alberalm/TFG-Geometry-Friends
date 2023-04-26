@@ -55,6 +55,7 @@ namespace GeometryFriendsAgents
         public bool circleAgentReadyForCoop;
         public bool rectangleAgentReadyForCoop;
         public bool circleInAir = false;
+        public bool changing = false;
 
         // Learning
         public LearningCircle lCircle;
@@ -390,6 +391,23 @@ namespace GeometryFriendsAgents
             return circleInfo.X <= rectangleInfo.X + width / 2 &&
                 circleInfo.X >= rectangleInfo.X - width / 2 &&
                 Math.Abs(circleInfo.Y + GameInfo.CIRCLE_RADIUS + rectangleInfo.Height / 2 - rectangleInfo.Y) < 2 * GameInfo.PIXEL_LENGTH;
+        }
+
+        public void UpdateChanging()
+        {
+            if (currentPlatformCircle.yTop == currentPlatformRectangle.yTop && currentPlatformCircle.real && currentPlatformRectangle.real &&
+               ((currentPlatformCircle.leftEdge < rectangleInfo.X/GameInfo.PIXEL_LENGTH && currentPlatformCircle.rightEdge > rectangleInfo.X / GameInfo.PIXEL_LENGTH) 
+               || (currentPlatformRectangle.leftEdge < rectangleInfo.X / GameInfo.PIXEL_LENGTH && currentPlatformRectangle.rightEdge > rectangleInfo.X / GameInfo.PIXEL_LENGTH))) // Same platform
+            {
+                if (actionSelectorCircle.move != null && actionSelectorRectangle.move != null)
+                {
+                    changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
+                }
+            }
+            else
+            {
+                changing = false;
+            }
         }
 
         public void PlanDebug(ref List<DebugInformation> newDebugInfo)

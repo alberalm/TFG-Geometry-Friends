@@ -46,6 +46,7 @@ namespace GeometryFriendsAgents
         bool flag = false;
         private double t = 0;
         private double t_0 = 0;
+        private bool finished_changing = true;
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -222,6 +223,16 @@ namespace GeometryFriendsAgents
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 125), "Replanificando", GeometryFriends.XNAStub.Color.Red));
             }
+            if (setupMaker.actionSelectorRectangle.waitingForCircleToLand)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 150), "Waiting For Circle to Land", GeometryFriends.XNAStub.Color.Green));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 150), "NOT Waiting For Circle to Land", GeometryFriends.XNAStub.Color.Red));
+            }
+
+
             //Current Action
             if (currentAction == Moves.NO_ACTION)
         {
@@ -327,6 +338,7 @@ namespace GeometryFriendsAgents
                 return;
             }
             currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
+            
             if (!setupMaker.levelMapCircle.AtBorder(setupMaker.circleInfo, currentPlatformCircle, ref currentAction, setupMaker.planCircle))
             {
                 if (currentPlatformCircle.id == -1 && setupMaker.CircleAboveRectangle())
@@ -373,6 +385,45 @@ namespace GeometryFriendsAgents
                     {
                         // TODO: Add logic with failed move
                         setupMaker.Replanning();
+                    }
+                    setupMaker.UpdateChanging();
+                    if (setupMaker.changing)
+                    {
+                        if(setupMaker.rectangleInfo.X > setupMaker.circleInfo.X)
+                        {
+                            if (setupMaker.circleInfo.VelocityX > 100)
+                            {
+                                currentAction = Moves.NO_ACTION;
+                            }
+                            else
+                            {
+                                currentAction = Moves.ROLL_RIGHT;
+                            }
+                        }
+                        else
+                        {
+                            if (setupMaker.circleInfo.VelocityX < -100)
+                            {
+                                currentAction = Moves.NO_ACTION;
+                            }
+                            else
+                            {
+                                currentAction = Moves.ROLL_LEFT;
+                            }
+                        }
+                        finished_changing = false;
+                        return;
+                    }
+                    else if(!finished_changing)
+                    {
+                        if(Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) < GameInfo.VERTICAL_RECTANGLE_HEIGHT/2 + GameInfo.CIRCLE_RADIUS)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            finished_changing = true;
+                        }
                     }
                     Tuple<Moves, Tuple<bool, bool>> tup;
                     if (GameInfo.PHYSICS)
