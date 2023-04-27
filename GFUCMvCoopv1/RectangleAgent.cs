@@ -357,7 +357,7 @@ namespace GeometryFriendsAgents
             update_counter = 0;
 
             currentPlatformRectangle = setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo);
-            setupMaker.currentPlatformRectangle = currentPlatformRectangle;
+            setupMaker.currentPlatformRectangle = setupMaker.levelMapRectangle.PlatformBelowRectangle(setupMaker.rectangleInfo);
             
             //Become horozintal asap when move=drop
             if (!hasFinishedDrop && setupMaker.planRectangle.Count > 0 && !setupMaker.planRectangle[0].landingPlatform.real)

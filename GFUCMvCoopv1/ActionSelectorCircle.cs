@@ -255,7 +255,7 @@ namespace GeometryFriendsAgents
                         List<MoveInformation> moves = levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                         foreach (MoveInformation move in moves)
                         {
-                            if (move.landingPlatform.id == currentPlatform.id && Utilities.Contained(nextMoveInThisPlatform.diamondsCollected, move.diamondsCollected))
+                            if (setupMaker.levelMapCircle.small_to_simplified[move.landingPlatform].id == currentPlatform.id && Utilities.Contained(nextMoveInThisPlatform.diamondsCollected, move.diamondsCollected))
                             {
                                 if (nextMoveInThisPlatform.DistanceToRollingEdge() < min_distance || move.DistanceToRollingEdge() >= min_distance)
                                 {
@@ -337,11 +337,10 @@ namespace GeometryFriendsAgents
                             List<MoveInformation> moves=levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                             foreach (MoveInformation move in moves)
                             {
-                                if (move.landingPlatform.id == plan[0].landingPlatform.id && Utilities.Contained(aux_move.diamondsCollected, move.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO
+                                if (setupMaker.levelMapCircle.small_to_simplified[move.landingPlatform].id == plan[0].landingPlatform.id && Utilities.Contained(aux_move.diamondsCollected, move.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO
                                 {
                                     if (aux_move.DistanceToRollingEdge() < min_distance || move.DistanceToRollingEdge() >= min_distance)
                                     {
-                                        plan.RemoveAt(0);
                                         return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(move)));
                                     }
                                 }

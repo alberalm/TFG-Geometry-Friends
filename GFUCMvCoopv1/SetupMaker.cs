@@ -368,12 +368,12 @@ namespace GeometryFriendsAgents
         public void DrawLevelMap(ref List<DebugInformation> debugInformation)
         {
             //Common obstacles
-            DrawObstacles(ref debugInformation);
-            DrawLegend(ref debugInformation);
+            //DrawObstacles(ref debugInformation);
+            //DrawLegend(ref debugInformation);
 
             //Rectangle info
-            DrawRectangleSmallPlatforms(ref debugInformation);
-            DrawRectangleSimplifiedPlatformsNumbers(ref debugInformation);
+            //DrawRectangleSmallPlatforms(ref debugInformation);
+            //DrawRectangleSimplifiedPlatformsNumbers(ref debugInformation);
             //DrawRectangleSmallPlatformsNumbers(ref debugInformation);
 
             //Circle info
@@ -382,7 +382,7 @@ namespace GeometryFriendsAgents
             //DrawCircleSmallPlatformsNumbers(ref List < DebugInformation > debugInformation);
 
             //Collectibles
-            DrawCollectibles(ref debugInformation);
+            //DrawCollectibles(ref debugInformation);
         }
 
         public bool CircleAboveRectangle()
