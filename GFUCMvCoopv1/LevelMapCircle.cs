@@ -129,7 +129,7 @@ namespace GeometryFriendsAgents
                 int rightEdge = xMap + width / 2 - 1;
                 int yTop = yMap - height / 2;
                 prevPlatform = false;
-
+                moveGenerator.trajectoryAdder.circleSimulator.levelMap = levelMap;
                 for (int x = leftEdge; x <= rightEdge; x++)
                 {
                     CollisionType col = moveGenerator.trajectoryAdder.circleSimulator.CircleIntersectsWithObstacle(x, yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH);

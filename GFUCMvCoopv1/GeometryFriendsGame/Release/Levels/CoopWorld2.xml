@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Levels>
+  <Level1>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="728" Y="712" />
+    <SquareStartingPosition X="632" Y="504" />
+    <Collectibles>
+      <Collectible X="616" Y="88" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle width="176" height="32" X="536" Y="568" centered="false" />
+    </GreenObstacles>
+    <BlackObstacles />
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+  </Level1>
+</Levels>

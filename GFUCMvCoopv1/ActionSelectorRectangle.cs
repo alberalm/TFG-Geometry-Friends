@@ -304,11 +304,6 @@ namespace GeometryFriendsAgents
         public Moves nextActionPhisics(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI,RectangleRepresentation rI, Platform currentPlatform)
         {
             MoveInformation move2 = DiamondsCanBeCollectedFrom(cI, rI, levelMap.small_to_simplified[currentPlatform], remaining, (int)(rI.X / GameInfo.PIXEL_LENGTH));
-            
-            if(move != null && move.x == 0)
-            {
-                int a = 0;
-            }
 
             if(setupMaker.circleInAir && setupMaker.currentPlatformCircle.real && (int) cI.VelocityX/10 != circle_flying_velocity/10)
             {
@@ -590,11 +585,35 @@ namespace GeometryFriendsAgents
                         }
                         if (intersects_if_right && intersects_if_left)
                         {
-                            //Generate new moves
-                        }
-                        if (move != null && move.x == 0)
-                        {
-                            int a = 0;
+                            // We inverse the process of jumping to calculate from where the circle needs to jump
+                            // Then we replace the current plan[0] move with it
+                            move.x = (setupMaker.currentPlatformRectangle.rightEdge + setupMaker.currentPlatformRectangle.leftEdge) / 2; // Need to change this
+                            Platform departure_platform = setupMaker.levelMapCircle.simplified_to_small[setupMaker.planCircle[0].departurePlatform][0];
+                            Platform landing_platform = setupMaker.levelMapCircle.simplified_to_small[setupMaker.planCircle[0].landingPlatform][0];
+                            foreach (Platform p in setupMaker.levelMapCircle.simplified_to_small[setupMaker.planCircle[0].landingPlatform])
+                            {
+                                if(p.yTop > landing_platform.yTop)
+                                {
+                                    landing_platform = p;
+                                }
+                            }
+                            MoveInformation new_jump = setupMaker.levelMapCircle.moveGenerator.GenerateNewJump(
+                                setupMaker.levelMapCircle.platformList,
+                                departure_platform,
+                                landing_platform,
+                                move.x,
+                                (int)setupMaker.planCircle[0].path[setupMaker.planCircle[0].path.Count - 1].Item2 / GameInfo.PIXEL_LENGTH);
+                            if (new_jump != null)
+                            {
+                                new_jump.departurePlatform = setupMaker.levelMapCircle.small_to_simplified[new_jump.departurePlatform];
+                                new_jump.landingPlatform = setupMaker.levelMapCircle.small_to_simplified[new_jump.landingPlatform];
+                                setupMaker.planCircle[0] = new_jump;
+                                return Moves.NO_ACTION;
+                            }
+                            else
+                            {
+                                // What can we do here?
+                            }
                         }
                     }
                     else

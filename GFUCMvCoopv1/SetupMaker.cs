@@ -92,11 +92,10 @@ namespace GeometryFriendsAgents
         
         public void SetUp()
         {
-            levelMapCircle.CreateLevelMap(collectiblesInfo, obstaclesInfo, greenObstaclesInfo);
             levelMapRectangle.CreateLevelMap(collectiblesInfo, obstaclesInfo, yellowObstaclesInfo);
+            levelMapCircle.CreateLevelMap(collectiblesInfo, obstaclesInfo, greenObstaclesInfo, levelMapRectangle.moveGenerator);
 
             levelMapCooperative = new LevelMapCooperative(levelMapCircle, levelMapRectangle);
-
             levelMapCooperative.CreateLevelMap(ref circle_to_rectangle, levelMapRectangle.small_to_simplified);
 
             graph = new Graph(levelMapCircle.simplified_platforms, levelMapRectangle.simplified_platforms, circle_to_rectangle, collectiblesInfo);

@@ -46,7 +46,7 @@ namespace GeometryFriendsAgents
             return platformList;
         }
 
-        public void CreateLevelMap(CollectibleRepresentation[] colI, ObstacleRepresentation[] oI, ObstacleRepresentation[] cPI)
+        public void CreateLevelMap(CollectibleRepresentation[] colI, ObstacleRepresentation[] oI, ObstacleRepresentation[] cPI, MoveGenerator moveGenerator = null)
         {
             SetCollectibles(colI);
 
@@ -56,7 +56,16 @@ namespace GeometryFriendsAgents
 
             SetObstacles(cPI);
 
-            moveGenerator = new MoveGenerator(initialCollectiblesInfo, levelMap);
+            this.moveGenerator = new MoveGenerator(initialCollectiblesInfo, levelMap);
+
+            /*if(moveGenerator == null)
+            {
+                this.moveGenerator = new MoveGenerator(initialCollectiblesInfo, levelMap);
+            }
+            else
+            {
+                this.moveGenerator = moveGenerator;
+            }*/
 
             IdentifyPlatforms(oI);
 
