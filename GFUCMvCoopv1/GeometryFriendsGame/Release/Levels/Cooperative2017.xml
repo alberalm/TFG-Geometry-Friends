@@ -19,6 +19,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="20" />
       <HighScore name="No Name" value="69" />
     </HighScores>
   </Level1>
@@ -35,6 +36,9 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="12" />
+    </HighScores>
   </Level2>
   <Level3>
     <Description />
@@ -83,6 +87,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="31" />
       <HighScore name="No Name" value="57" />
     </HighScores>
   </Level4>
@@ -106,6 +111,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="8" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="11" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="42" />
     </HighScores>
@@ -129,6 +135,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="28" />
       <HighScore name="No Name" value="40" />
     </HighScores>
   </Level6>
@@ -172,7 +179,9 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="30" />
       <HighScore name="No Name" value="36" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="39" />
     </HighScores>
   </Level8>
   <Level9>
@@ -198,6 +207,7 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="7" />
       <HighScore name="No Name" value="9" />
     </HighScores>
   </Level9>
@@ -224,5 +234,10 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="13" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="15" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="15" />
+    </HighScores>
   </Level10>
 </Levels>

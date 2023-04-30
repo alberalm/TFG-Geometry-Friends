@@ -255,7 +255,7 @@ namespace GeometryFriendsAgents
                         List<MoveInformation> moves = levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                         foreach (MoveInformation move in moves)
                         {
-                            if (setupMaker.levelMapCircle.small_to_simplified[move.landingPlatform].id == currentPlatform.id && Utilities.Contained(nextMoveInThisPlatform.diamondsCollected, move.diamondsCollected))
+                            if (move.landingPlatform.id == currentPlatform.id && Utilities.Contained(nextMoveInThisPlatform.diamondsCollected, move.diamondsCollected))
                             {
                                 if (nextMoveInThisPlatform.DistanceToRollingEdge() < min_distance || move.DistanceToRollingEdge() >= min_distance)
                                 {
@@ -302,6 +302,13 @@ namespace GeometryFriendsAgents
                         return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                     }
                     
+                    if(plan[0].moveType == MoveType.COOPMOVE && setupMaker.planRectangle[0].moveType != MoveType.CIRCLETILT)
+                    {
+                        //Circle has to wait
+                        //TODO:Optimize time and try to perform next move in plan?
+                        return new Tuple<Moves, Tuple<bool, bool>>(Moves.NO_ACTION, new Tuple<bool, bool>(false, false));
+                    }
+
                     if (!plan[0].landingPlatform.real && setupMaker.planRectangle[0].moveType == MoveType.COOPMOVE)
                     {
                         if (!setupMaker.rectangleAgentReadyForCoop)
@@ -370,7 +377,7 @@ namespace GeometryFriendsAgents
 
         private bool JumpNeedsAngularMomentum(MoveInformation m)
         {
-            return Math.Abs(m.landingPlatform.yTop + GameInfo.JUMP_VELOCITYY * GameInfo.JUMP_VELOCITYY / (2 * GameInfo.GRAVITY * GameInfo.PIXEL_LENGTH) - m.departurePlatform.yTop) <= 5;
+            return Math.Abs(m.landingPlatform.yTop + GameInfo.JUMP_VELOCITYY * GameInfo.JUMP_VELOCITYY / (2 * GameInfo.GRAVITY * GameInfo.PIXEL_LENGTH) - m.departurePlatform.yTop) <= 7;
         }
 
         public Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, double brake_distance, double acceleration_distance)

@@ -81,6 +81,7 @@ namespace GeometryFriendsAgents
             this.initial_collectibles = collectibles;
             this.circle_to_rectangle = circle_to_rectangle;
             this.collectibles = new List<Diamond>();
+            best_sol = new Node(new List<MoveInformation>(), new List<MoveInformation>(), new List<bool>(), 0, false);
             for (int i = 0; i < collectibles.Length; i++)
             {
                 this.collectibles.Add(new Diamond(i));
@@ -156,6 +157,7 @@ namespace GeometryFriendsAgents
             best_sol = new Node(new List<MoveInformation>(), new List<MoveInformation>(), auxlist, 0, false);
             queue.Add(new Node(new List<MoveInformation> { new MoveInformation(circle_platforms[src_circle]) },
                 new List<MoveInformation> { new MoveInformation(rectangle_platforms[src_rectangle]) }, auxlist, 0, false));
+            
             sw.Restart();
 
             while (queue.Count > 0)

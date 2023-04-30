@@ -563,7 +563,7 @@ namespace GeometryFriendsAgents
 
                     if (setupMaker.changing)
                     {
-                        if (setupMaker.rectangleInfo.Height < GameInfo.VERTICAL_RECTANGLE_HEIGHT - 20)
+                        if (setupMaker.rectangleInfo.Height < GameInfo.VERTICAL_RECTANGLE_HEIGHT - 20 && setupMaker.levelMapRectangle.RectangleCanMorphUp(setupMaker.rectangleInfo))
                         {
                             currentAction = Moves.MORPH_UP;
                         }

@@ -99,7 +99,13 @@ namespace GeometryFriendsAgents
             levelMapCooperative.CreateLevelMap(ref circle_to_rectangle, levelMapRectangle.small_to_simplified);
 
             graph = new Graph(levelMapCircle.simplified_platforms, levelMapRectangle.simplified_platforms, circle_to_rectangle, collectiblesInfo);
-            graph.SearchAlgorithm(levelMapCircle.small_to_simplified[levelMapCircle.PlatformBelowCircle(circleInfo)].id, levelMapRectangle.PlatformBelowRectangle(rectangleInfo).id, collectiblesInfo);
+            Platform p_rectangle = levelMapRectangle.PlatformBelowRectangle(rectangleInfo);
+            Platform p_circle = levelMapCircle.PlatformBelowCircle(circleInfo);
+            if (p_circle.id!=-1 && p_rectangle.id != -1)
+            {
+                graph.SearchAlgorithm(levelMapCircle.small_to_simplified[p_circle].id, p_rectangle.id, collectiblesInfo);
+            }
+            
 
             // Circle
 
@@ -396,10 +402,14 @@ namespace GeometryFriendsAgents
         {
             if (currentPlatformCircle.yTop == currentPlatformRectangle.yTop && currentPlatformCircle.real && currentPlatformRectangle.real &&
                ((currentPlatformCircle.leftEdge < rectangleInfo.X/GameInfo.PIXEL_LENGTH && currentPlatformCircle.rightEdge > rectangleInfo.X / GameInfo.PIXEL_LENGTH) 
-               || (currentPlatformRectangle.leftEdge < rectangleInfo.X / GameInfo.PIXEL_LENGTH && currentPlatformRectangle.rightEdge > rectangleInfo.X / GameInfo.PIXEL_LENGTH))) // Same platform
-            {
+               || (currentPlatformRectangle.leftEdge < circleInfo.X / GameInfo.PIXEL_LENGTH && currentPlatformRectangle.rightEdge > circleInfo.X / GameInfo.PIXEL_LENGTH))) // Same platform
+            {                   
                 if (actionSelectorCircle.move != null && actionSelectorRectangle.move != null)
                 {
+                    if (actionSelectorCircle.move.x == actionSelectorRectangle.move.x)
+                    {
+                        actionSelectorCircle.move.x++;
+                    }
                     changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
                 }
             }

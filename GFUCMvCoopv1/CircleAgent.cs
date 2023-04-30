@@ -89,7 +89,7 @@ namespace GeometryFriendsAgents
         private void InitialDraw()
         {
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            setupMaker.DrawLevelMap(ref newDebugInfo);
+            //setupMaker.DrawLevelMap(ref newDebugInfo);
             //setupMaker.levelMapCircle.DrawConnections(ref newDebugInfo);
             //levelMapCircle.DrawConnectionsVertex(ref newDebugInfo);
             setupMaker.PlanDebug(ref newDebugInfo);

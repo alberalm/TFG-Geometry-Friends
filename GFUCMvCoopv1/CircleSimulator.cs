@@ -95,6 +95,19 @@ namespace GeometryFriendsAgents
                 return vx * vx <= 2 * GameInfo.CIRCLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge - 1 - x);
             }
         }
+        private List<int> CollectDiamonds(float x_tfloat, float y_tfloat)
+        {
+            List<int> l = new List<int>();
+            for (int i = 0; i < initialCollectiblesInfo.Length; i++)
+            {
+                CollectibleRepresentation coll = initialCollectiblesInfo[i];
+                if(Math.Abs(coll.X- x_tfloat)+ Math.Abs(coll.Y - y_tfloat)< GameInfo.SEMI_COLLECTIBLE_HEIGHT + GameInfo.CIRCLE_RADIUS + 3)
+                {
+                    l.Add(i);
+                }
+            }
+            return l;
+        }
 
         public List<MoveInformation> SimulateMove(ref List<Platform> platformList, float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m)
         {
@@ -114,9 +127,21 @@ namespace GeometryFriendsAgents
             int j = 0;
             List<MoveInformation> moves = new List<MoveInformation>();
             CollisionType cct = CircleIntersectsWithObstacle(x_t, y_t);
+            
             while (cct != CollisionType.Bottom && j <= NUM_REBOUNDS)
             {
                 m.path.Add(new Tuple<float, float>(x_tfloat, y_tfloat));
+                List<int> diamonds_collected = CollectDiamonds(x_tfloat, y_tfloat);
+                if (diamonds_collected.Count>0)
+                {
+                    foreach(int d in diamonds_collected)
+                    {
+                        if (!m.diamondsCollected.Contains(d))
+                        {
+                            m.diamondsCollected.Add(d);
+                        }
+                    }                    
+                }
                 if (cct == CollisionType.Diamond)
                 {
                     int d = GetDiamondCollected(x_t, y_t);
