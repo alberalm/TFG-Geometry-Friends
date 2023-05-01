@@ -33,7 +33,7 @@ namespace GeometryFriendsAgents
         private List<AgentMessage> messages;
 
         //debug agent predictions and history keeping
-        private List<CollectibleRepresentation> remaining;
+        public List<CollectibleRepresentation> remaining;
 
         //Area of the game screen
         private Rectangle area;
@@ -42,10 +42,11 @@ namespace GeometryFriendsAgents
         public SetupMaker setupMaker;
 
         //Execution
-        Platform currentPlatformCircle;
+        public Platform currentPlatformCircle;
         bool flag = false;
         private double t = 0;
         private double t_0 = 0;
+        private double t_recovery = 0;
         private bool finished_changing = true;
 
         //Debug
@@ -305,8 +306,18 @@ namespace GeometryFriendsAgents
             */
             currentAction = possibleMoves[rnd.Next(possibleMoves.Count)];
             
-            //send a message to the rectangle agent telling what action it chose
-            messages.Add(new AgentMessage("Going to :" + currentAction));
+        }
+
+        private void RandomActionWithoutJump()
+        {
+            /*
+             Circle Actions
+             ROLL_LEFT = 1      
+             ROLL_RIGHT = 2
+             JUMP = 3
+             GROW = 4
+            */
+            currentAction = possibleMoves[rnd.Next(possibleMoves.Count-1)];
         }
 
         //implements abstract circle interface: GeometryFriends agents manager gets the current action intended to be actuated in the enviroment for this agent
@@ -334,6 +345,34 @@ namespace GeometryFriendsAgents
             {
                 return;
             }
+
+            if (Math.Abs(setupMaker.circleInfo.X - setupMaker.lastCircleInfo.X) <= 5 && Math.Abs(setupMaker.circleInfo.Y - setupMaker.lastCircleInfo.Y) <= 5)
+            {
+                setupMaker.timesStuckCircle++;
+            }
+            else
+            {
+                setupMaker.lastCircleInfo = setupMaker.circleInfo;
+                setupMaker.timesStuckCircle = 0;
+            }
+
+            if (t_recovery > 0 || (setupMaker.timesStuckCircle > 70 && setupMaker.timesStuckRectangle > 70 &&
+                Math.Abs(setupMaker.circleInfo.X- setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 &&
+                Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2))
+            {
+                t_recovery += elapsedGameTime.TotalMilliseconds;
+                if (setupMaker.timesStuckCircle > 70 && t_recovery > 200)
+                {
+                    RandomActionWithoutJump();
+                    t_recovery = 1;
+                }
+                else if (t_recovery > 200)
+                {
+                    t_recovery = 0;
+                }
+                return;
+            }
+
             UpdateDraw();
             t_0 += elapsedGameTime.TotalMilliseconds;
             t += elapsedGameTime.TotalMilliseconds;
@@ -385,7 +424,8 @@ namespace GeometryFriendsAgents
                 else
                 {
                     if (setupMaker.planCircle.Count == 0 || ((currentPlatformCircle.real || setupMaker.CircleAboveRectangle()) &&
-                            setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id)) //CIRCLE IN LAST PLATFORM
+                            setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id)
+                            || (setupMaker.planCircle[0].moveType == MoveType.COOPMOVE && setupMaker.planRectangle[0].moveType == MoveType.COOPMOVE)) //CIRCLE IN LAST PLATFORM
                     {
                         // TODO: Add logic with failed move
                         setupMaker.Replanning();
@@ -482,6 +522,7 @@ namespace GeometryFriendsAgents
                     if (item.Message.CompareTo("Rectangle setup completed") == 0)
                     {
                         setupMaker = (SetupMaker) item.Attachment;
+                        setupMaker.circleAgent = this;
                     }
                 }
             }

@@ -48,6 +48,7 @@ namespace GeometryFriendsAgents
             this.moveType = MoveType.NOMOVE;
             this.diamondsCollected = new List<int>();
             this.path = new List<Tuple<float, float>>();
+            this.path.Add(new Tuple<float, float>((landingPlatform.rightEdge + landingPlatform.leftEdge) * GameInfo.PIXEL_LENGTH / 2, landingPlatform.yTop * GameInfo.PIXEL_LENGTH));
             this.distanceToObstacle = 0;
             this.moveDuringFlight = Moves.NO_ACTION;
             this.risky = false;
@@ -152,6 +153,11 @@ namespace GeometryFriendsAgents
             }
             if (Utilities.Contained(diamondsCollected, other.diamondsCollected) && Utilities.Contained(other.diamondsCollected, diamondsCollected)) //diamondsCollected=other.diamondsCollected
             {
+                if(diamondsCollected.Count==1 && diamondsCollected[0] == 0)
+                {
+                    int a = 0;
+                }
+
                 // Departure not real
                 if (!departurePlatform.real)
                 {

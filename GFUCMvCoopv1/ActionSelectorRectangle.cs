@@ -304,19 +304,22 @@ namespace GeometryFriendsAgents
         public Moves nextActionPhisics(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI,RectangleRepresentation rI, Platform currentPlatform)
         {
             MoveInformation move2 = DiamondsCanBeCollectedFrom(cI, rI, levelMap.small_to_simplified[currentPlatform], remaining, (int)(rI.X / GameInfo.PIXEL_LENGTH));
-
-            if(setupMaker.circleInAir && setupMaker.currentPlatformCircle.real && (int) cI.VelocityX/10 != circle_flying_velocity/10)
+            
+            if (setupMaker.currentPlatformCircle.real && (int)cI.VelocityX / 10 != circle_flying_velocity / 10)
             {
-                setupMaker.rectangleAgentReadyForCoop = false;
                 waitingForCircleToLand = false;
-                setupMaker.circleInAir = false;
+                if (setupMaker.circleInAir)
+                {
+                    setupMaker.rectangleAgentReadyForCoop = false;
+                    setupMaker.circleInAir = false;
+                }
             }
 
             if (!waitingForCircleToLand)
             {                
                 if (move2 != null)
                 {
-                    move = move2;
+                    move = new MoveInformation(move2);
                     target_position = move.x;
                     target_velocity = move.velocityX;
                     setupMaker.rectangleAgentReadyForCoop = false;
@@ -325,7 +328,7 @@ namespace GeometryFriendsAgents
                 {
                     if (plan.Count > 0)
                     {
-                        move = plan[0];
+                        move = new MoveInformation(plan[0]);
                         target_position = plan[0].x;
                         target_velocity = plan[0].velocityX;
                     }
@@ -344,6 +347,12 @@ namespace GeometryFriendsAgents
                     else if (move == null)
                     {
                         move = new MoveInformation(currentPlatform) { moveType = MoveType.COOPMOVE };
+                    }
+                    else
+                    {
+                        float middle = GameInfo.PIXEL_LENGTH * (setupMaker.currentPlatformRectangle.rightEdge + setupMaker.currentPlatformRectangle.leftEdge) / 2;
+                        move.x = setupMaker.circleInfo.X < middle ? setupMaker.currentPlatformRectangle.rightEdge : setupMaker.currentPlatformRectangle.leftEdge;
+                        move.velocityX = 0;
                     }
                 }
             }
@@ -369,27 +378,29 @@ namespace GeometryFriendsAgents
             if (setupMaker.CircleAboveRectangle() && count == -1)
             {
                 setupMaker.circleInAir = false;
-                
+
                 circle_flying_velocity = 1000;
                 if (waitingForCircleToLand)
                 {
                     count = 0;
                     waitingForCircleToLand = false;
                 }
-
-                int w = RectangleShape.width(RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[0].Item2 + GameInfo.CIRCLE_RADIUS))));
-                
-                if (setupMaker.actionSelectorCircle.move.velocityX == 0)
+                int w = 0;
+                if (setupMaker.actionSelectorCircle.move != null)
                 {
-                    move.x = setupMaker.actionSelectorCircle.move.x;
-                }
-                else if(setupMaker.actionSelectorCircle.move.velocityX > 0)
-                {
-                    move.x = setupMaker.actionSelectorCircle.move.x - w / 2 + 1;
-                }
-                else
-                {
-                    move.x = setupMaker.actionSelectorCircle.move.x + w / 2 - 1;
+                    w = RectangleShape.width(RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[0].Item2 + GameInfo.CIRCLE_RADIUS))));
+                    if (setupMaker.actionSelectorCircle.move.velocityX == 0)
+                    {
+                        move.x = setupMaker.actionSelectorCircle.move.x;
+                    }
+                    else if (setupMaker.actionSelectorCircle.move.velocityX > 0)
+                    {
+                        move.x = setupMaker.actionSelectorCircle.move.x - w / 2 + 2;
+                    }
+                    else
+                    {
+                        move.x = setupMaker.actionSelectorCircle.move.x + w / 2 - 1;
+                    }
                 }
                 
                 move.shape = RectangleShape.Shape.HORIZONTAL;
@@ -441,7 +452,7 @@ namespace GeometryFriendsAgents
                         }
                         else
                         {
-                            if(setupMaker.actionSelectorCircle.move.landingPlatform.yTop > setupMaker.currentPlatformRectangle.yTop)
+                            if(setupMaker.actionSelectorCircle.move.landingPlatform.yTop > setupMaker.currentPlatformRectangle.yTop + 1 - GameInfo.HORIZONTAL_RECTANGLE_HEIGHT / GameInfo.PIXEL_LENGTH)
                             {
                                 PrepareForCircleLanding(false);
                             }
@@ -649,7 +660,7 @@ namespace GeometryFriendsAgents
                             }
                         }
                     }
-                    
+
                     /*else if (!setupMaker.rectangleAgentReadyForCoop)
                     {
                         // Rectangle is not ready to cooperate
@@ -671,10 +682,15 @@ namespace GeometryFriendsAgents
                         move.x = setupMaker.planCircle[0].xlandPoint;
                         move.velocityX = 0;
                     }*/
+
+
+
+                    m = getPhisicsMove(rI, move);
                 }
                 else if (setupMaker.planCircle.Count > 0 && setupMaker.planCircle[0].landingPlatform.real && setupMaker.planCircle[0].departurePlatform.real)
                 {
                     //This COOPMOVE was addeed to the plan because the rectangle has to wait
+                    move.x = (int)setupMaker.rectangleInfo.X / GameInfo.PIXEL_LENGTH;
                     m = Moves.NO_ACTION;
                 }
                 
@@ -885,7 +901,7 @@ namespace GeometryFriendsAgents
                             float targetx = move_l.xlandPoint * GameInfo.PIXEL_LENGTH;
                             float minx = targetx - width / 2;
                             float maxx = targetx + width / 2;
-                            float miny = setupMaker.planCircle[0].path[setupMaker.planCircle[0].path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS;
+                            float miny = setupMaker.actionSelectorCircle.move.path[setupMaker.actionSelectorCircle.move.path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS;
                             float maxy = miny + GameInfo.HORIZONTAL_RECTANGLE_HEIGHT;
                             bool intersects_if_left = false;
                             bool intersects_if_right = false;
@@ -899,7 +915,7 @@ namespace GeometryFriendsAgents
                                 float minx2 = minx - (width / 2 + GameInfo.CIRCLE_RADIUS + GameInfo.PIXEL_LENGTH);
                                 float maxx2 = maxx - (width / 2 + GameInfo.CIRCLE_RADIUS + GameInfo.PIXEL_LENGTH);
                                 
-                                foreach (Tuple<float, float> tup in setupMaker.planCircle[0].path)
+                                foreach (Tuple<float, float> tup in setupMaker.actionSelectorCircle.move.path)
                                 {
                                     if (tup.Item1 + GameInfo.CIRCLE_RADIUS > minx2 && tup.Item1 - GameInfo.CIRCLE_RADIUS < maxx2 && tup.Item2 + GameInfo.CIRCLE_RADIUS > miny && tup.Item2 - GameInfo.CIRCLE_RADIUS < maxy)
                                     {
@@ -919,7 +935,7 @@ namespace GeometryFriendsAgents
                                 //Check if trajectory intersects when rectangle in left side
                                 float minx2 = minx + (width / 2 + GameInfo.CIRCLE_RADIUS + GameInfo.PIXEL_LENGTH);
                                 float maxx2 = maxx + (width / 2 + GameInfo.CIRCLE_RADIUS + GameInfo.PIXEL_LENGTH);
-                                foreach (Tuple<float, float> tup in setupMaker.planCircle[0].path)
+                                foreach (Tuple<float, float> tup in setupMaker.actionSelectorCircle.move.path)
                                 {
                                     if (tup.Item1 + GameInfo.CIRCLE_RADIUS > minx2 && tup.Item1 - GameInfo.CIRCLE_RADIUS < maxx2 && tup.Item2 + GameInfo.CIRCLE_RADIUS > miny && tup.Item2 - GameInfo.CIRCLE_RADIUS < maxy)
                                     {
@@ -946,7 +962,14 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
-            
+            if(move.x > setupMaker.currentPlatformRectangle.rightEdge)
+            {
+                move.x = setupMaker.currentPlatformRectangle.rightEdge - 1;
+            }
+            else if (move.x < setupMaker.currentPlatformRectangle.leftEdge)
+            {
+                move.x = setupMaker.currentPlatformRectangle.leftEdge + 1;
+            }
             hasFinishedReplanning = true;
         }
 

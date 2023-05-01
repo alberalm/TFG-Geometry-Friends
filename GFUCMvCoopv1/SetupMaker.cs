@@ -57,6 +57,12 @@ namespace GeometryFriendsAgents
         public bool circleInAir = false;
         public bool changing = false;
 
+        // Recovery mode
+        public int timesStuckRectangle = 0;
+        public int timesStuckCircle = 0;
+        public CircleRepresentation lastCircleInfo;
+        public RectangleRepresentation lastRectangleInfo;
+
         // Learning
         public LearningCircle lCircle;
         public LearningRectangle lRectangle;
@@ -399,18 +405,26 @@ namespace GeometryFriendsAgents
         }
 
         public void UpdateChanging()
-        {
+        { 
             if (currentPlatformCircle.yTop == currentPlatformRectangle.yTop && currentPlatformCircle.real && currentPlatformRectangle.real &&
                ((currentPlatformCircle.leftEdge < rectangleInfo.X/GameInfo.PIXEL_LENGTH && currentPlatformCircle.rightEdge > rectangleInfo.X / GameInfo.PIXEL_LENGTH) 
                || (currentPlatformRectangle.leftEdge < circleInfo.X / GameInfo.PIXEL_LENGTH && currentPlatformRectangle.rightEdge > circleInfo.X / GameInfo.PIXEL_LENGTH))) // Same platform
             {                   
-                if (actionSelectorCircle.move != null && actionSelectorRectangle.move != null)
+                if (actionSelectorCircle.move != null && actionSelectorRectangle.move != null &&
+                    (actionSelectorRectangle.move.moveType != MoveType.CIRCLETILT || actionSelectorCircle.move.moveType != MoveType.COOPMOVE))
                 {
                     if (actionSelectorCircle.move.x == actionSelectorRectangle.move.x)
                     {
-                        actionSelectorCircle.move.x++;
+                        changing = false;
+                        return;
                     }
                     changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
+                    if (changing && circleAgent.currentPlatformCircle.id != -1 && rectangleAgent.currentPlatformRectangle.id != -1)
+                    {
+                        actionSelectorCircle.nextActionPhisics(ref planCircle, circleAgent.remaining, circleInfo, rectangleInfo, circleAgent.currentPlatformCircle);
+                        actionSelectorRectangle.nextActionPhisics(ref planRectangle, rectangleAgent.remaining, circleInfo, rectangleInfo, rectangleAgent.currentPlatformRectangle);
+                        changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
+                    }
                 }
             }
             else

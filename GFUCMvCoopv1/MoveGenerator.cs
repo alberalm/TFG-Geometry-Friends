@@ -97,13 +97,13 @@ namespace GeometryFriendsAgents
                     {
                         if (p2.leftEdge == p.rightEdge + 1)
                         {
-                            trajectoryAdder.AddAdjacent(ref platformList, ref p, 15 * (p2.rightEdge - p2.leftEdge), p.rightEdge, RectangleShape.Shape.HORIZONTAL, p2);
-                            trajectoryAdder.AddAdjacent(ref platformList, ref p2, -15 * (p2.rightEdge - p2.leftEdge), p2.leftEdge, RectangleShape.Shape.HORIZONTAL, p);
+                            trajectoryAdder.AddAdjacent(ref platformList, ref p, p2.rightEdge - p2.leftEdge < 8 ? 50 : 15 * (p2.rightEdge - p2.leftEdge), p.rightEdge, RectangleShape.Shape.HORIZONTAL, p2);
+                            trajectoryAdder.AddAdjacent(ref platformList, ref p2, p2.rightEdge - p2.leftEdge < 8 ? -50 : -15 * (p2.rightEdge - p2.leftEdge), p2.leftEdge, RectangleShape.Shape.HORIZONTAL, p);
                         }
                         else if (p.leftEdge == p2.rightEdge + 1)
                         {
-                            trajectoryAdder.AddAdjacent(ref platformList, ref p, -15 * (p2.rightEdge - p2.leftEdge), p.leftEdge, RectangleShape.Shape.HORIZONTAL, p2);
-                            trajectoryAdder.AddAdjacent(ref platformList, ref p2, 15 * (p2.rightEdge - p2.leftEdge), p2.rightEdge, RectangleShape.Shape.HORIZONTAL, p);
+                            trajectoryAdder.AddAdjacent(ref platformList, ref p, p2.rightEdge - p2.leftEdge < 8 ? -50 : -15 * (p2.rightEdge - p2.leftEdge), p.leftEdge, RectangleShape.Shape.HORIZONTAL, p2);
+                            trajectoryAdder.AddAdjacent(ref platformList, ref p2, p2.rightEdge - p2.leftEdge < 8 ? 50 : 15 * (p2.rightEdge - p2.leftEdge), p2.rightEdge, RectangleShape.Shape.HORIZONTAL, p);
                         }
                     }
                 }
@@ -401,6 +401,10 @@ namespace GeometryFriendsAgents
         {
             Platform p = platformList[k];
             int vx = i * velocity_step;
+            if(x==93 && vx==0 && !p.real)
+            {
+                int a = 0;
+            }
             if (trajectoryAdder.circleSimulator.EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
             {
                 trajectoryAdder.AddJump(ref platformList, ref p, vx, MoveType.JUMP, x);

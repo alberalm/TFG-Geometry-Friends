@@ -26,10 +26,6 @@ namespace GeometryFriendsAgents
         private long lastMoveTime;
         private Random rnd;
         private int update_counter = 0;
-        private int timesStuck = 0;
-
-        //Sensors Information
-        private RectangleRepresentation lastRectangleInfo;
 
         //predictor of actions for the circle
         private ActionSimulator predictor = null;
@@ -37,7 +33,7 @@ namespace GeometryFriendsAgents
         private List<AgentMessage> messages;
 
         //debug agent predictions and history keeping
-        private List<CollectibleRepresentation> remaining;
+        public List<CollectibleRepresentation> remaining;
 
         //Area of the game screen
         protected Rectangle area;
@@ -46,7 +42,7 @@ namespace GeometryFriendsAgents
         public SetupMaker setupMaker;
 
         //Execution
-        Platform currentPlatformRectangle;
+        public Platform currentPlatformRectangle;
         private bool hasFinishedDrop = true;
         private bool hasFinishedTilt = true;
         private double t = 0;
@@ -313,14 +309,14 @@ namespace GeometryFriendsAgents
             {
                 return;
             }
-            if (Math.Abs(setupMaker.rectangleInfo.X - lastRectangleInfo.X) <= 5 && Math.Abs(setupMaker.rectangleInfo.Y - lastRectangleInfo.Y) <= 5)
+            if (Math.Abs(setupMaker.rectangleInfo.X - setupMaker.lastRectangleInfo.X) <= 5 && Math.Abs(setupMaker.rectangleInfo.Y - setupMaker.lastRectangleInfo.Y) <= 5)
             {
-                timesStuck++;
+                setupMaker.timesStuckRectangle++;
             }
             else
             {
-                lastRectangleInfo = setupMaker.rectangleInfo;
-                timesStuck = 0;
+                setupMaker.lastRectangleInfo = setupMaker.rectangleInfo;
+                setupMaker.timesStuckRectangle = 0;
             }
             
             UpdateDraw();
@@ -333,11 +329,14 @@ namespace GeometryFriendsAgents
             }
             t = 0;*/
 
-            if ((t_0 > 0 || timesStuck > 30) &&
+            if (((t_0 > 0 || setupMaker.timesStuckRectangle > 70) &&
                 (setupMaker.actionSelectorRectangle.move == null || setupMaker.actionSelectorRectangle.move.moveType != MoveType.COOPMOVE))
+                || ((t_0 > 0 || (setupMaker.timesStuckRectangle > 70 && setupMaker.timesStuckCircle > 70)) &&
+                Math.Abs(setupMaker.circleInfo.X - setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 &&
+                Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2))
             {
                 t_0 += elapsedGameTime.TotalMilliseconds;
-                if (timesStuck > 30 && t_0 > 200)
+                if (setupMaker.timesStuckRectangle > 70 && t_0 > 200)
                 {
                     RandomAction();
                     t_0 = 1;

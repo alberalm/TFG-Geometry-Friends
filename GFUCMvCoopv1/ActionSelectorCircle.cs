@@ -306,6 +306,7 @@ namespace GeometryFriendsAgents
                     {
                         //Circle has to wait
                         //TODO:Optimize time and try to perform next move in plan?
+                        move.x = (int) setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH;
                         return new Tuple<Moves, Tuple<bool, bool>>(Moves.NO_ACTION, new Tuple<bool, bool>(false, false));
                     }
 

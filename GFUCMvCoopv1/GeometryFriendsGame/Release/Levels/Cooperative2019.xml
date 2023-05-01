@@ -53,6 +53,9 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="43" />
+    </HighScores>
   </Level3>
   <Level4>
     <Description />
