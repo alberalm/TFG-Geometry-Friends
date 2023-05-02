@@ -441,7 +441,7 @@ namespace GeometryFriendsAgents
                             (departurePlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH,
                             v_x,
                             GameInfo.JUMP_VELOCITYY,
-                            ref aux);
+                            ref aux, 0.015f);
                         MoveInformation new_jump = null;
                         foreach (MoveInformation m in moves)
                         {

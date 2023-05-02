@@ -335,7 +335,7 @@ namespace GeometryFriendsAgents
         public void AddFallC(ref List<Platform> platformList, ref Platform p, int vx, MoveType moveType, int x)
         {
             MoveInformation m = new MoveInformation(new Platform(-1), p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
-            List<MoveInformation> move_list = circleSimulator.SimulateMove(ref platformList, x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, 0, ref m);
+            List<MoveInformation> move_list = circleSimulator.SimulateMove(ref platformList, x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, 0, ref m, 0.015f);
             foreach (MoveInformation move in move_list)
             {
                 MoveInformation moveaux = move;
@@ -346,7 +346,7 @@ namespace GeometryFriendsAgents
         public void AddJump(ref List<Platform> platformList, ref Platform p, int vx, MoveType moveType, int x)
         {
             MoveInformation m = new MoveInformation(new Platform(-1), p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
-            List<MoveInformation> move_list = circleSimulator.SimulateMove(ref platformList, x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, (int)GameInfo.JUMP_VELOCITYY, ref m);
+            List<MoveInformation> move_list = circleSimulator.SimulateMove(ref platformList, x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, (int)GameInfo.JUMP_VELOCITYY, ref m, 0.015f);
             foreach(MoveInformation move in move_list)
             {
                 MoveInformation moveaux = move;

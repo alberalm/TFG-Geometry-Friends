@@ -200,6 +200,7 @@ namespace GeometryFriendsAgents
                             {
                                 n.caught[i] = true;
                                 n.numCaught++;
+                                break;
                             }
                             if (tuple.Item1 == move_circle.landingPlatform.id && !move_circle.landingPlatform.real
                                 && move_rectangle.landingPlatform.id == circle_to_rectangle[move_circle.landingPlatform.id]
@@ -207,11 +208,13 @@ namespace GeometryFriendsAgents
                             {
                                 n.caught[i] = true;
                                 n.numCaught++;
+                                break;
                             }
                             if (tuple.Item1 == move_rectangle.landingPlatform.id && tuple.Item2.Equals("r"))
                             {
                                 n.caught[i] = true;
                                 n.numCaught++;
+                                break;
                             }
                         }
                     }
@@ -257,7 +260,14 @@ namespace GeometryFriendsAgents
                     circle_moves.Insert(0, new MoveInformation(move_circle.landingPlatform) { moveType = MoveType.COOPMOVE });
 
                     List<MoveInformation> rectangle_moves = new List<MoveInformation>(move_rectangle.landingPlatform.moveInfoList);
-                    rectangle_moves.Insert(0, new MoveInformation(move_rectangle.landingPlatform) { moveType = MoveType.COOPMOVE });
+                    if (move_rectangle.landingPlatform.real)
+                    {
+                        rectangle_moves.Insert(0, new MoveInformation(move_rectangle.landingPlatform) { moveType = MoveType.COOPMOVE });
+                    }
+                    else
+                    {
+                        rectangle_moves.Add(new MoveInformation(move_rectangle.landingPlatform) { moveType = MoveType.COOPMOVE });
+                    }
 
                     foreach (MoveInformation mc in circle_moves)
                     {

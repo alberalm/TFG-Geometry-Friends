@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Runtime.Remoting;
 
 namespace GeometryFriendsAgents
 {
@@ -236,7 +237,22 @@ namespace GeometryFriendsAgents
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 150), "NOT Waiting For Circle to Land", GeometryFriends.XNAStub.Color.Red));
             }
-
+            if (setupMaker.actionSelectorRectangle.avoidCircle)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 175), "AVOIDING CIRCLE", GeometryFriends.XNAStub.Color.Green));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 175), "NOT AVOIDING CIRCLE", GeometryFriends.XNAStub.Color.Red));
+            }
+            if (setupMaker.actionSelectorRectangle.pick_up_circle)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 200), "PICKING CIRCLE UP", GeometryFriends.XNAStub.Color.Green));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 200), "NOT PICKING CIRCLE UP", GeometryFriends.XNAStub.Color.Red));
+            }
 
             //Current Action
             if (currentAction == Moves.NO_ACTION)
@@ -305,10 +321,9 @@ namespace GeometryFriendsAgents
              GROW = 4
             */
             currentAction = possibleMoves[rnd.Next(possibleMoves.Count)];
-            
         }
 
-        private void RandomActionWithoutJump()
+        private void RandomActionWithLessJump()
         {
             /*
              Circle Actions
@@ -317,7 +332,19 @@ namespace GeometryFriendsAgents
              JUMP = 3
              GROW = 4
             */
-            currentAction = possibleMoves[rnd.Next(possibleMoves.Count-1)];
+            int r = rnd.Next(20);
+            if(r < 9)
+            {
+                currentAction = Moves.ROLL_RIGHT;
+            }
+            else if(r < 18)
+            {
+                currentAction = Moves.ROLL_LEFT;
+            }
+            else
+            {
+                currentAction = Moves.JUMP;
+            }
         }
 
         //implements abstract circle interface: GeometryFriends agents manager gets the current action intended to be actuated in the enviroment for this agent
@@ -357,18 +384,19 @@ namespace GeometryFriendsAgents
             }
 
             if (t_recovery > 0 || (setupMaker.timesStuckCircle > 70 && setupMaker.timesStuckRectangle > 70 &&
-                Math.Abs(setupMaker.circleInfo.X- setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 &&
-                Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2))
+                Math.Abs(setupMaker.circleInfo.X- setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH &&
+                Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH))
             {
                 t_recovery += elapsedGameTime.TotalMilliseconds;
-                if (setupMaker.timesStuckCircle > 70 && t_recovery > 200)
+                if (setupMaker.timesStuckCircle > 70 && t_recovery > 300 + setupMaker.numStuck * 100)
                 {
-                    RandomActionWithoutJump();
+                    RandomActionWithLessJump();
                     t_recovery = 1;
                 }
-                else if (t_recovery > 200)
+                else if (t_recovery > 300 + setupMaker.numStuck * 100)
                 {
                     t_recovery = 0;
+                    setupMaker.numStuck++;
                 }
                 return;
             }

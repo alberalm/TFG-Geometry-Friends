@@ -55,6 +55,8 @@
       <HighScore name="UCMAgent&amp;UCMAgent" value="27" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="37" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="37" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="37" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="67" />
     </HighScores>
   </Level2>
   <Level3>
@@ -99,6 +101,9 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="17" />
+    </HighScores>
   </Level4>
   <Level5>
     <Description />
@@ -123,6 +128,7 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="19" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="53" />
     </HighScores>
   </Level5>
   <Level6>
@@ -145,6 +151,7 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="14" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="16" />
     </HighScores>
   </Level6>
@@ -172,6 +179,9 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="45" />
+    </HighScores>
   </Level7>
   <Level8>
     <Description />
@@ -202,6 +212,7 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="20" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="33" />
     </HighScores>
   </Level8>
   <Level9>
@@ -229,6 +240,7 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="13" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="23" />
     </HighScores>
   </Level9>
   <Level10>
@@ -246,6 +258,7 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="13" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="14" />
     </HighScores>
   </Level10>

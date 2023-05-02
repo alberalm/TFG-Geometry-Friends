@@ -109,14 +109,14 @@ namespace GeometryFriendsAgents
             return l;
         }
 
-        public List<MoveInformation> SimulateMove(ref List<Platform> platformList, float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m)
+        public List<MoveInformation> SimulateMove(ref List<Platform> platformList, float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m, float dt)
         {
             bool flag = false;
             if (vy_0 == 0)
             {
                 flag = true;
             }
-            float dt = 0.015f;
+            
             float t = 0;
             float x_tfloat = x_0;
             float y_tfloat = y_0;
@@ -236,7 +236,7 @@ namespace GeometryFriendsAgents
                     y_t = (int)(y_tfloat / GameInfo.PIXEL_LENGTH);
                 }
                 
-                moves = SimulateMove(ref platformList, x_tfloat, y_tfloat, vx_0, vy_0 - t * GameInfo.GRAVITY, ref newm);
+                moves = SimulateMove(ref platformList, x_tfloat, y_tfloat, vx_0, vy_0 - t * GameInfo.GRAVITY, ref newm, dt);
             }
             moves.Add(m);
             return moves;

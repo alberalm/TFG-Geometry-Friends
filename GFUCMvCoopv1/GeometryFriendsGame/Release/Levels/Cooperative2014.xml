@@ -16,6 +16,9 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="90" />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="50" />
+    </HighScores>
   </Level1>
   <Level2>
     <TimeLimit value="90" />
@@ -37,6 +40,9 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="19" />
+    </HighScores>
   </Level2>
   <Level3>
     <TimeLimit value="35" />
@@ -57,6 +63,9 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="16" />
+    </HighScores>
   </Level3>
   <Level4>
     <TimeLimit value="110" />
@@ -82,11 +91,11 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="38" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="41" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="44" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="46" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="47" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="48" />
     </HighScores>
   </Level4>
   <Level5>
@@ -110,6 +119,9 @@
     <YellowObstacles />
     <GreenElevators />
     <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="27" />
+    </HighScores>
   </Level5>
   <Level6>
     <TimeLimit value="90" />
@@ -134,10 +146,10 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="No Name" value="16" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="23" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="25" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="26" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="28" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="34" />
     </HighScores>
   </Level6>
   <Level7>
@@ -188,6 +200,7 @@
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="16" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="16" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="17" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="18" />
     </HighScores>
   </Level8>
@@ -217,6 +230,7 @@
       <HighScore name="UCMAgent&amp;UCMAgent" value="22" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="37" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="44" />
     </HighScores>
   </Level9>

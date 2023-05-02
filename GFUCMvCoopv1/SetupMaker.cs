@@ -36,7 +36,6 @@ namespace GeometryFriendsAgents
         public LevelMapRectangle levelMapRectangle;
         public LevelMapCooperative levelMapCooperative;
 
-
         public Dictionary<int, int> circle_to_rectangle;
         // Planning
         public Graph graph;
@@ -62,6 +61,7 @@ namespace GeometryFriendsAgents
         public int timesStuckCircle = 0;
         public CircleRepresentation lastCircleInfo;
         public RectangleRepresentation lastRectangleInfo;
+        public int numStuck = 0;
 
         // Learning
         public LearningCircle lCircle;

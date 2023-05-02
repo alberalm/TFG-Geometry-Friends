@@ -252,7 +252,7 @@ namespace GeometryFriendsAgents
                         
                         MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
                         
-                        List<MoveInformation> moves = levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
+                        List<MoveInformation> moves = levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m,0.015f);
                         foreach (MoveInformation move in moves)
                         {
                             if (move.landingPlatform.id == currentPlatform.id && Utilities.Contained(nextMoveInThisPlatform.diamondsCollected, move.diamondsCollected))
@@ -342,7 +342,7 @@ namespace GeometryFriendsAgents
                                 return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                             }
                             MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
-                            List<MoveInformation> moves=levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
+                            List<MoveInformation> moves=levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m, 0.015f);
                             foreach (MoveInformation move in moves)
                             {
                                 if (setupMaker.levelMapCircle.small_to_simplified[move.landingPlatform].id == plan[0].landingPlatform.id && Utilities.Contained(aux_move.diamondsCollected, move.diamondsCollected))//CUIDADO, IGUAL ES DEMASIADO RESTRICTIVO

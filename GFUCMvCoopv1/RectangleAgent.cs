@@ -330,18 +330,18 @@ namespace GeometryFriendsAgents
             t = 0;*/
 
             if (((t_0 > 0 || setupMaker.timesStuckRectangle > 70) &&
-                (setupMaker.actionSelectorRectangle.move == null || setupMaker.actionSelectorRectangle.move.moveType != MoveType.COOPMOVE))
+                (setupMaker.actionSelectorRectangle.move == null || setupMaker.actionSelectorRectangle.move.moveType != MoveType.COOPMOVE || setupMaker.currentPlatformRectangle.id == -1))
                 || ((t_0 > 0 || (setupMaker.timesStuckRectangle > 70 && setupMaker.timesStuckCircle > 70)) &&
-                Math.Abs(setupMaker.circleInfo.X - setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 &&
-                Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2))
+                Math.Abs(setupMaker.circleInfo.X - setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH &&
+                Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH))
             {
                 t_0 += elapsedGameTime.TotalMilliseconds;
-                if (setupMaker.timesStuckRectangle > 70 && t_0 > 200)
+                if (setupMaker.timesStuckRectangle > 70 && t_0 > 300 + setupMaker.numStuck * 100)
                 {
                     RandomAction();
                     t_0 = 1;
                 }
-                else if(t_0 > 200)
+                else if(t_0 > 300 + setupMaker.numStuck * 100)
                 {
                     t_0 = 0;
                 }

@@ -363,9 +363,9 @@ namespace GeometryFriendsAgents
             }
         }
 
-        public List<MoveInformation> SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m)
+        public List<MoveInformation> SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m, float dt)
         {
-            return moveGenerator.trajectoryAdder.circleSimulator.SimulateMove(ref platformList, x_0, y_0, vx_0, vy_0, ref m);
+            return moveGenerator.trajectoryAdder.circleSimulator.SimulateMove(ref platformList, x_0, y_0, vx_0, vy_0, ref m, dt);
         }
 
         public void DrawConnectionsVertex(ref List<DebugInformation> debugInformation)

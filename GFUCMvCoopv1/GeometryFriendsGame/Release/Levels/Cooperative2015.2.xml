@@ -24,9 +24,11 @@
     <OrangeElevators />
     <TimeLimit value="40" />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="22" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="23" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="23" />
-      <HighScore name="IST Circle&amp;IST Rectangle" value="40" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="26" />
     </HighScores>
   </Level1>
   <Level2>
@@ -61,6 +63,9 @@
     <OrangeElevators />
     <TimeLimit value="90" />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="36" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="57" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="73" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="90" />
     </HighScores>
   </Level2>
@@ -116,6 +121,7 @@
     <TimeLimit value="25" />
     <HighScores>
       <HighScore name="IST Circle&amp;IST Rectangle" value="25" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="37" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="42" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="59" />
     </HighScores>
@@ -142,6 +148,7 @@
     <TimeLimit value="40" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="16" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="17" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="40" />
     </HighScores>
   </Level5>

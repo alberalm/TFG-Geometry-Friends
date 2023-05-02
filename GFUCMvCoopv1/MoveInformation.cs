@@ -153,21 +153,25 @@ namespace GeometryFriendsAgents
             }
             if (Utilities.Contained(diamondsCollected, other.diamondsCollected) && Utilities.Contained(other.diamondsCollected, diamondsCollected)) //diamondsCollected=other.diamondsCollected
             {
-                if(diamondsCollected.Count==1 && diamondsCollected[0] == 0)
-                {
-                    int a = 0;
-                }
-
+                
                 // Departure not real
                 if (!departurePlatform.real)
                 {
                     int y1 = (int)path[0].Item2 / GameInfo.PIXEL_LENGTH;
                     int y2 = (int)other.path[0].Item2 / GameInfo.PIXEL_LENGTH;
-                    if (y1 > y2)
+                    if(distanceToObstacle <= 6 && other.distanceToObstacle > 6)
+                    {
+                        return -1;
+                    }
+                    if (other.distanceToObstacle <= 6 && distanceToObstacle > 6)
                     {
                         return 1;
                     }
-                    else if(y1 < y2)
+                    if (y1 > y2 && DistanceToOtherEdge() > 2 && distanceToObstacle > 6)
+                    {
+                        return 1;
+                    }
+                    else if(y1 < y2 && other.DistanceToOtherEdge() > 2 && other.distanceToObstacle > 6)
                     {
                         return -1;
                     }
@@ -189,11 +193,11 @@ namespace GeometryFriendsAgents
                 }
                 if (!departurePlatform.real)
                 {
-                    if (Math.Abs(velocityX)< Math.Abs(other.velocityX))
+                    if (Math.Abs(velocityX) < Math.Abs(other.velocityX) && DistanceToOtherEdge() > 3 && distanceToObstacle > 6)
                     {
                         return 1;
                     }
-                    else if (Math.Abs(velocityX) > Math.Abs(other.velocityX))
+                    else if (Math.Abs(velocityX) > Math.Abs(other.velocityX) && other.DistanceToOtherEdge() > 3 && other.distanceToObstacle > 6)
                     {
                         return -1;
                     }
