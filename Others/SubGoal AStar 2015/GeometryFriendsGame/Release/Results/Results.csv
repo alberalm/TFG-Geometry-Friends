@@ -1,0 +1,2 @@
+Timestamp;Agent Implementation;World Name ;Level Number;Collectibles Collected;Collectibles to Catch;Passed Level?;Elapsed Game Time (s);Time Limit (s);Elapsed Real Time (s);Score;Endgame Message
+2023-03-22_21:50:05;SubGoalAStarAgents;Rectangle2022.2;9;2;6;0;120,000005699694;120;120,019;200;

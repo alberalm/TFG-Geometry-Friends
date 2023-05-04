@@ -1,0 +1,4 @@
+Es la evolución del RRT 2017. 
+EL círculo funciona, pero no es comparable a Ricardo/BrianCook/nuestro
+El rectángulo funciona pero juega fatal
+La cooperación no está implementada.

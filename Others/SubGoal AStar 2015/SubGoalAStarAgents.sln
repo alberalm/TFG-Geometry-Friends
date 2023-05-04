@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33403.182
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubGoalAStarAgents", "SubGoalAStarAgents.csproj", "{B4DCAFB0-B498-485A-9BA9-CE350B9743EF}"
+EndProject
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "GeometryFriends", "GeometryFriendsGame\Release\GeometryFriends.exe", "{372B152A-C269-4EA7-99D1-B7D6023538D6}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = C:\Users\llama\Desktop\Tests\SubGoal AStar 2015\GeometryFriendsGame\Release\GeometryFriends.exe
+		RemoteMachine = DESKTOP-NJO422N
+		StartingDirectory = C:\Users\llama\Desktop\Tests\SubGoal AStar 2015\GeometryFriendsGame\Release
+		Environment = Predeterminado
+		LaunchingEngine = 00000000-0000-0000-0000-000000000000
+		UseLegacyDebugEngines = No
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+		IORedirection = Auto
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4DCAFB0-B498-485A-9BA9-CE350B9743EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4DCAFB0-B498-485A-9BA9-CE350B9743EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4DCAFB0-B498-485A-9BA9-CE350B9743EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4DCAFB0-B498-485A-9BA9-CE350B9743EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{372B152A-C269-4EA7-99D1-B7D6023538D6}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{372B152A-C269-4EA7-99D1-B7D6023538D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D1872EFE-FB3F-496E-BF0D-98760878054C}
+	EndGlobalSection
+EndGlobal

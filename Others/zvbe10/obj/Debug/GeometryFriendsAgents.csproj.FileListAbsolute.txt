@@ -1,0 +1,2 @@
+C:\Users\User\Desktop\בינה\rl\obj\Debug\GeometryFriendsAgents.csproj.AssemblyReference.cache
+C:\Users\User\Desktop\בינה\rl\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache

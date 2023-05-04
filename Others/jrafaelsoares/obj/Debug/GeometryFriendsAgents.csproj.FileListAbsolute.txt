@@ -1,0 +1,6 @@
+C:\Users\llama\Desktop\Tests\jrafaelsoares\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.dll
+C:\Users\llama\Desktop\Tests\jrafaelsoares\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.pdb
+C:\Users\llama\Desktop\Tests\jrafaelsoares\obj\Debug\GeometryFriendsAgents.csproj.AssemblyReference.cache
+C:\Users\llama\Desktop\Tests\jrafaelsoares\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
+C:\Users\llama\Desktop\Tests\jrafaelsoares\obj\Debug\GeometryFriendsAgents.dll
+C:\Users\llama\Desktop\Tests\jrafaelsoares\obj\Debug\GeometryFriendsAgents.pdb

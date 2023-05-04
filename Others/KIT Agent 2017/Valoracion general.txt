@@ -1,0 +1,3 @@
+El código del rectángulo en aleatorio
+El código del círculo es bueno pero funciona fatal
+La cooperación no funciona

@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33403.182
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RRTAgents", "RRTAgents.csproj", "{CF50E61C-FCC6-4019-805C-6FD5C6AAFA32}"
+EndProject
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "GeometryFriends", "GeometryFriendsGame\Release\GeometryFriends.exe", "{B78A1A88-E25C-4FCE-B774-D70E7E4EF42C}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = C:\Users\llama\Desktop\Tests\RRT Agent 2017\GeometryFriendsGame\Release\GeometryFriends.exe
+		RemoteMachine = DESKTOP-NJO422N
+		StartingDirectory = C:\Users\llama\Desktop\Tests\RRT Agent 2017\GeometryFriendsGame\Release
+		Environment = Predeterminado
+		LaunchingEngine = 00000000-0000-0000-0000-000000000000
+		UseLegacyDebugEngines = No
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+		IORedirection = Auto
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF50E61C-FCC6-4019-805C-6FD5C6AAFA32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF50E61C-FCC6-4019-805C-6FD5C6AAFA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF50E61C-FCC6-4019-805C-6FD5C6AAFA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF50E61C-FCC6-4019-805C-6FD5C6AAFA32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B78A1A88-E25C-4FCE-B774-D70E7E4EF42C}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{B78A1A88-E25C-4FCE-B774-D70E7E4EF42C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC43F129-D649-4737-97E2-D6C06C647529}
+	EndGlobalSection
+EndGlobal

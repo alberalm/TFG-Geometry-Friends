@@ -1,0 +1,57 @@
+Level Started
+1,326
+Explored Nodes (Once): 13
+Explored Nodes (Total): 22
+TotalNodes: 14
+Level Started
+1,459
+Explored Nodes (Once): 467
+Explored Nodes (Total): 2437
+TotalNodes: 468
+Level Started
+0,284
+Explored Nodes (Once): 323
+Explored Nodes (Total): 705
+TotalNodes: 325
+Level Started
+0,6070001
+Explored Nodes (Once): 626
+Explored Nodes (Total): 2559
+TotalNodes: 628
+Level Started
+5,354
+Explored Nodes (Once): 2667
+Explored Nodes (Total): 20531
+TotalNodes: 2669
+Level Started
+1,933
+Explored Nodes (Once): 935
+Explored Nodes (Total): 5186
+TotalNodes: 938
+Level Started
+1,176
+Explored Nodes (Once): 201
+Explored Nodes (Total): 916
+TotalNodes: 202
+Level Started
+5,618
+Explored Nodes (Once): 3155
+Explored Nodes (Total): 22253
+TotalNodes: 3163
+Level Started
+0,8380001
+Explored Nodes (Once): 126
+Explored Nodes (Total): 228
+TotalNodes: 127
+Level Started
+Level Started
+1,314
+Explored Nodes (Once): 25
+Explored Nodes (Total): 66
+TotalNodes: 26
+Level Started
+Level Started
+15,156
+Explored Nodes (Once): 7740
+Explored Nodes (Total): 56780
+TotalNodes: 7740

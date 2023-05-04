@@ -1,6 +1,0 @@
-C:\Users\llama\Desktop\GFKIT\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.dll
-C:\Users\llama\Desktop\GFKIT\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.pdb
-C:\Users\llama\Desktop\GFKIT\obj\Debug\GeometryFriendsAgents.csprojAssemblyReference.cache
-C:\Users\llama\Desktop\GFKIT\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
-C:\Users\llama\Desktop\GFKIT\obj\Debug\GeometryFriendsAgents.dll
-C:\Users\llama\Desktop\GFKIT\obj\Debug\GeometryFriendsAgents.pdb

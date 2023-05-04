@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{82314D53-E711-47D0-AA62-6E615045A820}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GeometryFriendsAgents</RootNamespace>
+    <AssemblyName>ReinforcementLearningAgents</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GeometryFriends">
+      <HintPath>GeometryFriendsGame\Release\GeometryFriends.exe</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CircleAgent.cs" />
+    <Compile Include="DFS\DFS.cs" />
+    <Compile Include="DFS\DFSNode.cs" />
+    <Compile Include="GameStates\CircleGameState.cs" />
+    <Compile Include="GameStates\GameState.cs" />
+    <Compile Include="GameStates\InterPlatformPlayedGameStateInfo.cs" />
+    <Compile Include="GameStates\IntraPlatformPlayedGameStateInfo.cs" />
+    <Compile Include="GameStates\SixthGameState.cs" />
+    <Compile Include="GameStates\SquareGameState.cs" />
+    <Compile Include="Graph\CircleGraph.cs" />
+    <Compile Include="Graph\Graph.cs" />
+    <Compile Include="Graph\GraphLink.cs" />
+    <Compile Include="Graph\GraphNode.cs" />
+    <Compile Include="Graph\SquareGraph.cs" />
+    <Compile Include="Learning\CircleLearningCenter.cs" />
+    <Compile Include="Learning\LearningCenter.cs" />
+    <Compile Include="Learning\SquareLearningCenter.cs" />
+    <Compile Include="Managers\CiclePlatformManager.cs" />
+    <Compile Include="Managers\PlatformManager.cs" />
+    <Compile Include="Managers\SquarePlatformManager.cs" />
+    <Compile Include="Model\CircleWorldModel.cs" />
+    <Compile Include="Model\SquareWorldModel.cs" />
+    <Compile Include="Model\WorldModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RectangleAgent.cs" />
+    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="WorldObjects\Collectible.cs" />
+    <Compile Include="WorldObjects\Platforms\CirclePlatform.cs" />
+    <Compile Include="WorldObjects\Platforms\Platform.cs" />
+    <Compile Include="WorldObjects\Platforms\SquarePlatform.cs" />
+    <Compile Include="WorldObjects\WorldObject.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>call "$(SolutionDir)Scripts\agents_post_build_and_cleanup.bat" $(SolutionDir) $(ConfigurationName) $(TargetDir) $(ProjectName)</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

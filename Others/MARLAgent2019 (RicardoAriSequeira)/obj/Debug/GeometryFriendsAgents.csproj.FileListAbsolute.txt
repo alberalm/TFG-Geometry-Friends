@@ -1,0 +1,6 @@
+C:\Users\llama\Desktop\Tests\MARLAgent2019\GeometryFriendsGame\Release\Agents\IST Agents.dll
+C:\Users\llama\Desktop\Tests\MARLAgent2019\GeometryFriendsGame\Release\Agents\IST Agents.pdb
+C:\Users\llama\Desktop\Tests\MARLAgent2019\obj\Debug\GeometryFriendsAgents.csproj.AssemblyReference.cache
+C:\Users\llama\Desktop\Tests\MARLAgent2019\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
+C:\Users\llama\Desktop\Tests\MARLAgent2019\obj\Debug\IST Agents.dll
+C:\Users\llama\Desktop\Tests\MARLAgent2019\obj\Debug\IST Agents.pdb

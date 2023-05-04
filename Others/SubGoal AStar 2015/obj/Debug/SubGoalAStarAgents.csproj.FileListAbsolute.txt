@@ -1,0 +1,6 @@
+C:\Users\llama\Desktop\Tests\SubGoal AStar 2015\GeometryFriendsGame\Release\Agents\SubGoalAStarAgents.dll
+C:\Users\llama\Desktop\Tests\SubGoal AStar 2015\GeometryFriendsGame\Release\Agents\SubGoalAStarAgents.pdb
+C:\Users\llama\Desktop\Tests\SubGoal AStar 2015\obj\Debug\SubGoalAStarAgents.csproj.AssemblyReference.cache
+C:\Users\llama\Desktop\Tests\SubGoal AStar 2015\obj\Debug\SubGoalAStarAgents.csproj.CoreCompileInputs.cache
+C:\Users\llama\Desktop\Tests\SubGoal AStar 2015\obj\Debug\SubGoalAStarAgents.dll
+C:\Users\llama\Desktop\Tests\SubGoal AStar 2015\obj\Debug\SubGoalAStarAgents.pdb

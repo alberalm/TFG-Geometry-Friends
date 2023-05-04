@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{99BC9472-08A6-4512-31EE-4DE786ED9A49}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GeometryFriendsAgents</RootNamespace>
+    <AssemblyName>GeometryFriendsAgents</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>GeometryFriendsGame\Release\Agents\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>GeometryFriendsGame\Release\Agents\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GeometryFriends">
+      <HintPath>GeometryFriendsGame\Release\GeometryFriends.exe</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AGAgent\CircleAgent.cs" />
+    <Compile Include="AGAgent\CircleState\CircleContactPoint.cs" />
+    <Compile Include="AGAgent\CircleState\CircleOperator.cs" />
+    <Compile Include="AGAgent\CircleState\CircleState.cs" />
+    <Compile Include="AGAgent\CircleState\CircleStateMapper.cs" />
+    <Compile Include="AGAgent\Game\GameArea.cs" />
+    <Compile Include="AGAgent\Game\GamePhysics.cs" />
+    <Compile Include="AGAgent\Game\GameState.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\AlternatingOpenList.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\AStarEvaluator.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\EagerSearch.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\EvaluationContext.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\EvaluationResult.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\Heuristic.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\NodeStatus.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\OpenList.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\Operator.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\PlanningProblem.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\ScalarEvaluator.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\SearchEngine.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\SearchNode.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\SearchSpace.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\SearchStatus.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\SimpleOpenList.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\TransitionResult.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\WeightedAStarEvaluator.cs" />
+    <Compile Include="AGAgent\HeuristicSearch\IGoal.cs" />
+    <Compile Include="AGAgent\Game\ObstacleGrid.cs" />
+    <Compile Include="AGAgent\ControlPolicies\Policy.cs" />
+    <Compile Include="AGAgent\Learning\PolicyBase.cs" />
+    <Compile Include="AGAgent\Learning\RollingVPolicy.cs" />
+    <Compile Include="AGAgent\Learning\RollingVTable.cs" />
+    <Compile Include="AGAgent\Learning\StateValueFunction.cs" />
+    <Compile Include="AGAgent\Learning\TabularPolicy.cs" />
+    <Compile Include="AGAgent\Learning\TabularStateValueFunction.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentGoalTimeStepsHeuristic.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AGAgent\RectangleAgent.cs" />
+    <Compile Include="AGAgent\Learning\StateActionFunction.cs" />
+    <Compile Include="AGAgent\Learning\TabularStateActionFunction.cs" />
+    <Compile Include="AGAgent\Learning\TiledStateActionFunction.cs" />
+    <Compile Include="AGAgent\Learning\RollingQTable.cs" />
+    <Compile Include="AGAgent\Learning\RollingState.cs" />
+    <Compile Include="AGAgent\ControlPolicies\CompositePolicy.cs" />
+    <Compile Include="AGAgent\ControlPolicies\DoNothingPolicy.cs" />
+    <Compile Include="AGAgent\ControlPolicies\FallAndStopPolicy.cs" />
+    <Compile Include="AGAgent\ControlPolicies\JumpAndStopPolicy.cs" />
+    <Compile Include="AGAgent\ControlPolicies\RollToPolicy.cs" />
+    <Compile Include="AGAgent\ControlPolicies\RollUpPolicy.cs" />
+    <Compile Include="AGAgent\ControlPolicies\StopPolicy.cs" />
+    <Compile Include="AGAgent\SegmentState\Segment.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentAnalyzer.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentGoal.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentGoalCountHeuristic.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentInfo.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentModel.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentOperator.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentPlanningProblem.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentPlanningTask.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentState.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentStateMapper.cs" />
+    <Compile Include="AGAgent\SegmentState\SegmentTransition.cs" />
+    <Compile Include="AGAgent\Game\Simulation.cs" />
+    <Compile Include="AGAgent\Utility\Helpers.cs" />
+    <Compile Include="AGAgent\Utility\HighResolutionDateTime.cs" />
+    <Compile Include="AGAgent\Utility\Logger.cs" />
+    <Compile Include="AGAgent\Utility\TileCoding.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

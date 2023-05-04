@@ -1,0 +1,3 @@
+Cuadrado comparabale con el nuestro (parece algo peor este pero funciona razonablemente bien)
+Círculo aceptable. Entre BrianCook y los de RRT
+Parece entreverse algo de cooperación

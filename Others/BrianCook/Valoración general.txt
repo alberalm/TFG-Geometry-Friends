@@ -1,0 +1,2 @@
+El círculo funciona bien.
+El rectángulo y la cooperación no están implementados
