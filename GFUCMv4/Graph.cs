@@ -238,7 +238,7 @@ namespace GeometryFriendsAgents
                     }
                     else
                     {
-                        if (n.plan.ElementAt(0).IsEqual(previous_move))
+                        if (n.plan.Count>0 && n.plan.ElementAt(0).IsEqual(previous_move))
                         {
                             if (reserve_plan == null)
                             {
