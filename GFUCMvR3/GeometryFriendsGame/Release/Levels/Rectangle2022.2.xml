@@ -53,7 +53,7 @@
       <HighScore name="UCMAgent" value="29" />
       <HighScore name="UCMAgent" value="66" />
       <HighScore name="UCMAgent" value="77" />
-      <HighScore name="UCMAgent" value="104" />
+      <HighScore name="UCMAgent" value="102" />
     </HighScores>
   </Level2>
   <Level3>
@@ -271,10 +271,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="29" />
+      <HighScore name="UCMAgent" value="31" />
       <HighScore name="UCMAgent" value="33" />
       <HighScore name="UCMAgent" value="34" />
       <HighScore name="UCMAgent" value="35" />
-      <HighScore name="UCMAgent" value="37" />
     </HighScores>
   </Level9>
   <Level10>

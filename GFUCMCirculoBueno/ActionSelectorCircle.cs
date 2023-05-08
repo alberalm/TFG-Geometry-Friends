@@ -111,7 +111,7 @@ namespace GeometryFriendsAgents
                             levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
                             if (m.landingPlatform.id == plan[0].landingPlatform.id && Utilities.Contained(aux_move.diamondsCollected, m.diamondsCollected))
                             {
-                                if (nextMoveInThisPlatform.DistanceToRollingEdge() < min_distance || m.DistanceToRollingEdge() >= min_distance)
+                                if (plan[0].DistanceToRollingEdge() < min_distance || m.DistanceToRollingEdge() >= min_distance)
                                 {
                                     plan.RemoveAt(0);
                                     return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));

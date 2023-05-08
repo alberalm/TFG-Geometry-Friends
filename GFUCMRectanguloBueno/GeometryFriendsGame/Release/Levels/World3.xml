@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Levels>
+  <Level1>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="-1000" Y="-1000" />
+    <SquareStartingPosition X="984" Y="200" />
+    <Collectibles>
+      <Collectible X="1128" Y="424" />
+      <Collectible X="168" Y="280" />
+      <Collectible X="104" Y="584" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle width="544" height="96" X="680" Y="488" centered="false" />
+    </GreenObstacles>
+    <BlackObstacles>
+      <Obstacle width="688" height="64" X="552" Y="280" centered="false" />
+      <Obstacle width="336" height="96" X="40" Y="664" centered="false" />
+      <Obstacle width="432" height="64" X="264" Y="600" centered="false" />
+      <Obstacle width="224" height="48" X="472" Y="552" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles>
+      <Obstacle width="352" height="96" X="40" Y="280" centered="false" />
+    </YellowObstacles>
+    <GreenElevators />
+    <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent" value="19" />
+    </HighScores>
+  </Level1>
+</Levels>
