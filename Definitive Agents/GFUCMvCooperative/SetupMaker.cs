@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using static GeometryFriendsAgents.LevelMap;
 using Size = System.Drawing.Size;
 
@@ -66,7 +67,16 @@ namespace GeometryFriendsAgents
         // Learning
         public LearningCircle lCircle;
         public LearningRectangle lRectangle;
-        
+
+
+        //Explainability
+        private GeometryFriends.XNAStub.Color color_green = GeometryFriends.XNAStub.Color.LightGreen;
+        private GeometryFriends.XNAStub.Color color_yellow = GeometryFriends.XNAStub.Color.LightGoldenrodYellow;
+        public string circle_immediate_goal = "";
+        public string rectangle_immediate_goal = "";
+        public string circle_state = "";
+        public string rectangle_state = "";
+
         public SetupMaker(CountInformation nI, RectangleRepresentation rI, CircleRepresentation cI, ObstacleRepresentation[] oI, ObstacleRepresentation[] rPI, ObstacleRepresentation[] cPI, CollectibleRepresentation[] colI)
         {
             numbersInfo = nI;
@@ -84,7 +94,7 @@ namespace GeometryFriendsAgents
             lCircle = new LearningCircle();
             lRectangle = new LearningRectangle();
             circle_to_rectangle = new Dictionary<int, int>();
-            
+
             collectibleId = new Dictionary<CollectibleRepresentation, int>();
             for (int i = 0; i < colI.Length; i++)
             {
@@ -140,6 +150,45 @@ namespace GeometryFriendsAgents
                 fullPlanCircle = new List<MoveInformation>(planCircle);
                 planRectangle = graph.GetRectanglePlan();
                 fullPlanRectangle = new List<MoveInformation>(planRectangle);
+            }
+        }
+
+        
+
+        public bool CircleAboveRectangle()
+        {
+            double width = GameInfo.RECTANGLE_AREA / rectangleInfo.Height;
+            return circleInfo.X <= rectangleInfo.X + width / 2 &&
+                circleInfo.X >= rectangleInfo.X - width / 2 &&
+                Math.Abs(circleInfo.Y + GameInfo.CIRCLE_RADIUS + rectangleInfo.Height / 2 - rectangleInfo.Y) < 2 * GameInfo.PIXEL_LENGTH;
+        }
+
+        public void UpdateChanging()
+        { 
+            if (currentPlatformCircle.yTop == currentPlatformRectangle.yTop && currentPlatformCircle.real && currentPlatformRectangle.real &&
+               ((currentPlatformCircle.leftEdge < rectangleInfo.X/GameInfo.PIXEL_LENGTH && currentPlatformCircle.rightEdge > rectangleInfo.X / GameInfo.PIXEL_LENGTH) 
+               || (currentPlatformRectangle.leftEdge < circleInfo.X / GameInfo.PIXEL_LENGTH && currentPlatformRectangle.rightEdge > circleInfo.X / GameInfo.PIXEL_LENGTH))) // Same platform
+            {                   
+                if (actionSelectorCircle.move != null && actionSelectorRectangle.move != null &&
+                    (actionSelectorRectangle.move.moveType != MoveType.CIRCLETILT || actionSelectorCircle.move.moveType != MoveType.COOPMOVE))
+                {
+                    if (actionSelectorCircle.move.x == actionSelectorRectangle.move.x)
+                    {
+                        changing = false;
+                        return;
+                    }
+                    changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
+                    if (changing && circleAgent.currentPlatformCircle.id != -1 && rectangleAgent.currentPlatformRectangle.id != -1)
+                    {
+                        actionSelectorCircle.nextActionPhisics(ref planCircle, circleAgent.remaining, circleInfo, rectangleInfo, circleAgent.currentPlatformCircle);
+                        actionSelectorRectangle.nextActionPhisics(ref planRectangle, rectangleAgent.remaining, circleInfo, rectangleInfo, rectangleAgent.currentPlatformRectangle);
+                        changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
+                    }
+                }
+            }
+            else
+            {
+                changing = false;
             }
         }
 
@@ -310,6 +359,7 @@ namespace GeometryFriendsAgents
                 }
             }
         }
+
         private void DrawCircleSmallPlatformsNumbers(ref List<DebugInformation> debugInformation)
         {
             foreach (Platform p in levelMapCircle.platformList)
@@ -375,76 +425,69 @@ namespace GeometryFriendsAgents
                 count++;
             }
         }
-       
+
         public void DrawLevelMap(ref List<DebugInformation> debugInformation)
         {
             //Common obstacles
             //DrawObstacles(ref debugInformation);
             //DrawLegend(ref debugInformation);
 
-            //Rectangle info
+            //Rectangle obstacles info
             //DrawRectangleSmallPlatforms(ref debugInformation);
             //DrawRectangleSimplifiedPlatformsNumbers(ref debugInformation);
             //DrawRectangleSmallPlatformsNumbers(ref debugInformation);
 
-            //Circle info
+            //Circle obstacles info
             DrawCircleSimplifiedPlatforms(ref debugInformation);
             DrawCircleSimplifiedPlatformsNumbers(ref debugInformation);
             //DrawCircleSmallPlatformsNumbers(ref List < DebugInformation > debugInformation);
 
-            //Collectibles
+            //Collectibles info
             //DrawCollectibles(ref debugInformation);
-        }
-
-        public bool CircleAboveRectangle()
-        {
-            double width = GameInfo.RECTANGLE_AREA / rectangleInfo.Height;
-            return circleInfo.X <= rectangleInfo.X + width / 2 &&
-                circleInfo.X >= rectangleInfo.X - width / 2 &&
-                Math.Abs(circleInfo.Y + GameInfo.CIRCLE_RADIUS + rectangleInfo.Height / 2 - rectangleInfo.Y) < 2 * GameInfo.PIXEL_LENGTH;
-        }
-
-        public void UpdateChanging()
-        { 
-            if (currentPlatformCircle.yTop == currentPlatformRectangle.yTop && currentPlatformCircle.real && currentPlatformRectangle.real &&
-               ((currentPlatformCircle.leftEdge < rectangleInfo.X/GameInfo.PIXEL_LENGTH && currentPlatformCircle.rightEdge > rectangleInfo.X / GameInfo.PIXEL_LENGTH) 
-               || (currentPlatformRectangle.leftEdge < circleInfo.X / GameInfo.PIXEL_LENGTH && currentPlatformRectangle.rightEdge > circleInfo.X / GameInfo.PIXEL_LENGTH))) // Same platform
-            {                   
-                if (actionSelectorCircle.move != null && actionSelectorRectangle.move != null &&
-                    (actionSelectorRectangle.move.moveType != MoveType.CIRCLETILT || actionSelectorCircle.move.moveType != MoveType.COOPMOVE))
-                {
-                    if (actionSelectorCircle.move.x == actionSelectorRectangle.move.x)
-                    {
-                        changing = false;
-                        return;
-                    }
-                    changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
-                    if (changing && circleAgent.currentPlatformCircle.id != -1 && rectangleAgent.currentPlatformRectangle.id != -1)
-                    {
-                        actionSelectorCircle.nextActionPhisics(ref planCircle, circleAgent.remaining, circleInfo, rectangleInfo, circleAgent.currentPlatformCircle);
-                        actionSelectorRectangle.nextActionPhisics(ref planRectangle, rectangleAgent.remaining, circleInfo, rectangleInfo, rectangleAgent.currentPlatformRectangle);
-                        changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
-                    }
-                }
-            }
-            else
-            {
-                changing = false;
-            }
         }
 
         public void PlanDebug(ref List<DebugInformation> newDebugInfo)
         {
-            int x = 900;
-            int y = 50;
-            int step = 1;
-            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x, y), new Size(350, 25*(2* fullPlanCircle.Count+2)), GeometryFriends.XNAStub.Color.Black));
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x,y), "Plan del círculo", GeometryFriends.XNAStub.Color.Yellow));
+            //Circle plan
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(0, 715), new Size(640, 80), color_yellow));
+            int x = 10;
+            int y = 720;
+            int step = 1;    
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x,y), "Plan del círculo", GeometryFriends.XNAStub.Color.Black));
             foreach (MoveInformation m in fullPlanCircle)
             {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x, y+25*step),
-                    step.ToString()+".- "+m.moveType.ToString()+" de P"+m.departurePlatform.id.ToString()+" a P" + m.landingPlatform.id.ToString(),
-                    GeometryFriends.XNAStub.Color.Yellow));
+                if (step == 3)
+                {
+                    y = 645;
+                }
+                if (step <= 5)
+                {
+                    if (!m.departurePlatform.real)
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step<=2? 0:320), y + 25 * step),
+                        step.ToString() + ".- " + m.moveType.ToString() + " de Rect (C" + m.departurePlatform.id.ToString() + ") a C" + m.landingPlatform.id.ToString(),
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                    else if (!m.landingPlatform.real)
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
+                        step.ToString() + ".- " + m.moveType.ToString() + " de C" + m.departurePlatform.id.ToString() + " a Rect (C" + m.landingPlatform.id.ToString() + ")",
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                    else if (m.moveType==MoveType.COOPMOVE)
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
+                        step.ToString() + ".- WAIT en C" + m.departurePlatform.id.ToString(),
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                    else 
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
+                        step.ToString() + ".- " + m.moveType.ToString() + " de C" + m.departurePlatform.id.ToString() + " a C" + m.landingPlatform.id.ToString(),
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                }
+                
                 foreach (Tuple<float, float> tup in m.path)
                 {
                     newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.Yellow));
@@ -458,19 +501,46 @@ namespace GeometryFriendsAgents
 
                 step++;
             }
-            y = 50 + 25 * step;
+
+            //Rectangle plan
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(640, 715), new Size(640, 80), color_green));
+            x = 650;
+            y = 720;
             step = 1;
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x, y), "Plan del rectángulo", GeometryFriends.XNAStub.Color.Green));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x, y), "Plan del rectángulo", GeometryFriends.XNAStub.Color.Black));
             foreach (MoveInformation m in fullPlanRectangle)
             {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x, y + 25 * step),
-                    step.ToString() + ".- " + m.moveType.ToString() + " de P" + m.departurePlatform.id.ToString() + " a P" + m.landingPlatform.id.ToString(),
-                    GeometryFriends.XNAStub.Color.Green));
+                if (step == 3)
+                {
+                    y = 645;
+                }
+                if (step <= 5)
+                {
+                    if (m.moveType == MoveType.COOPMOVE && (!fullPlanCircle[step - 1].departurePlatform.real || !fullPlanCircle[step - 1].landingPlatform.real))
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
+                        step.ToString() + ".- HELP CIRCLE en R" + m.landingPlatform.id.ToString(),
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                    else if (m.moveType == MoveType.COOPMOVE)
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
+                        step.ToString() + ".- WAIT en R" + m.landingPlatform.id.ToString(),
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                    else
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
+                        step.ToString() + ".- " + m.moveType.ToString() + " de R" + m.departurePlatform.id.ToString() + " a R" + m.landingPlatform.id.ToString(),
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                    
+                }
                 foreach (Tuple<float, float> tup in m.path)
                 {
                     newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 2, GeometryFriends.XNAStub.Color.Green));
                 }
-                if (m.path.Count > 0)
+                if (m.path.Count > 0 && m.moveType!=MoveType.COOPMOVE)
                 {
                     newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(m.path[m.path.Count / 2].Item1 + 3, m.path[m.path.Count / 2].Item2 + 5), 16, GeometryFriends.XNAStub.Color.Black));
                     newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(m.path[m.path.Count / 2].Item1 + 4, m.path[m.path.Count / 2].Item2 + 6), 14, GeometryFriends.XNAStub.Color.Green));
@@ -479,5 +549,375 @@ namespace GeometryFriendsAgents
                 step++;
             }
         }
+        private void DrawCircle(ref List<DebugInformation> newDebugInfo)
+        {
+            /*
+            //Circle Silhouette
+            int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
+            for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
+            {
+                for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
+                {
+                    int x = (int)(circleInfo.X / GameInfo.PIXEL_LENGTH);
+                    int y = (int)(circleInfo.Y / GameInfo.PIXEL_LENGTH);
+                    DebugInformation di = DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x + i) * GameInfo.PIXEL_LENGTH, (y + j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen);
+                    newDebugInfo.Add(di);
+                }
+            }*/
+
+
+
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(40, 316), new Size(118, 200), color_yellow));
+
+            //Circle velocity
+
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X + circleInfo.VelocityX, circleInfo.Y), GeometryFriends.XNAStub.Color.Red));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(circleInfo.X, circleInfo.Y), new PointF(circleInfo.X, circleInfo.Y + circleInfo.VelocityY), GeometryFriends.XNAStub.Color.Blue));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X + 20, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X - 20, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X + 40, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X - 20, circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(5, 400), "Vx: " + (int)circleInfo.VelocityX, GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(5, 430), "Target vx: " + actionSelectorCircle.target_velocity, GeometryFriends.XNAStub.Color.Black));
+
+            //Circle target position
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH, circleInfo.Y), 10, GeometryFriends.XNAStub.Color.Yellow));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(5, 460), "Dist. x: "+ (int)Math.Abs(circleInfo.X / GameInfo.PIXEL_LENGTH - actionSelectorCircle.target_position), GeometryFriends.XNAStub.Color.Black));
+
+            //Acceleration point
+            if (actionSelectorCircle.target_velocity > 0)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH- actionSelectorCircle.acceleration_distance, circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Pink));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH + actionSelectorCircle.acceleration_distance, circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Pink));
+            }
+            //Breaking point
+            if (circleInfo.VelocityX > 0)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X + actionSelectorCircle.brake_distance, circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Gray));
+            }
+            else {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(circleInfo.X - actionSelectorCircle.brake_distance, circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Gray));
+            }
+
+            //Current platform circle
+            currentPlatformCircle = levelMapCircle.CirclePlatform(circleInfo);            
+            if (levelMapCircle.small_to_simplified.ContainsKey(currentPlatformCircle))
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(circleInfo.X, circleInfo.Y), "C"+levelMapCircle.small_to_simplified[currentPlatformCircle].id.ToString(), GeometryFriends.XNAStub.Color.Black));
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(circleInfo.X, circleInfo.Y), "-1", GeometryFriends.XNAStub.Color.Black));
+
+            }
+            /*
+            CircleAboveRectangle()
+            rectangleAgentReadyForCoop
+            
+            circleAgentReadyForCoop
+            circleAgentReadyForCircleTilt
+            actionSelectorRectangle.count.ToString()
+            setupMaker.circleInAir
+            setupMaker.actionSelectorRectangle.hasFinishedReplanning
+            waitingForCircleToLand
+            avoidCircle
+            pick_up_circle
+            */
+
+            //Current Action            
+            if (circleAgent.currentAction == Moves.NO_ACTION)
+            {
+                 
+            }
+            else if (circleAgent.currentAction == Moves.ROLL_LEFT)
+            {
+                LeftArrow(50, 375, ref newDebugInfo);
+            }
+            else if (circleAgent.currentAction == Moves.ROLL_RIGHT)
+            {
+                RightArrow(110, 375, ref newDebugInfo);
+            }
+            else if (circleAgent.currentAction == Moves.JUMP)
+            {
+                UpArrow(80, 345, ref newDebugInfo);
+            }
+
+            //Circle messages
+            
+        }
+        private void DrawRectangle(ref List<DebugInformation> newDebugInfo)
+        {
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(1122, 316), new Size(118, 220), color_green));
+            //Rectangle velocity
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(rectangleInfo.X, rectangleInfo.Y), new PointF(rectangleInfo.X + rectangleInfo.VelocityX, rectangleInfo.Y), GeometryFriends.XNAStub.Color.Red));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(rectangleInfo.X, rectangleInfo.Y), new PointF(rectangleInfo.X, rectangleInfo.Y + rectangleInfo.VelocityY), GeometryFriends.XNAStub.Color.Blue));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X + 20, rectangleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X - 20, rectangleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X + 40, rectangleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X - 20, rectangleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1122, 450), "Vx: " + (int)rectangleInfo.VelocityX, GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1122, 480), "Target vx: " + actionSelectorRectangle.target_velocity, GeometryFriends.XNAStub.Color.Black));
+
+            //Rectangle target position
+            if (actionSelectorRectangle.move != null)
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelectorRectangle.move.x * GameInfo.PIXEL_LENGTH, rectangleInfo.Y), 10, GeometryFriends.XNAStub.Color.Green));
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1122, 510), "Dist. x: "+ (int)Math.Abs(rectangleInfo.X / GameInfo.PIXEL_LENGTH - actionSelectorRectangle.move.x), GeometryFriends.XNAStub.Color.Black));
+
+                if (actionSelectorRectangle.target_velocity > 0)
+                {
+                    newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelectorRectangle.move.x * GameInfo.PIXEL_LENGTH - actionSelectorRectangle.acceleration_distance, rectangleInfo.Y), 5, GeometryFriends.XNAStub.Color.Pink));
+                }
+                else
+                {
+                    newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelectorRectangle.move.x * GameInfo.PIXEL_LENGTH + actionSelectorRectangle.acceleration_distance, rectangleInfo.Y), 5, GeometryFriends.XNAStub.Color.Pink));
+                }
+                if (rectangleInfo.VelocityX > 0)
+                {
+                    newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X + actionSelectorRectangle.brake_distance, rectangleInfo.Y), 5, GeometryFriends.XNAStub.Color.Gray));
+                }
+                else
+                {
+                    newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X - actionSelectorRectangle.brake_distance, rectangleInfo.Y), 5, GeometryFriends.XNAStub.Color.Gray));
+                }
+
+            }
+
+
+            //Platform
+            currentPlatformRectangle = levelMapRectangle.PlatformBelowRectangle(rectangleInfo);
+
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(rectangleInfo.X, rectangleInfo.Y), "R" + currentPlatformRectangle.id.ToString(), GeometryFriends.XNAStub.Color.Black));
+           
+
+            //Current Action
+             
+            if (rectangleAgent.currentAction == Moves.NO_ACTION)
+            {
+                
+            }
+            else if (rectangleAgent.currentAction == Moves.MOVE_LEFT)
+            {
+                LeftArrow(1170, 375, ref newDebugInfo);
+            }
+            else if (rectangleAgent.currentAction == Moves.MOVE_RIGHT)
+            {
+                RightArrow(1230, 375, ref newDebugInfo);
+            }
+            else if (rectangleAgent.currentAction == Moves.MORPH_DOWN)
+            {
+                DownArrow(1200, 405, ref newDebugInfo);
+            }
+            else if (rectangleAgent.currentAction == Moves.MORPH_UP)
+            {
+                UpArrow(1200, 345, ref newDebugInfo);
+            }
+        }
+        private void DrawPanels(ref List<DebugInformation> newDebugInfo)
+        {           
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(0, 0), new Size(640, 130), color_yellow));
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(640, 0), new Size(640, 130), color_green));
+           
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(0, 80), new Size(40, 635), color_yellow));
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(1240, 80), new Size(40, 635), color_green));
+        }
+
+        private void DrawCircleExplanation(ref List<DebugInformation> newDebugInfo)
+        {
+            string message1 = "Objetivo inmediato: " + circle_immediate_goal;
+            int maxLength = 55;
+            int y = 0;
+            if (message1.Length > maxLength)
+            {
+                string m1 = "";
+                string m2 = "";
+                foreach (string word in message1.Split(' '))
+                {
+                    if (m2.Length == 0)
+                    {
+                        if (m1.Length + 1 + word.Length > maxLength)
+                        {
+                            m2+= word+ " ";
+                        }
+                        else
+                        {
+                            m1 += word + " ";
+                        }
+                    }
+                    else
+                    {
+                        m2 += word + " ";
+                    }
+                    
+                };
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(10, 10), m1, GeometryFriends.XNAStub.Color.Black));
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(10, 40), m2, GeometryFriends.XNAStub.Color.Black));
+                y = 30;
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(10, 10), message1, GeometryFriends.XNAStub.Color.Black));
+            }
+            string message2 = "Estado: " + circle_state;
+            if (message2.Length > maxLength)
+            {
+                string m1 = "";
+                string m2 = "";
+                foreach (string word in message2.Split(' '))
+                {
+                    if (m2.Length == 0)
+                    {
+                        if (m1.Length + 1 + word.Length > maxLength)
+                        {
+                            m2 += word + " ";
+                        }
+                        else
+                        {
+                            m1 += word + " ";
+                        }
+                    }
+                    else
+                    {
+                        m2 += word + " ";
+                    }
+
+                };
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(10, y + 40), m1, GeometryFriends.XNAStub.Color.Black));
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(10, y + 70), m2, GeometryFriends.XNAStub.Color.Black));
+                y = 30;
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(10, y + 40), message2, GeometryFriends.XNAStub.Color.Black));
+            }
+        }
+
+        private void DrawRectangleExplanation(ref List<DebugInformation> newDebugInfo)
+        {
+            string message1 = "Objetivo inmediato: " + rectangle_immediate_goal;
+            int maxLength = 55;
+            int y = 0;
+            if (message1.Length > maxLength)
+            {
+                string m1 = "";
+                string m2 = "";
+                foreach (string word in message1.Split(' '))
+                {
+                    if (m2.Length == 0)
+                    {
+                        if (m1.Length + 1 + word.Length > maxLength)
+                        {
+                            m2 += word + " ";
+                        }
+                        else
+                        {
+                            m1 += word + " ";
+                        }
+                    }
+                    else
+                    {
+                        m2 += word + " ";
+                    }
+
+                };
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(650, 10), m1, GeometryFriends.XNAStub.Color.Black));
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(650, 40), m2, GeometryFriends.XNAStub.Color.Black));
+                y = 30;
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(650, 10), message1, GeometryFriends.XNAStub.Color.Black));
+            }
+            string message2 = "Estado: " + rectangle_state;
+            if (message2.Length > maxLength)
+            {
+                string m1 = "";
+                string m2 = "";
+                foreach (string word in message2.Split(' '))
+                {
+                    if (m2.Length == 0)
+                    {
+                        if (m1.Length + 1 + word.Length > maxLength)
+                        {
+                            m2 += word + " ";
+                        }
+                        else
+                        {
+                            m1 += word + " ";
+                        }
+                    }
+                    else
+                    {
+                        m2 += word + " ";
+                    }
+
+                };
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(650, y + 40), m1, GeometryFriends.XNAStub.Color.Black));
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(650, y + 70), m2, GeometryFriends.XNAStub.Color.Black));
+                y = 30;
+            }
+            else
+            {
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(650, y + 40), message2, GeometryFriends.XNAStub.Color.Black));
+            }
+        }
+
+        public void ExplainabilitySystem(ref List<DebugInformation> newDebugInfo)
+        {
+            /*DrawLevelMap(ref newDebugInfo);
+            levelMapCircle.DrawConnections(ref newDebugInfo);
+            levelMapRectangle.DrawConnections(ref newDebugInfo);*/
+            PlanDebug(ref newDebugInfo);
+            DrawPanels(ref newDebugInfo);
+            DrawCircle(ref newDebugInfo);
+            DrawRectangle(ref newDebugInfo);
+            DrawCircleExplanation(ref newDebugInfo);
+            DrawRectangleExplanation(ref newDebugInfo);
+        }
+
+        private void UpArrow(float centerx, float centery, ref List<DebugInformation> newDebugInfo)
+        {
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 5, centery + 20), new PointF(centerx - 5, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 5, centery + 20), new PointF(centerx + 5, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 5, centery + 20), new PointF(centerx - 5, centery+20), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 5, centery     ), new PointF(centerx - 15, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 5, centery     ), new PointF(centerx + 15, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 15, centery     ), new PointF(centerx, centery - 25), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx    , centery - 25), new PointF(centerx + 15, centery), GeometryFriends.XNAStub.Color.Black));
+        }
+        private void DownArrow(float centerx, float centery, ref List<DebugInformation> newDebugInfo)
+        {
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 5, centery - 20), new PointF(centerx - 5, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 5, centery - 20), new PointF(centerx + 5, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 5, centery - 20), new PointF(centerx - 5, centery - 20), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 5, centery), new PointF(centerx - 15, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 5, centery), new PointF(centerx + 15, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 15, centery), new PointF(centerx, centery + 25), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx, centery + 25), new PointF(centerx + 15, centery), GeometryFriends.XNAStub.Color.Black));
+        }
+        private void RightArrow(float centerx, float centery, ref List<DebugInformation> newDebugInfo)
+        {
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 20, centery + 5), new PointF(centerx , centery + 5), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 20, centery - 5), new PointF(centerx , centery - 5), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 20, centery - 5), new PointF(centerx - 20, centery + 5), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx, centery + 5), new PointF(centerx , centery + 15), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx , centery - 5), new PointF(centerx , centery - 15), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx , centery + 15), new PointF(centerx + 25, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 25, centery ), new PointF(centerx , centery - 15), GeometryFriends.XNAStub.Color.Black));
+        }
+        private void LeftArrow(float centerx, float centery, ref List<DebugInformation> newDebugInfo)
+        {
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 20, centery + 5), new PointF(centerx, centery + 5), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 20, centery - 5), new PointF(centerx, centery - 5), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx + 20, centery - 5), new PointF(centerx + 20, centery + 5), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx, centery + 5), new PointF(centerx, centery + 15), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx, centery - 5), new PointF(centerx, centery - 15), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx, centery + 15), new PointF(centerx - 25, centery), GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(centerx - 25, centery), new PointF(centerx, centery - 15), GeometryFriends.XNAStub.Color.Black));
+        }
     }
+    
 }

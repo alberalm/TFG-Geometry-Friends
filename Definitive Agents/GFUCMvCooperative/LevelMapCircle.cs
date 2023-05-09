@@ -85,7 +85,7 @@ namespace GeometryFriendsAgents
                 }
                 if (Math.Abs(p.rightEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1 && levelMap[p.rightEdge + 1, p.yTop] == PixelType.EMPTY) // Ball at right edge
                 {
-                    currentAction = Moves.ROLL_LEFT;
+                    currentAction = Moves.ROLL_LEFT;                    
                     return true;
                 }
                 else if (Math.Abs(p.leftEdge - cI.X / GameInfo.PIXEL_LENGTH) <= 1 && levelMap[p.leftEdge - 1, p.yTop] == PixelType.EMPTY) // Ball at left edge
@@ -366,11 +366,6 @@ namespace GeometryFriendsAgents
         public List<MoveInformation> SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m, float dt)
         {
             return moveGenerator.trajectoryAdder.circleSimulator.SimulateMove(ref platformList, x_0, y_0, vx_0, vy_0, ref m, dt);
-        }
-
-        public void DrawConnectionsVertex(ref List<DebugInformation> debugInformation)
-        {
-            moveGenerator.trajectoryAdder.circleSimulator.DrawConnectionsVertex(ref debugInformation);
         }
 
         public void AddCooperative(List<Platform> platformListRectangle)

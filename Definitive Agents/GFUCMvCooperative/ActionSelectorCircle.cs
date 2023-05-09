@@ -22,10 +22,6 @@ namespace GeometryFriendsAgents
             MoveInformation move = null;
             MoveInformation next_move_circle = setupMaker.planCircle.Count > 0 ? setupMaker.planCircle[0] : null;
             MoveInformation next_move_rectangle = setupMaker.planRectangle.Count > 0 ? setupMaker.planRectangle[0] : null;
-            if (!levelMap.small_to_simplified.ContainsKey(p))
-            {
-                int a =  0;
-            }
             foreach (MoveInformation m in levelMap.small_to_simplified[p].moveInfoList)
             {
                 if (m.landingPlatform.id == levelMap.small_to_simplified[p].id)
@@ -55,7 +51,10 @@ namespace GeometryFriendsAgents
                     }
                 }
             }
-
+            if (move != null)
+            {
+                
+            }
             return move;
         }
 
@@ -197,11 +196,42 @@ namespace GeometryFriendsAgents
             if (nextMoveInThisPlatform != null)
             {
                 move = nextMoveInThisPlatform;
+                string goal = "Coger diamante(s) ";
+                foreach (int d in move.diamondsCollected)
+                {
+                    goal += d.ToString() + " ";
+                }
+                if (!move.departurePlatform.real || !move.landingPlatform.real)
+                {
+                    goal += "con cooperación";
+                }
+                else
+                {
+                    goal += "individualmente";
+                }
+                goal += " mediante un " + move.moveType.ToString();
+                setupMaker.circle_immediate_goal = goal;
             }
             else if (plan.Count > 0)
             {
                 move = plan[0];
+                if (move.moveType == MoveType.COOPMOVE) {
+                    setupMaker.circle_immediate_goal = "WAIT en C" + move.departurePlatform.id.ToString();
+                }
+                else if (!move.departurePlatform.real)
+                {
+                    setupMaker.circle_immediate_goal = move.moveType.ToString() + " de Rect (C" + move.departurePlatform.id.ToString() + ") a C" + move.landingPlatform.id.ToString();
+                }
+                else if (!move.landingPlatform.real)
+                {
+                    setupMaker.circle_immediate_goal = move.moveType.ToString() + " de C" + move.departurePlatform.id.ToString() + " a Rect (C" + move.landingPlatform.id.ToString()+")";
+                }
+                else
+                {
+                    setupMaker.circle_immediate_goal = move.moveType.ToString() + " de C" + move.departurePlatform.id.ToString() + " a C" + move.landingPlatform.id.ToString();
+                }                
             }
+            
             if (move != null)
             {
                 target_position = move.x;
@@ -209,6 +239,7 @@ namespace GeometryFriendsAgents
 
             if (setupMaker.CircleAboveRectangle())
             {
+                setupMaker.circle_state = "Manteniendo el equilibrio sobre el rectángulo...";
                 setupMaker.circleAgentReadyForCoop = true;
                 brake_distance = (cI.VelocityX - rI.VelocityX) * (cI.VelocityX - rI.VelocityX) / (2 * GameInfo.CIRCLE_ACCELERATION);
                 
@@ -270,6 +301,7 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
+                    setupMaker.circle_state = "Rodando hacia el punto objetivo con la velocidad apropiada...";
                     return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                 }
             }
@@ -286,6 +318,7 @@ namespace GeometryFriendsAgents
 
                     if (plan[0].moveType == MoveType.COOPMOVE && setupMaker.planRectangle[0].moveType == MoveType.CIRCLETILT)
                     {
+                        setupMaker.circle_state = "Rodando hacia el escalón para hacer un CIRCLETILT...";
                         target_position = setupMaker.planRectangle[0].x;
                         target_position += target_position * GameInfo.PIXEL_LENGTH > cI.X ? 2 : -2;
                         target_velocity = 0;
@@ -297,6 +330,7 @@ namespace GeometryFriendsAgents
                         }
                         if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= 5*GameInfo.PIXEL_LENGTH && Math.Abs(cI.VelocityX) < 30)
                         {
+                            setupMaker.circle_state = "Preparado para hacer un CIRCLETILT...";
                             setupMaker.circleAgentReadyForCircleTilt = true;
                         }
                         return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
@@ -306,6 +340,7 @@ namespace GeometryFriendsAgents
                     {
                         //Circle has to wait
                         //TODO:Optimize time and try to perform next move in plan?
+                        setupMaker.circle_state = "Esperando...";
                         move.x = (int) setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH;
                         return new Tuple<Moves, Tuple<bool, bool>>(Moves.NO_ACTION, new Tuple<bool, bool>(false, false));
                     }
@@ -318,6 +353,7 @@ namespace GeometryFriendsAgents
                             target_position = (int)(real_target / GameInfo.PIXEL_LENGTH);
                             return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, real_target,
                                 cI.VelocityX, 0, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));*/
+                            setupMaker.circle_state = "Esperando a que el rectángulo se coloque para aterrizar sobre él...";
                             return new Tuple<Moves, Tuple<bool, bool>>(Moves.NO_ACTION, new Tuple<bool, bool>(false, false));
                         }
                     }
@@ -358,6 +394,7 @@ namespace GeometryFriendsAgents
                     }
                     else
                     {
+                        setupMaker.circle_state = "Rodando hacia el punto de "+(move.moveType==MoveType.JUMP?"salto":"caída")+" con la velocidad apropiada...";
                         return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                     }
                 }
@@ -369,7 +406,7 @@ namespace GeometryFriendsAgents
                     possibleMoves.Add(Moves.ROLL_RIGHT);
                     possibleMoves.Add(Moves.NO_ACTION);
                     possibleMoves.Add(Moves.JUMP);
-
+                    setupMaker.circle_state = "No sé que hacer...";
                     //return new Tuple<Moves, Tuple<bool, bool>>(possibleMoves[rnd.Next(possibleMoves.Count)], new Tuple<bool, bool>(false, false));
                     return new Tuple<Moves, Tuple<bool, bool>>(Moves.NO_ACTION, new Tuple<bool, bool>(false, false));
                 }

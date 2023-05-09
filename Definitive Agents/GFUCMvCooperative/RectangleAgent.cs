@@ -345,6 +345,7 @@ namespace GeometryFriendsAgents
                 {
                     t_0 = 0;
                 }
+                setupMaker.rectangle_state = "Sistema de recuperación...";
                 return;
             }
 
@@ -434,6 +435,7 @@ namespace GeometryFriendsAgents
             {
                 if (currentPlatformRectangle.id == -1) // Rectangle is in the air
                 {
+                    setupMaker.rectangle_state = "Volando...";
                     if (setupMaker.actionSelectorRectangle.move != null)
                     {
                         // Become horozintal asap when move=drop
@@ -562,6 +564,7 @@ namespace GeometryFriendsAgents
 
                     if (setupMaker.changing)
                     {
+                        setupMaker.rectangle_state = "Intercambiando posición con el círculo...";
                         if (setupMaker.rectangleInfo.Height < GameInfo.VERTICAL_RECTANGLE_HEIGHT - 20 && setupMaker.levelMapRectangle.RectangleCanMorphUp(setupMaker.rectangleInfo))
                         {
                             currentAction = Moves.MORPH_UP;

@@ -14,8 +14,6 @@ namespace GeometryFriendsAgents
         public CollectibleRepresentation[] initialCollectiblesInfo;
         public PixelType[,] levelMap;
 
-        List<MoveInformation> parabolas = new List<MoveInformation>();
-
         public CircleSimulator(CollectibleRepresentation[] initialCollectiblesInfo, PixelType[,] levelMap)
         {
             this.initialCollectiblesInfo = initialCollectiblesInfo;
@@ -58,28 +56,6 @@ namespace GeometryFriendsAgents
             return new Platform(-2);
         }
 
-        public void DrawConnectionsVertex(ref List<DebugInformation> debugInformation)
-        {
-            GeometryFriends.XNAStub.Color color = GeometryFriends.XNAStub.Color.Purple;
-
-            foreach (MoveInformation parabola in parabolas)
-            {
-                if (parabola.velocityX % 30 == 0)
-                {
-                    color = GeometryFriends.XNAStub.Color.Purple;
-                }
-                else
-                {
-                    color = GeometryFriends.XNAStub.Color.DeepPink;
-                }
-                foreach (Tuple<float, float> tup in parabola.path)
-                {
-                    debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(tup.Item1, tup.Item2), 1, color));
-
-                }
-            }
-        }
-
         public bool EnoughSpaceToAccelerate(int leftEdge, int rigthEdge, int x, int vx)
         {
             if (Math.Abs(vx) == GameInfo.VELOCITY_STEP_PHISICS || vx==0)
@@ -111,12 +87,6 @@ namespace GeometryFriendsAgents
 
         public List<MoveInformation> SimulateMove(ref List<Platform> platformList, float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m, float dt)
         {
-            bool flag = false;
-            if (vy_0 == 0)
-            {
-                flag = true;
-            }
-            
             float t = 0;
             float x_tfloat = x_0;
             float y_tfloat = y_0;
@@ -217,11 +187,7 @@ namespace GeometryFriendsAgents
                     i--;
                 }
             }
-            m.rightEdgeIsDangerous = vx_0 > 0;
-            if (flag)
-            {
-                parabolas.Add(m);
-            }
+            m.rightEdgeIsDangerous = vx_0 > 0;            
             
             if (cct == CollisionType.Agent)
             {

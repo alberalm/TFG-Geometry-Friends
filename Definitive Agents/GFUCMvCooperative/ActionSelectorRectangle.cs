@@ -328,6 +328,21 @@ namespace GeometryFriendsAgents
                     target_position = move.x;
                     target_velocity = move.velocityX;
                     setupMaker.rectangleAgentReadyForCoop = false;
+                    string goal = "Coger diamante(s) ";
+                    foreach (int d in move.diamondsCollected)
+                    {
+                        goal += d.ToString() + " ";
+                    }
+                    if (!move.departurePlatform.real || !move.landingPlatform.real)
+                    {
+                        goal += "con cooperación";
+                    }
+                    else
+                    {
+                        goal += "individualmente";
+                    }
+                    goal += " mediante un " + move.moveType.ToString();
+                    setupMaker.rectangle_immediate_goal = goal;
                 }
                 else
                 {
@@ -336,6 +351,29 @@ namespace GeometryFriendsAgents
                         move = new MoveInformation(plan[0]);
                         target_position = plan[0].x;
                         target_velocity = plan[0].velocityX;
+                        if (setupMaker.actionSelectorCircle.move != null)
+                        {
+                            if (move.moveType == MoveType.COOPMOVE && setupMaker.actionSelectorCircle.move.departurePlatform.real && setupMaker.actionSelectorCircle.move.landingPlatform.real)
+                            {
+                                setupMaker.rectangle_immediate_goal = "WAIT en R" + move.departurePlatform.id.ToString();
+                            }
+                            else if (move.moveType == MoveType.COOPMOVE && !setupMaker.actionSelectorCircle.move.departurePlatform.real)
+                            {
+                                setupMaker.rectangle_immediate_goal = "Mantenerse en la plataforma R" + move.departurePlatform.id.ToString() + " para ser la plataforma de despegue del círculo";
+                            }
+                            else if (!setupMaker.actionSelectorCircle.move.landingPlatform.real)
+                            {
+                                setupMaker.rectangle_immediate_goal = "Mantenerse en la plataforma R" + move.departurePlatform.id.ToString() + " para ser la plataforma de aterrizaje del círculo";
+                            }
+                            else
+                            {
+                                setupMaker.rectangle_immediate_goal = move.moveType.ToString() + " de C" + move.departurePlatform.id.ToString() + " a C" + move.landingPlatform.id.ToString();
+                            }
+                        }
+                        else
+                        {
+                            setupMaker.rectangle_immediate_goal = move.moveType.ToString() + " de C" + move.departurePlatform.id.ToString() + " a C" + move.landingPlatform.id.ToString();
+                        }
                     }
                     else if (setupMaker.actionSelectorCircle.move == null)
                     {
@@ -347,14 +385,17 @@ namespace GeometryFriendsAgents
                         Moves.MORPH_DOWN,
                         Moves.MORPH_UP
                     };
+                        setupMaker.rectangle_state = "No sé que hacer...";
                         return possibleMoves[rnd.Next(possibleMoves.Count)];
                     }
                     else if (move == null)
                     {
+                        setupMaker.rectangle_immediate_goal = "Ayudar al círculo";
                         move = new MoveInformation(currentPlatform) { moveType = MoveType.COOPMOVE };
                     }
                     else
                     {
+                        setupMaker.rectangle_immediate_goal = "Mantenerse en la plataforma R" + move.departurePlatform.id.ToString() + " sin estorbar al círculo";
                         float middle = GameInfo.PIXEL_LENGTH * (setupMaker.currentPlatformRectangle.rightEdge + setupMaker.currentPlatformRectangle.leftEdge) / 2;
                         move.x = setupMaker.circleInfo.X < middle ? setupMaker.currentPlatformRectangle.rightEdge : setupMaker.currentPlatformRectangle.leftEdge;
                         move.velocityX = 0;
@@ -369,6 +410,7 @@ namespace GeometryFriendsAgents
                 setupMaker.rectangleAgentReadyForCoop = false;
                 move.velocityX = 0;
                 count++;
+                setupMaker.rectangle_state = "Dejando que el círculo termine de aterrizar...";
             }
             else if (count == 100)
             {
@@ -382,6 +424,7 @@ namespace GeometryFriendsAgents
             Moves m = getPhisicsMove(rI, move);
             if (setupMaker.CircleAboveRectangle() && count == -1)
             {
+                setupMaker.rectangle_state = "Transportando al círculo...";
                 setupMaker.circleInAir = false;
                 avoidCircle = false;
                 circle_flying_velocity = 1000;
@@ -486,6 +529,7 @@ namespace GeometryFriendsAgents
                 }// Circle wants to be above rectangle
                 else if (setupMaker.planCircle.Count > 0 && !setupMaker.planCircle[0].landingPlatform.real && setupMaker.planCircle[0].departurePlatform.real)
                 {
+                    setupMaker.rectangle_state = "Deslizandome hasta el punto de aterrizaje del círculo";
                     if (setupMaker.actionSelectorCircle.move != null && setupMaker.actionSelectorCircle.move.distanceToObstacle > 0)
                     {
                         move.x = 0;
@@ -601,6 +645,7 @@ namespace GeometryFriendsAgents
                         {
                             if (setupMaker.actionSelectorCircle.move != null)
                             {
+                                setupMaker.rectangle_state += " (o un poco a la izquierda)...";
                                 move.x = setupMaker.actionSelectorCircle.move.xlandPoint;
                                 move.velocityX = 0;
                                 if (setupMaker.actionSelectorCircle.move.distanceToObstacle > 0 || (!setupMaker.circleInAir && setupMaker.currentPlatformCircle.real))
@@ -611,6 +656,7 @@ namespace GeometryFriendsAgents
                                 {
                                     setupMaker.rectangleAgentReadyForCoop = true;
                                     waitingForCircleToLand = true;
+                                    setupMaker.rectangle_state = "Esperando al aterrizaje del círculo...";
                                 }
                             }
                         }
@@ -618,6 +664,7 @@ namespace GeometryFriendsAgents
                         {
                             if (setupMaker.actionSelectorCircle.move != null)
                             {
+                                setupMaker.rectangle_state += " (o un poco a la derecha)...";
                                 move.x = setupMaker.actionSelectorCircle.move.xlandPoint;
                                 move.velocityX = 0; 
                                 if (setupMaker.actionSelectorCircle.move.distanceToObstacle > 0 || (!setupMaker.circleInAir && setupMaker.currentPlatformCircle.real))
@@ -628,11 +675,13 @@ namespace GeometryFriendsAgents
                                 {
                                     setupMaker.rectangleAgentReadyForCoop = true;
                                     waitingForCircleToLand = true;
+                                    setupMaker.rectangle_state = "Esperando al aterrizaje del círculo...";
                                 }
                             }
                         }
                         if (intersects_if_right && intersects_if_left)
                         {
+                            setupMaker.rectangle_state += "...";
                             // We inverse the process of jumping to calculate from where the circle needs to jump
                             // Then we replace the current plan[0] move with it
                             move.x = (setupMaker.currentPlatformRectangle.rightEdge + setupMaker.currentPlatformRectangle.leftEdge) / 2; // Need to change this
@@ -661,11 +710,13 @@ namespace GeometryFriendsAgents
                             else
                             {
                                 // What can we do here?
+                                setupMaker.rectangle_state = "No sé que hacer...";
                             }
                         }
                     }
                     else
                     {
+                        setupMaker.rectangle_state += "...";
                         if (setupMaker.actionSelectorCircle.move != null)
                         {
                             PrepareForCircleLanding(true);
@@ -673,6 +724,7 @@ namespace GeometryFriendsAgents
                             {
                                 setupMaker.rectangleAgentReadyForCoop = true;
                                 waitingForCircleToLand= true;
+                                setupMaker.rectangle_state = "Esperando al aterrizaje del círculo...";
                             }
                         }
                     }
@@ -725,7 +777,11 @@ namespace GeometryFriendsAgents
                 lastX = move.x;
             }
             
-            
+            if(!(setupMaker.CircleAboveRectangle() && count == -1)&&move.moveType != MoveType.COOPMOVE)
+            {
+                setupMaker.rectangle_state = "Deslizándome hasta la posición objetivo...";
+            }
+
             Platform current_platform = levelMap.RectanglePlatform(rI);
             next_platform = null;
 
@@ -853,6 +909,7 @@ namespace GeometryFriendsAgents
                 {
                     if (!setupMaker.circleAgentReadyForCircleTilt)
                     {
+                        setupMaker.rectangle_state = "Esperando a que el círculo esté listo para hacer el CIRCLETILT...";                        
                         return GetToPosition(rI.X, move.velocityX > 0 ? (move.departurePlatform.leftEdge + 5) * GameInfo.PIXEL_LENGTH : (move.departurePlatform.rightEdge - 5) * GameInfo.PIXEL_LENGTH,
                                 rI.VelocityX, 0, move);
                         /*if (Math.Sign(rI.X - cI.X) == Math.Sign(target_position * GameInfo.PIXEL_LENGTH - rI.X) ||
@@ -864,6 +921,10 @@ namespace GeometryFriendsAgents
                         {
                             return Moves.NO_ACTION;
                         }*/
+                    }
+                    else
+                    {
+                        setupMaker.rectangle_state = "Deslizándome hasta la posición del CIRCLETILT...";
                     }
                 }
                 // Check shape
@@ -899,6 +960,15 @@ namespace GeometryFriendsAgents
 
         private void PrepareForCircleLanding(bool pick_up_circle)
         {
+            if (pick_up_circle)
+            {
+                setupMaker.rectangle_state = "Recalculando punto de aterrizaje del círculo...";
+            }
+            else
+            {
+                setupMaker.rectangle_state = "Esquivando al círculo...";
+            }
+
             if (move.x == 0)
             {
                 move.x = setupMaker.actionSelectorCircle.move.xlandPoint;
@@ -917,13 +987,12 @@ namespace GeometryFriendsAgents
                 hasFinishedReplanning = false;
                 MoveInformation m2 = new MoveInformation(setupMaker.actionSelectorCircle.move);
                 List<MoveInformation> l = setupMaker.levelMapCircle.SimulateMove(setupMaker.circleInfo.X, setupMaker.circleInfo.Y, setupMaker.circleInfo.VelocityX, -setupMaker.circleInfo.VelocityY, ref m2, 0.005f);
-                bool entered = false;
+                
                 foreach (MoveInformation move_l in l)
                 {
                     if (setupMaker.actionSelectorCircle.move.landingPlatform.id == setupMaker.levelMapCircle.small_to_simplified[move_l.landingPlatform].id &&
                         Math.Abs(move_l.path[move_l.path.Count - 1].Item2 - setupMaker.actionSelectorCircle.move.path[setupMaker.actionSelectorCircle.move.path.Count - 1].Item2) < 2 * GameInfo.PIXEL_LENGTH)
-                    {
-                        entered = true;
+                    {                       
                         if (pick_up_circle)
                         {
                             move.x = move_l.xlandPoint;
@@ -993,16 +1062,9 @@ namespace GeometryFriendsAgents
                         setupMaker.actionSelectorCircle.move.distanceToObstacle = -5; // < 0 means it has already been simulated
                         break;
                     }
-                }
-                if (!entered)
-                {
-                    int a = 0;
-                }
+                }                
             }
-            else
-            {
-                int a = 0;
-            }
+            
             if(move.x > setupMaker.currentPlatformRectangle.rightEdge)
             {
                 move.x = setupMaker.currentPlatformRectangle.rightEdge - 1;
@@ -1011,11 +1073,7 @@ namespace GeometryFriendsAgents
             {
                 move.x = setupMaker.currentPlatformRectangle.leftEdge + 1;
             }
-            if(move.x >= 52 && move.x <=58)
-            {
-                int a = 0;
-            }
-
+            
             hasFinishedReplanning = true;
         }
 

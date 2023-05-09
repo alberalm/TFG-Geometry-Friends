@@ -36,9 +36,6 @@ namespace GeometryFriendsAgents
         //debug agent predictions and history keeping
         public List<CollectibleRepresentation> remaining;
 
-        //Area of the game screen
-        private Rectangle area;
-
         //Representation of level
         public SetupMaker setupMaker;
 
@@ -53,7 +50,6 @@ namespace GeometryFriendsAgents
         //Debug
         private DebugInformation[] debugInfo = null;
         private List<DebugInformation> newDebugInfo;
-        private List<CircleRepresentation> trajectory;
 
         public CircleAgent()
         {
@@ -79,7 +75,7 @@ namespace GeometryFriendsAgents
 
             //Debug
             newDebugInfo = new List<DebugInformation>();
-            trajectory = new List<CircleRepresentation>();
+            
         }
 
         //implements abstract circle interface: used to setup the initial information so that the agent has basic knowledge about the level
@@ -88,191 +84,17 @@ namespace GeometryFriendsAgents
             
         }
 
-        private void InitialDraw()
-        {
-            //newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            //setupMaker.DrawLevelMap(ref newDebugInfo);
-            //setupMaker.levelMapCircle.DrawConnections(ref newDebugInfo);
-            //levelMapCircle.DrawConnectionsVertex(ref newDebugInfo);
-            setupMaker.PlanDebug(ref newDebugInfo);
-        }
-
         private void UpdateDraw()
         {
-            //newDebugInfo.Clear();
-            //newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            //InitialDraw();
-            CircleDraw();
-            //debugInfo = newDebugInfo.ToArray();
+            newDebugInfo.Clear();
+            newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
+            setupMaker.ExplainabilitySystem(ref newDebugInfo);
+            debugInfo = newDebugInfo.ToArray();
         }
 
         
 
-        private void CircleDraw()
-        {
-            /*
-            //Circle Silhouette
-            int[] CIRCLE_SIZE = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
-            for (int i = -GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH; i++)
-            {
-                for (int j = -CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j < CIRCLE_SIZE[i + GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH]; j++)
-                {
-                    int x = (int)(setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH);
-                    int y = (int)(setupMaker.circleInfo.Y / GameInfo.PIXEL_LENGTH);
-                    DebugInformation di = DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x + i) * GameInfo.PIXEL_LENGTH, (y + j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen);
-                    newDebugInfo.Add(di);
-                }
-            }
-            *//*
-            //Circle trajectory
-            trajectory.Add(setupMaker.circleInfo);
-            for (int i = Math.Max(0, trajectory.Count - 200); i < trajectory.Count; i++)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(trajectory[i].X, trajectory[i].Y), 4, GeometryFriends.XNAStub.Color.Orange));
-            }
-            */
-            //Circle velocity
-            /*newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), new PointF(  setupMaker.circleInfo.X + setupMaker.circleInfo.VelocityX, setupMaker.circleInfo.Y), GeometryFriends.XNAStub.Color.Red));
-            newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), new PointF(  setupMaker.circleInfo.X, setupMaker.circleInfo.Y + setupMaker.circleInfo.VelocityY), GeometryFriends.XNAStub.Color.Blue));
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X + 20, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X - 20, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X + 40, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X - 20, setupMaker.circleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
-            */
-            //Circle velocity
-            /*newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH, setupMaker.circleInfo.Y), 10, GeometryFriends.XNAStub.Color.Yellow));
-            if (setupMaker.actionSelectorRectangle.move != null)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.actionSelectorRectangle.move.x * GameInfo.PIXEL_LENGTH, setupMaker.rectangleInfo.Y), 10, GeometryFriends.XNAStub.Color.Green));
-            }*/
-            /*
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 100), "Velocidad: " + setupMaker.circleInfo.VelocityX, GeometryFriends.XNAStub.Color.Orange));
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 150), "Velocidad objetivo: " + setupMaker.actionSelectorCircle.target_velocity, GeometryFriends.XNAStub.Color.Orange));
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(600, 200), "Distancia: " + Math.Abs(setupMaker.circleInfo.X/ GameInfo.PIXEL_LENGTH - setupMaker.actionSelectorCircle.target_position), GeometryFriends.XNAStub.Color.Orange));
-
-            if (setupMaker.actionSelectorCircle.target_velocity > 0)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH- setupMaker.actionSelectorCircle.acceleration_distance, setupMaker.circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Pink));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.actionSelectorCircle.target_position * GameInfo.PIXEL_LENGTH + setupMaker.actionSelectorCircle.acceleration_distance, setupMaker.circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Pink));
-            }
-            if (setupMaker.circleInfo.VelocityX > 0)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X + setupMaker.actionSelectorCircle.brake_distance, setupMaker.circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Gray));
-            }
-            else {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X - setupMaker.actionSelectorCircle.brake_distance, setupMaker.circleInfo.Y), 5, GeometryFriends.XNAStub.Color.Gray));
-            }*/
-            
-            //Platform
-            setupMaker.currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);            
-            setupMaker.currentPlatformRectangle = setupMaker.levelMapRectangle.PlatformBelowRectangle(setupMaker.rectangleInfo);
-            
-            /*newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(setupMaker.rectangleInfo.X, setupMaker.rectangleInfo.Y), setupMaker.currentPlatformRectangle.id.ToString(), GeometryFriends.XNAStub.Color.Black));
-           
-            if (setupMaker.levelMapCircle.small_to_simplified.ContainsKey(setupMaker.currentPlatformCircle))
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), setupMaker.levelMapCircle.small_to_simplified[setupMaker.currentPlatformCircle].id.ToString(), GeometryFriends.XNAStub.Color.Black));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), "-1", GeometryFriends.XNAStub.Color.Black));
-
-            }
-            if (setupMaker.CircleAboveRectangle())
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y + GameInfo.CIRCLE_RADIUS),6, GeometryFriends.XNAStub.Color.Red));
-            }
-
-            if (!setupMaker.rectangleAgentReadyForCoop)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.rectangleInfo.X, setupMaker.rectangleInfo.Y), 6, GeometryFriends.XNAStub.Color.Red));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.rectangleInfo.X, setupMaker.rectangleInfo.Y), 6, GeometryFriends.XNAStub.Color.Green));
-            }
-
-            if (!setupMaker.circleAgentReadyForCoop)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), 6, GeometryFriends.XNAStub.Color.Red));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(setupMaker.circleInfo.X, setupMaker.circleInfo.Y), 6, GeometryFriends.XNAStub.Color.Green));
-            }
-            if (setupMaker.circleAgentReadyForCircleTilt)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 50), "circleAgentReadyForCircleTilt", GeometryFriends.XNAStub.Color.Green));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 50), "circleAgentNOTReadyForCircleTilt", GeometryFriends.XNAStub.Color.Red));
-            }
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 75), setupMaker.actionSelectorRectangle.count.ToString(), GeometryFriends.XNAStub.Color.Black));
-            if (setupMaker.circleInAir)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 100), "circleInAir", GeometryFriends.XNAStub.Color.Green));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 100), "circleNOTInAir", GeometryFriends.XNAStub.Color.Red));
-            }
-
-            if (setupMaker.actionSelectorRectangle.hasFinishedReplanning)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 125), "NO Replanificando", GeometryFriends.XNAStub.Color.Green));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 125), "Replanificando", GeometryFriends.XNAStub.Color.Red));
-            }
-            if (setupMaker.actionSelectorRectangle.waitingForCircleToLand)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 150), "Waiting For Circle to Land", GeometryFriends.XNAStub.Color.Green));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 150), "NOT Waiting For Circle to Land", GeometryFriends.XNAStub.Color.Red));
-            }
-            if (setupMaker.actionSelectorRectangle.avoidCircle)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 175), "AVOIDING CIRCLE", GeometryFriends.XNAStub.Color.Green));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 175), "NOT AVOIDING CIRCLE", GeometryFriends.XNAStub.Color.Red));
-            }
-            if (setupMaker.actionSelectorRectangle.pick_up_circle)
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 200), "PICKING CIRCLE UP", GeometryFriends.XNAStub.Color.Green));
-            }
-            else
-            {
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(700, 200), "NOT PICKING CIRCLE UP", GeometryFriends.XNAStub.Color.Red));
-            }*/
-
-            //Current Action
-            /*
-            if (currentAction == Moves.NO_ACTION)
-        {
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 300), 10, GeometryFriends.XNAStub.Color.Blue));
-        }
-        else if (currentAction == Moves.ROLL_LEFT)
-        {
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(550, 300), 10, GeometryFriends.XNAStub.Color.Green));
-        }
-        else if (currentAction == Moves.ROLL_RIGHT)
-        {
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(650, 300), 10, GeometryFriends.XNAStub.Color.Purple));
-        }
-        else if (currentAction == Moves.JUMP)
-        {
-            newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(600, 250), 10, GeometryFriends.XNAStub.Color.Yellow));
-        }*/
-        }
+       
 
         //implements abstract circle interface: registers updates from the agent's sensors that it is up to date with the latest environment information
         /*WARNING: this method is called independently from the agent update - Update(TimeSpan elapsedGameTime) - so care should be taken when using complex 
@@ -374,6 +196,10 @@ namespace GeometryFriendsAgents
                 return;
             }
 
+            setupMaker.currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
+            setupMaker.currentPlatformRectangle = setupMaker.levelMapRectangle.PlatformBelowRectangle(setupMaker.rectangleInfo);
+            UpdateDraw();
+
             if (Math.Abs(setupMaker.circleInfo.X - setupMaker.lastCircleInfo.X) <= 5 && Math.Abs(setupMaker.circleInfo.Y - setupMaker.lastCircleInfo.Y) <= 5)
             {
                 setupMaker.timesStuckCircle++;
@@ -399,10 +225,10 @@ namespace GeometryFriendsAgents
                     t_recovery = 0;
                     setupMaker.numStuck++;
                 }
+                setupMaker.circle_state = "Sistema de recuperación...";
                 return;
             }
-
-            UpdateDraw();
+            
             t_0 += elapsedGameTime.TotalMilliseconds;
             t += elapsedGameTime.TotalMilliseconds;
             if (t < 100)
@@ -415,6 +241,7 @@ namespace GeometryFriendsAgents
             {
                 if (currentPlatformCircle.id == -1 && setupMaker.CircleAboveRectangle())
                 {
+                    setupMaker.circle_state = "Manteniendo el equilibrio encima del rectángulo...";
                     Platform rectangle_platform = setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo);
                     foreach(int id in setupMaker.levelMapCircle.small_circle_to_small_rectangle.Keys)
                     {
@@ -427,6 +254,7 @@ namespace GeometryFriendsAgents
                 }
                 if (currentPlatformCircle.id == -1) // Ball is in the air
                 {
+                    setupMaker.circle_state = "Volando...";
                     if (!flag)
                     {
                         if (setupMaker.circleInfo.VelocityX > 0)
@@ -462,7 +290,8 @@ namespace GeometryFriendsAgents
                     setupMaker.UpdateChanging();
                     if (setupMaker.changing)
                     {
-                        if(setupMaker.rectangleInfo.X > setupMaker.circleInfo.X)
+                        setupMaker.circle_state = "Intercambiando posición con el rectángulo...";
+                        if (setupMaker.rectangleInfo.X > setupMaker.circleInfo.X)
                         {
                             if (setupMaker.circleInfo.VelocityX > 100)
                             {
@@ -514,6 +343,9 @@ namespace GeometryFriendsAgents
                     }
                     flag = tup.Item2.Item2;
                 }
+            }
+            else {
+                setupMaker.circle_state = "Evitando caer por un borde...";
             }
             if(currentAction == Moves.JUMP)
             {

@@ -401,10 +401,7 @@ namespace GeometryFriendsAgents
         {
             Platform p = platformList[k];
             int vx = i * velocity_step;
-            if(x==93 && vx==0 && !p.real)
-            {
-                int a = 0;
-            }
+            
             if (trajectoryAdder.circleSimulator.EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
             {
                 trajectoryAdder.AddJump(ref platformList, ref p, vx, MoveType.JUMP, x);

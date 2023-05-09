@@ -82,3 +82,9 @@ D:\TFG Infor\TFG---Geometry-Friends\GFUCMvCooperacionBueno\obj\Debug\GeometryFri
 D:\TFG Infor\TFG---Geometry-Friends\GFUCMvCooperacionBueno\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
 D:\TFG Infor\TFG---Geometry-Friends\GFUCMvCooperacionBueno\obj\Debug\GeometryFriendsAgents.dll
 D:\TFG Infor\TFG---Geometry-Friends\GFUCMvCooperacionBueno\obj\Debug\GeometryFriendsAgents.pdb
+D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMvCooperative\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.dll
+D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMvCooperative\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.pdb
+D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMvCooperative\obj\Debug\GeometryFriendsAgents.csproj.AssemblyReference.cache
+D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMvCooperative\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
+D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMvCooperative\obj\Debug\GeometryFriendsAgents.dll
+D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMvCooperative\obj\Debug\GeometryFriendsAgents.pdb
