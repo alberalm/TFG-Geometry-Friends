@@ -300,11 +300,7 @@ namespace GeometryFriendsAgents
                         color = GeometryFriends.XNAStub.Color.Blue;
                         break;
                 }
-                for (int x = p.leftEdge; x <= p.rightEdge; x++)
-                {
-                    debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, (p.yTop + 1) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), color));
-                }
-                //debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2, p.yTop * GameInfo.PIXEL_LENGTH), p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
+                debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(p.leftEdge * GameInfo.PIXEL_LENGTH, (p.yTop + 1) * GameInfo.PIXEL_LENGTH), new Size((p.rightEdge-p.leftEdge+1)*GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), color));
             }
         }
 
@@ -326,11 +322,11 @@ namespace GeometryFriendsAgents
             foreach (Platform p in levelMapRectangle.simplified_platforms)
             {
                 debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2, p.yTop * GameInfo.PIXEL_LENGTH + 10),
-                    new Size(20, 20), GeometryFriends.XNAStub.Color.Black));
+                    new Size(35, 20), GeometryFriends.XNAStub.Color.Black));
                 debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2 + 1, p.yTop * GameInfo.PIXEL_LENGTH + 9),
-                    new Size(18, 18), GeometryFriends.XNAStub.Color.Green));
+                    new Size(33, 18), GeometryFriends.XNAStub.Color.Green));
                 debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2, p.yTop * GameInfo.PIXEL_LENGTH + 6),
-                    p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
+                    "R" + p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
             }
         }
 
@@ -338,25 +334,19 @@ namespace GeometryFriendsAgents
         {
             foreach (Platform p in levelMapCircle.simplified_platforms)
             {
-                for (int x = p.leftEdge; x <= p.rightEdge; x++)
+                if (p.real)
                 {
-                    if (p.real)
-                    {
-                        debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x * GameInfo.PIXEL_LENGTH, p.yTop * GameInfo.PIXEL_LENGTH),
-                            new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Chocolate));
-                    }
-                    else
-                    {
-                        foreach (Platform small in levelMapCircle.simplified_to_small[p])
-                        {
-                            for (int x1 = small.leftEdge; x1 <= small.rightEdge; x1++)
-                            {
-                                debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(x1 * GameInfo.PIXEL_LENGTH, small.yTop * GameInfo.PIXEL_LENGTH),
-                                    new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.LightPink));
-                            }
-                        }
-                    }
+                    debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(p.leftEdge * GameInfo.PIXEL_LENGTH, p.yTop * GameInfo.PIXEL_LENGTH),
+                            new Size((p.rightEdge - p.leftEdge + 1) * GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.Chocolate));
                 }
+                else
+                {
+                    foreach (Platform small in levelMapCircle.simplified_to_small[p])
+                    {
+                        debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(small.leftEdge * GameInfo.PIXEL_LENGTH, small.yTop * GameInfo.PIXEL_LENGTH),
+                                    new Size((small.rightEdge-small.leftEdge+1)*GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH/2), GeometryFriends.XNAStub.Color.LightPink));
+                    }
+                }                
             }
         }
 
@@ -392,7 +382,7 @@ namespace GeometryFriendsAgents
         {
             foreach (Platform p in levelMapCircle.simplified_platforms)
             {
-                int tam = 20 + (p.id / 10) * 15;
+                int tam = 35 + (p.id / 10) * 15;
                 if (p.real)
                 {
 
@@ -401,7 +391,7 @@ namespace GeometryFriendsAgents
                     debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2 + 1, p.yTop * GameInfo.PIXEL_LENGTH - 20),
                         new Size(tam - 2, 18), GeometryFriends.XNAStub.Color.Yellow));
                     debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2, p.yTop * GameInfo.PIXEL_LENGTH - 24),
-                        p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
+                        "C"+p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
                 }
                 else
                 {
@@ -410,7 +400,7 @@ namespace GeometryFriendsAgents
                     debugInformation.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2 + 1, p.yTop * GameInfo.PIXEL_LENGTH - 50),
                         new Size(tam - 2, 18), GeometryFriends.XNAStub.Color.Yellow));
                     debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF((p.leftEdge + p.rightEdge) * GameInfo.PIXEL_LENGTH / 2, p.yTop * GameInfo.PIXEL_LENGTH - 54),
-                        p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
+                        "C" + p.id.ToString(), GeometryFriends.XNAStub.Color.Black));
                 }
 
             }
@@ -421,7 +411,9 @@ namespace GeometryFriendsAgents
             int count = 0;
             foreach (CollectibleRepresentation c in levelMapRectangle.initialCollectiblesInfo)
             {
-                debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(c.X - 5, c.Y - 5), count.ToString(), GeometryFriends.XNAStub.Color.Black));
+                if (collectiblesInfo.Contains(c)) {
+                    debugInformation.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(c.X - 20, c.Y - 13), "D" + count.ToString(), GeometryFriends.XNAStub.Color.Black));
+                }
                 count++;
             }
         }
@@ -433,8 +425,8 @@ namespace GeometryFriendsAgents
             //DrawLegend(ref debugInformation);
 
             //Rectangle obstacles info
-            //DrawRectangleSmallPlatforms(ref debugInformation);
-            //DrawRectangleSimplifiedPlatformsNumbers(ref debugInformation);
+            DrawRectangleSmallPlatforms(ref debugInformation);
+            DrawRectangleSimplifiedPlatformsNumbers(ref debugInformation);
             //DrawRectangleSmallPlatformsNumbers(ref debugInformation);
 
             //Circle obstacles info
@@ -442,14 +434,13 @@ namespace GeometryFriendsAgents
             DrawCircleSimplifiedPlatformsNumbers(ref debugInformation);
             //DrawCircleSmallPlatformsNumbers(ref List < DebugInformation > debugInformation);
 
-            //Collectibles info
-            //DrawCollectibles(ref debugInformation);
+            
         }
 
         public void PlanDebug(ref List<DebugInformation> newDebugInfo)
         {
             //Circle plan
-            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(0, 715), new Size(640, 80), color_yellow));
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(0, 715), new Size(640, 85), color_yellow));
             int x = 10;
             int y = 720;
             int step = 1;    
@@ -503,7 +494,7 @@ namespace GeometryFriendsAgents
             }
 
             //Rectangle plan
-            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(640, 715), new Size(640, 80), color_green));
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(640, 715), new Size(640, 85), color_green));
             x = 650;
             y = 720;
             step = 1;
@@ -526,6 +517,24 @@ namespace GeometryFriendsAgents
                     {
                         newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
                         step.ToString() + ".- WAIT en R" + m.landingPlatform.id.ToString(),
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                    else if (m.moveType == MoveType.MONOSIDEDROP)
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
+                        step.ToString() + ".- MNSDDROP de R" + m.departurePlatform.id.ToString() + " a R" + m.landingPlatform.id.ToString(),
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                    else if (m.moveType == MoveType.BIGHOLEADJ)
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
+                        step.ToString() + ".- BIGHADJ de R" + m.departurePlatform.id.ToString() + " a R" + m.landingPlatform.id.ToString(),
+                        GeometryFriends.XNAStub.Color.Black));
+                    }
+                    else if (m.moveType == MoveType.BIGHOLEDROP)
+                    {
+                        newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(x + (step <= 2 ? 0 : 320), y + 25 * step),
+                        step.ToString() + ".- BIGHDROP de R" + m.departurePlatform.id.ToString() + " a R" + m.landingPlatform.id.ToString(),
                         GeometryFriends.XNAStub.Color.Black));
                     }
                     else
@@ -650,7 +659,7 @@ namespace GeometryFriendsAgents
         }
         private void DrawRectangle(ref List<DebugInformation> newDebugInfo)
         {
-            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(1122, 316), new Size(118, 220), color_green));
+            newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(1122, 306), new Size(118, 220), color_green));
             //Rectangle velocity
             newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(rectangleInfo.X, rectangleInfo.Y), new PointF(rectangleInfo.X + rectangleInfo.VelocityX, rectangleInfo.Y), GeometryFriends.XNAStub.Color.Red));
             newDebugInfo.Add(DebugInformationFactory.CreateLineDebugInfo(new PointF(rectangleInfo.X, rectangleInfo.Y), new PointF(rectangleInfo.X, rectangleInfo.Y + rectangleInfo.VelocityY), GeometryFriends.XNAStub.Color.Blue));
@@ -658,14 +667,14 @@ namespace GeometryFriendsAgents
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X - 20, rectangleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X + 40, rectangleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
             newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(rectangleInfo.X - 20, rectangleInfo.Y), 2, GeometryFriends.XNAStub.Color.Silver));
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1122, 450), "Vx: " + (int)rectangleInfo.VelocityX, GeometryFriends.XNAStub.Color.Black));
-            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1122, 480), "Target vx: " + actionSelectorRectangle.target_velocity, GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1122, 440), "Vx: " + (int)rectangleInfo.VelocityX, GeometryFriends.XNAStub.Color.Black));
+            newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1122, 470), "Target vx: " + actionSelectorRectangle.target_velocity, GeometryFriends.XNAStub.Color.Black));
 
             //Rectangle target position
             if (actionSelectorRectangle.move != null)
             {
                 newDebugInfo.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(actionSelectorRectangle.move.x * GameInfo.PIXEL_LENGTH, rectangleInfo.Y), 10, GeometryFriends.XNAStub.Color.Green));
-                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1122, 510), "Dist. x: "+ (int)Math.Abs(rectangleInfo.X / GameInfo.PIXEL_LENGTH - actionSelectorRectangle.move.x), GeometryFriends.XNAStub.Color.Black));
+                newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(1122, 500), "Dist. x: "+ (int)Math.Abs(rectangleInfo.X / GameInfo.PIXEL_LENGTH - actionSelectorRectangle.move.x), GeometryFriends.XNAStub.Color.Black));
 
                 if (actionSelectorRectangle.target_velocity > 0)
                 {
@@ -701,19 +710,19 @@ namespace GeometryFriendsAgents
             }
             else if (rectangleAgent.currentAction == Moves.MOVE_LEFT)
             {
-                LeftArrow(1170, 375, ref newDebugInfo);
+                LeftArrow(1170, 365, ref newDebugInfo);
             }
             else if (rectangleAgent.currentAction == Moves.MOVE_RIGHT)
             {
-                RightArrow(1230, 375, ref newDebugInfo);
+                RightArrow(1230, 365, ref newDebugInfo);
             }
             else if (rectangleAgent.currentAction == Moves.MORPH_DOWN)
             {
-                DownArrow(1200, 405, ref newDebugInfo);
+                DownArrow(1200, 395, ref newDebugInfo);
             }
             else if (rectangleAgent.currentAction == Moves.MORPH_UP)
             {
-                UpArrow(1200, 345, ref newDebugInfo);
+                UpArrow(1200, 335, ref newDebugInfo);
             }
         }
         private void DrawPanels(ref List<DebugInformation> newDebugInfo)
@@ -870,6 +879,8 @@ namespace GeometryFriendsAgents
             /*DrawLevelMap(ref newDebugInfo);
             levelMapCircle.DrawConnections(ref newDebugInfo);
             levelMapRectangle.DrawConnections(ref newDebugInfo);*/
+            //DrawLevelMap(ref newDebugInfo);
+            DrawCollectibles(ref newDebugInfo);
             PlanDebug(ref newDebugInfo);
             DrawPanels(ref newDebugInfo);
             DrawCircle(ref newDebugInfo);

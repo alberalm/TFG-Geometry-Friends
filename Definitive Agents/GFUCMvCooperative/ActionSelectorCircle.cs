@@ -199,7 +199,7 @@ namespace GeometryFriendsAgents
                 string goal = "Coger diamante(s) ";
                 foreach (int d in move.diamondsCollected)
                 {
-                    goal += d.ToString() + " ";
+                    goal += "D"+d.ToString() + " ";
                 }
                 if (!move.departurePlatform.real || !move.landingPlatform.real)
                 {
@@ -216,19 +216,50 @@ namespace GeometryFriendsAgents
             {
                 move = plan[0];
                 if (move.moveType == MoveType.COOPMOVE) {
-                    setupMaker.circle_immediate_goal = "WAIT en C" + move.departurePlatform.id.ToString();
+                    if (setupMaker.actionSelectorRectangle.move.moveType==MoveType.CIRCLETILT)
+                    {
+                        setupMaker.circle_immediate_goal = "Ayudar al rectángulo a hacer un CIRCLETILT desde C" + move.departurePlatform.id.ToString();
+                    }
+                    else
+                    {
+                        setupMaker.circle_immediate_goal = "WAIT en C" + move.departurePlatform.id.ToString();
+                    }                    
                 }
                 else if (!move.departurePlatform.real)
                 {
                     setupMaker.circle_immediate_goal = move.moveType.ToString() + " de Rect (C" + move.departurePlatform.id.ToString() + ") a C" + move.landingPlatform.id.ToString();
+                    if (move.diamondsCollected.Count > 0)
+                    {
+                        setupMaker.circle_immediate_goal += " que alcanza ";
+                        foreach(int d in move.diamondsCollected)
+                        {
+                            setupMaker.circle_immediate_goal += "D"+d.ToString()+" ";
+                        }
+                    }
                 }
                 else if (!move.landingPlatform.real)
                 {
                     setupMaker.circle_immediate_goal = move.moveType.ToString() + " de C" + move.departurePlatform.id.ToString() + " a Rect (C" + move.landingPlatform.id.ToString()+")";
+                    if (move.diamondsCollected.Count > 0)
+                    {
+                        setupMaker.circle_immediate_goal += " que alcanza ";
+                        foreach (int d in move.diamondsCollected)
+                        {
+                            setupMaker.circle_immediate_goal += "D" + d.ToString() + " ";
+                        }
+                    }
                 }
                 else
                 {
                     setupMaker.circle_immediate_goal = move.moveType.ToString() + " de C" + move.departurePlatform.id.ToString() + " a C" + move.landingPlatform.id.ToString();
+                    if (move.diamondsCollected.Count > 0)
+                    {
+                        setupMaker.circle_immediate_goal += " que alcanza ";
+                        foreach (int d in move.diamondsCollected)
+                        {
+                            setupMaker.circle_immediate_goal += "D" + d.ToString() + " ";
+                        }
+                    }
                 }                
             }
             

@@ -331,7 +331,7 @@ namespace GeometryFriendsAgents
                     string goal = "Coger diamante(s) ";
                     foreach (int d in move.diamondsCollected)
                     {
-                        goal += d.ToString() + " ";
+                        goal += "D"+d.ToString() + " ";
                     }
                     if (!move.departurePlatform.real || !move.landingPlatform.real)
                     {
@@ -367,12 +367,28 @@ namespace GeometryFriendsAgents
                             }
                             else
                             {
-                                setupMaker.rectangle_immediate_goal = move.moveType.ToString() + " de C" + move.departurePlatform.id.ToString() + " a C" + move.landingPlatform.id.ToString();
+                                setupMaker.rectangle_immediate_goal = move.moveType.ToString() + " de R" + move.departurePlatform.id.ToString() + " a R" + move.landingPlatform.id.ToString();
+                                if (move.diamondsCollected.Count > 0)
+                                {
+                                    setupMaker.rectangle_immediate_goal += " que alcanza ";
+                                    foreach (int d in move.diamondsCollected)
+                                    {
+                                        setupMaker.rectangle_immediate_goal += "D" + d.ToString() + " ";
+                                    }
+                                }
                             }
                         }
                         else
                         {
-                            setupMaker.rectangle_immediate_goal = move.moveType.ToString() + " de C" + move.departurePlatform.id.ToString() + " a C" + move.landingPlatform.id.ToString();
+                            setupMaker.rectangle_immediate_goal = move.moveType.ToString() + " de R" + move.departurePlatform.id.ToString() + " a R" + move.landingPlatform.id.ToString();
+                            if (move.diamondsCollected.Count > 0)
+                            {
+                                setupMaker.rectangle_immediate_goal += " que alcanza ";
+                                foreach (int d in move.diamondsCollected)
+                                {
+                                    setupMaker.rectangle_immediate_goal += "D" + d.ToString() + " ";
+                                }
+                            }
                         }
                     }
                     else if (setupMaker.actionSelectorCircle.move == null)
@@ -529,7 +545,7 @@ namespace GeometryFriendsAgents
                 }// Circle wants to be above rectangle
                 else if (setupMaker.planCircle.Count > 0 && !setupMaker.planCircle[0].landingPlatform.real && setupMaker.planCircle[0].departurePlatform.real)
                 {
-                    setupMaker.rectangle_state = "Deslizandome hasta el punto de aterrizaje del círculo";
+                    setupMaker.rectangle_state = "Deslizándome hasta el punto de aterrizaje del círculo";
                     if (setupMaker.actionSelectorCircle.move != null && setupMaker.actionSelectorCircle.move.distanceToObstacle > 0)
                     {
                         move.x = 0;
