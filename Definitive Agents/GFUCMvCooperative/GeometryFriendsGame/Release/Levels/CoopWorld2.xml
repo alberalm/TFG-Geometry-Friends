@@ -108,6 +108,7 @@
     <BlackObstacles>
       <Obstacle width="400" height="160" X="840" Y="600" centered="false" />
       <Obstacle width="400" height="64" X="840" Y="536" centered="false" />
+    </BlackObstacles>
     <YellowObstacles>
       <Obstacle width="32" height="496" X="904" Y="40" centered="false" />
     </YellowObstacles>
