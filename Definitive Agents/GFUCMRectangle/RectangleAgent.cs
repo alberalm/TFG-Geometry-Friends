@@ -405,7 +405,7 @@ namespace GeometryFriendsAgents
                 timesStuck = 0;
             }
             
-            //UpdateDraw();
+            UpdateDraw();
 
             /*t += elapsedGameTime.TotalMilliseconds;
             

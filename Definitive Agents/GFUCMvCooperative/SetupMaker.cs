@@ -622,19 +622,7 @@ namespace GeometryFriendsAgents
                 newDebugInfo.Add(DebugInformationFactory.CreateTextDebugInfo(new PointF(circleInfo.X, circleInfo.Y), "-1", GeometryFriends.XNAStub.Color.Black));
 
             }
-            /*
-            CircleAboveRectangle()
-            rectangleAgentReadyForCoop
-            
-            circleAgentReadyForCoop
-            circleAgentReadyForCircleTilt
-            actionSelectorRectangle.count.ToString()
-            setupMaker.circleInAir
-            setupMaker.actionSelectorRectangle.hasFinishedReplanning
-            waitingForCircleToLand
-            avoidCircle
-            pick_up_circle
-            */
+          
 
             //Current Action            
             if (circleAgent.currentAction == Moves.NO_ACTION)
@@ -654,7 +642,6 @@ namespace GeometryFriendsAgents
                 UpArrow(80, 345, ref newDebugInfo);
             }
 
-            //Circle messages
             
         }
         private void DrawRectangle(ref List<DebugInformation> newDebugInfo)
@@ -727,9 +714,10 @@ namespace GeometryFriendsAgents
         }
         private void DrawPanels(ref List<DebugInformation> newDebugInfo)
         {           
+            //Top panels
             newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(0, 0), new Size(640, 130), color_yellow));
             newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(640, 0), new Size(640, 130), color_green));
-           
+           //Lateral panels
             newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(0, 80), new Size(40, 635), color_yellow));
             newDebugInfo.Add(DebugInformationFactory.CreateRectangleDebugInfo(new PointF(1240, 80), new Size(40, 635), color_green));
         }
@@ -876,10 +864,10 @@ namespace GeometryFriendsAgents
 
         public void ExplainabilitySystem(ref List<DebugInformation> newDebugInfo)
         {
-            /*DrawLevelMap(ref newDebugInfo);
+            /*
             levelMapCircle.DrawConnections(ref newDebugInfo);
             levelMapRectangle.DrawConnections(ref newDebugInfo);*/
-            //DrawLevelMap(ref newDebugInfo);
+            DrawLevelMap(ref newDebugInfo);
             DrawCollectibles(ref newDebugInfo);
             PlanDebug(ref newDebugInfo);
             DrawPanels(ref newDebugInfo);
