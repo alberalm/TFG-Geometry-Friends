@@ -1,13 +1,13 @@
-Geometry Friends Agents
-World: ;Circle2017
-level;runs;collectibles average;collectibles available;time average;time limit;score average
-1;10;3;3;27,3;120;454
-2;10;1,6;2;54,2;120;270
-3;10;3;3;18,1;120;470
-4;10;3;3;25,5;120;457
-5;10;3;3;21;120;465
-6;10;3;3;13,3;120;478
-7;10;1,9;2;46,5;120;312
-8;10;3;3;30;120;450
-9;10;1;1;9,6;120;284
-10;10;3;3;39,1;120;435
+Geometry Friends Agents;;;;;;;;
+World: ;Circle2017;;;;;;;
+level;runs;collectibles average;collectibles available;time average;time limit;score average;Optimum Score;Porcentaje optimo
+1;10;3;3;27,3;120;454;468;97
+2;10;1,6;2;54,2;120;270;390;69
+3;10;3;3;18,1;120;470;477;99
+4;10;3;3;25,5;120;457;477;96
+5;10;3;3;21;120;465;485;96
+6;10;3;3;13,3;120;478;487;98
+7;10;1,9;2;46,5;120;312;370;84
+8;10;3;3;30;120;450;490;92
+9;10;1;1;9,6;120;284;295;96
+10;10;3;3;39,1;120;435;487;89

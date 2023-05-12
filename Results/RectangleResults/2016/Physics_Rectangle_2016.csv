@@ -1,14 +1,14 @@
-Geometry Friends Agents;;;;;;
-World: ;Rectangle2016;;;;;
-level;runs;collectibles average;collectibles available;time average;time limit;score average
-1;10;1,7;2;31,4;40;213
-2;10;4;4;29;65;511
-3;10;2;2;7,5;35;358
-4;10;3;3;15;30;400
-5;10;3;3;17,9;40;411
-6;10;2;3;90;90;200
-7;10;3,8;4;43,1;90;484
-8;10;3;4;90;90;300
-9;10;2;2;12,8;90;372
-10;10;5;5;14,4;90;668
-;;;;;;3917
+Geometry Friends Agents;;;;;;;;
+World: ;Rectangle2016;;;;;;;
+level;runs;collectibles average;collectibles available;time average;time limit;score average;Optimum score;Porcentaje optimo
+1;10;1,7;2;31,4;40;213;350;61
+2;10;4;4;29;65;511;551;93
+3;10;2;2;7,5;35;358;383;93
+4;10;3;3;15;30;400;480;83
+5;10;3;3;17,9;40;411;465;88
+6;10;2;3;90;90;200;484;41
+7;10;3,8;4;43,1;90;484;567;85
+8;10;3;4;90;90;300;573;52
+9;10;2;2;12,8;90;372;389;96
+10;10;5;5;14,4;90;668;691;97
+;;;;;;3917;;
