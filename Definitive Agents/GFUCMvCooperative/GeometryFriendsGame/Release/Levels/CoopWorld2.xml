@@ -116,6 +116,7 @@
     <OrangeElevators />
     <HighScores>
       <HighScore name="No Name" value="52" />
+      <HighScore name="No Name" value="224" />
     </HighScores>
   </Level5>
   <Level6>
@@ -143,7 +144,10 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="34" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="35" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="46" />
+      <HighScore name="UCMAgent&amp;UCMAgent" value="57" />
     </HighScores>
   </Level6>
   <Level7>
@@ -234,4 +238,47 @@
       <HighScore name="UCMAgent&amp;UCMAgent" value="20" />
     </HighScores>
   </Level10>
+  <Level11>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="936" Y="696" />
+    <SquareStartingPosition X="360" Y="696" />
+    <Collectibles>
+      <Collectible X="104" Y="680" />
+      <Collectible X="1160" Y="664" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle width="176" height="48" X="40" Y="584" centered="false" />
+      <Obstacle width="48" height="128" X="168" Y="632" centered="false" />
+    </GreenObstacles>
+    <BlackObstacles />
+    <YellowObstacles>
+      <Obstacle width="48" height="160" X="1032" Y="600" centered="false" />
+      <Obstacle width="208" height="48" X="1032" Y="552" centered="false" />
+    </YellowObstacles>
+    <GreenElevators />
+    <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="8" />
+    </HighScores>
+  </Level11>
+  <Level12>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="648" Y="600" />
+    <SquareStartingPosition X="648" Y="696" />
+    <Collectibles>
+      <Collectible X="1160" Y="120" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="224" height="48" X="1016" Y="280" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent&amp;UCMAgent" value="19" />
+    </HighScores>
+  </Level12>
 </Levels>

@@ -864,8 +864,8 @@ namespace GeometryFriendsAgents
 
         public void ExplainabilitySystem(ref List<DebugInformation> newDebugInfo)
         {
-            /*
-            levelMapCircle.DrawConnections(ref newDebugInfo);
+            
+            /*levelMapCircle.DrawConnections(ref newDebugInfo);
             levelMapRectangle.DrawConnections(ref newDebugInfo);*/
             DrawLevelMap(ref newDebugInfo);
             DrawCollectibles(ref newDebugInfo);

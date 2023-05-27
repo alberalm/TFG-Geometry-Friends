@@ -318,7 +318,7 @@ namespace GeometryFriendsAgents
         //implements abstract circle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            UpdateDraw();
+            //UpdateDraw();
             t_0 += elapsedGameTime.TotalMilliseconds;
             t += elapsedGameTime.TotalMilliseconds;
             if (t < 100)

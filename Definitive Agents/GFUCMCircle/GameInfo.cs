@@ -40,7 +40,7 @@ namespace GeometryFriendsAgents
         public const int VELOCITY_STEP_RECTANGLE = 50;
         public const int VELOCITY_STEP_PHISICS = 15;
         public const int VELOCITY_STEP_QLEARNING = 20;
-        public const bool PHYSICS = false;
+        public const bool PHYSICS = true;
         public const int TESTING_VELOCITY = 200;
 
         public const string Q_PATH1 = @"Q_table_";
