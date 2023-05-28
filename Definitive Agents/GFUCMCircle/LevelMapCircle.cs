@@ -503,14 +503,11 @@ namespace GeometryFriendsAgents
                     return p;
                 }
             }
-            //This point shouldn't be reachable. If it is, we can debug it
-            int[] z = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
-                                                                 //int aux = z[-1];
-                                                                 //Bugs when the collision isn't whith the top of an obstacle aka platform 
+            //This point shouldn't be reachable.
             return new Platform(-2);
         }
 
-        protected int GetDiamondCollected(int x, int y)//Check this function. Possible bugs
+        protected int GetDiamondCollected(int x, int y)
         {
             int min = 0;
             float d = 10;
@@ -537,11 +534,11 @@ namespace GeometryFriendsAgents
         {
             if (vx > 0)
             {
-                return vx * vx <= 2 * GameInfo.CIRCLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (x - leftEdge - 1);//Más conservador que como estaba
+                return vx * vx <= 2 * GameInfo.CIRCLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (x - leftEdge - 1);
             }
             else
             {
-                return vx * vx <= 2 * GameInfo.CIRCLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge - 1 - x);//Más conservador que como estaba
+                return vx * vx <= 2 * GameInfo.CIRCLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge - 1 - x);
             }
         }
 

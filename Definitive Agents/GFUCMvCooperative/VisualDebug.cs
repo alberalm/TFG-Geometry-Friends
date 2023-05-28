@@ -23,10 +23,7 @@ namespace GeometryFriendsAgents
                 debugInformation.Add(DebugInformationFactory.CreateCircleDebugInfo(new PointF(x_t, y_t), 2, color));
             }
         }
-        public static void DrawVelocityComponents(ref List<DebugInformation> debugInformation, float x_0, float y_0, int numX, int numY, GeometryFriends.XNAStub.Color color)
-        {
-            
-        }
+        
         public static void change(ref GeometryFriends.XNAStub.Color color)
         {
 

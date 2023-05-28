@@ -46,8 +46,8 @@ namespace GeometryFriendsAgents
         public const string Q_PATH1 = @"Q_table_";
         public const string Q_PATH_RECT = @"Q_table_R_";
         public const string Q_PATH_EXTENSION = @".csv";
-        public const int TARGET_POINT_ERROR = 2;//Cambiado
-        public const int ERROR = 1;//Cambiado
+        public const int TARGET_POINT_ERROR = 2;
+        public const int ERROR = 1;
 
         public const double SEMI_COLLECTIBLE_HEIGHT = 32;
         public static int[] COLLECTIBLE_SIZE = { 1, 2, 3, 3, 2, 1 }; // Divided by 2

@@ -406,14 +406,7 @@ namespace GeometryFriendsAgents
             }
             
             UpdateDraw();
-
-            /*t += elapsedGameTime.TotalMilliseconds;
-            
-            if (t < 100)
-            {
-                return;
-            }
-            t = 0;*/
+                     
 
             if (t_0 > 0 || timesStuck > 30)
             {
@@ -548,43 +541,7 @@ namespace GeometryFriendsAgents
                         }
                         else if (actionSelector.move.moveType == MoveType.FALL)
                         {
-                            currentAction = actionSelector.move.moveDuringFlight;
-                            /*if(actionSelector.move.moveDuringFlight != Moves.NO_ACTION)
-                            {
-                                currentAction = actionSelector.move.moveDuringFlight;
-                            }
-                            else
-                            {
-                                int xmidpoint = (actionSelector.move.landingPlatform.leftEdge + actionSelector.move.landingPlatform.rightEdge) / 2;
-                                MoveInformation m_left = new MoveInformation(actionSelector.move);
-                                m_left.moveDuringFlight = Moves.MOVE_LEFT;
-                                m_left.landingPlatform = new Platform(-1);
-                                levelMap.SimulateMove(rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_left, RectangleShape.GetShape(rectangleInfo));
-                                MoveInformation m_right = new MoveInformation(actionSelector.move);
-                                m_right.moveDuringFlight = Moves.MOVE_RIGHT;
-                                m_right.landingPlatform = new Platform(-1);
-                                levelMap.SimulateMove(rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_right, RectangleShape.GetShape(rectangleInfo));
-                                currentAction = Moves.NO_ACTION;
-                                if (m_left.landingPlatform.id >= 0 &&
-                                    levelMap.small_to_simplified[m_left.landingPlatform].id == actionSelector.move.landingPlatform.id)
-                                {
-                                    if (Math.Abs(m_left.xlandPoint - xmidpoint) < Math.Abs(actionSelector.move.xlandPoint-xmidpoint))
-                                    {
-                                        currentAction = Moves.MOVE_LEFT;
-                                    }
-                                }
-                                if(m_right.landingPlatform.id >= 0 &&
-                                    levelMap.small_to_simplified[m_right.landingPlatform].id == actionSelector.move.landingPlatform.id)
-                                {
-                                    if ((currentAction == Moves.NO_ACTION &&
-                                        Math.Abs(m_right.xlandPoint - xmidpoint) < Math.Abs(actionSelector.move.xlandPoint - xmidpoint))
-                                        || (currentAction == Moves.MOVE_LEFT &&
-                                        Math.Abs(m_right.xlandPoint - xmidpoint) < Math.Abs(m_left.xlandPoint - xmidpoint)))
-                                    {
-                                        currentAction = Moves.MOVE_RIGHT;
-                                    }
-                                }
-                            }*/
+                            currentAction = actionSelector.move.moveDuringFlight;                            
                         }
                         else
                         {
@@ -631,14 +588,8 @@ namespace GeometryFriendsAgents
                         fullPlan = new List<MoveInformation>(plan);
                     }
 
-                    if (GameInfo.PHYSICS)
-                    {
-                        currentAction = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
-                    }
-                    else
-                    {
-                        //tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
-                    }
+                    
+                    currentAction = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
                     actionSelector.lastMove = currentAction;
                 }
             }

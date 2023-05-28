@@ -321,14 +321,6 @@ namespace GeometryFriendsAgents
             
             //UpdateDraw();
 
-            /*t += elapsedGameTime.TotalMilliseconds;
-            
-            if (t < 100)
-            {
-                return;
-            }
-            t = 0;*/
-
             if (((t_0 > 0 || setupMaker.timesStuckRectangle > 70) &&
                 (setupMaker.actionSelectorRectangle.move == null || setupMaker.actionSelectorRectangle.move.moveType != MoveType.COOPMOVE || setupMaker.currentPlatformRectangle.id == -1))
                 || ((t_0 > 0 || (setupMaker.timesStuckRectangle > 70 && setupMaker.timesStuckCircle > 70)) &&
@@ -486,43 +478,7 @@ namespace GeometryFriendsAgents
                         }
                         else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.FALL)
                         {
-                            currentAction = setupMaker.actionSelectorRectangle.move.moveDuringFlight;
-                            /*if(actionSelector.move.moveDuringFlight != Moves.NO_ACTION)
-                            {
-                                currentAction = actionSelector.move.moveDuringFlight;
-                            }
-                            else
-                            {
-                                int xmidpoint = (actionSelector.move.landingPlatform.leftEdge + actionSelector.move.landingPlatform.rightEdge) / 2;
-                                MoveInformation m_left = new MoveInformation(actionSelector.move);
-                                m_left.moveDuringFlight = Moves.MOVE_LEFT;
-                                m_left.landingPlatform = new Platform(-1);
-                                levelMapCircle.SimulateMove(rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_left, RectangleShape.GetShape(rectangleInfo));
-                                MoveInformation m_right = new MoveInformation(actionSelector.move);
-                                m_right.moveDuringFlight = Moves.MOVE_RIGHT;
-                                m_right.landingPlatform = new Platform(-1);
-                                levelMapCircle.SimulateMove(rectangleInfo.X, rectangleInfo.Y, rectangleInfo.VelocityX, rectangleInfo.VelocityY, ref m_right, RectangleShape.GetShape(rectangleInfo));
-                                currentAction = Moves.NO_ACTION;
-                                if (m_left.landingPlatform.id >= 0 &&
-                                    levelMapCircle.small_to_simplified[m_left.landingPlatform].id == actionSelector.move.landingPlatform.id)
-                                {
-                                    if (Math.Abs(m_left.xlandPoint - xmidpoint) < Math.Abs(actionSelector.move.xlandPoint-xmidpoint))
-                                    {
-                                        currentAction = Moves.MOVE_LEFT;
-                                    }
-                                }
-                                if(m_right.landingPlatform.id >= 0 &&
-                                    levelMapCircle.small_to_simplified[m_right.landingPlatform].id == actionSelector.move.landingPlatform.id)
-                                {
-                                    if ((currentAction == Moves.NO_ACTION &&
-                                        Math.Abs(m_right.xlandPoint - xmidpoint) < Math.Abs(actionSelector.move.xlandPoint - xmidpoint))
-                                        || (currentAction == Moves.MOVE_LEFT &&
-                                        Math.Abs(m_right.xlandPoint - xmidpoint) < Math.Abs(m_left.xlandPoint - xmidpoint)))
-                                    {
-                                        currentAction = Moves.MOVE_RIGHT;
-                                    }
-                                }
-                            }*/
+                            currentAction = setupMaker.actionSelectorRectangle.move.moveDuringFlight;                            
                         }
                         else
                         {

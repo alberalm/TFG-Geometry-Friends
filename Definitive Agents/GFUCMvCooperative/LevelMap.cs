@@ -17,7 +17,6 @@ namespace GeometryFriendsAgents
         {
             Top, Right, Bottom, Left, Diamond, Other, Agent, None
             // Note: Diamond only if it does not intersect with other obstacle
-            // TODO: Change this
         };
 
         public LevelMap()
@@ -77,33 +76,6 @@ namespace GeometryFriendsAgents
 
             //GenerateMoveInformation();
 
-            // DEBUG
-            /* String s = "\n";
-            s += "Number of platforms: " + platformList.Count.ToString() + "\n";
-            for (int i = 0; i < platformList.Count; i++)
-            {
-                Platform p = platformList[i];
-                s += "Platform id = " + p.id + "\n";
-                //s += "      Left edge = " + p.leftEdge + "\n";
-                //s += "      Right edge = " + p.rightEdge + "\n";
-                //s += "      Ytop = " + p.yTop + "\n";
-                s += "      Moves = " + p.moveInfoList.Count+ "\n";
-                foreach(MoveInformation m in p.moveInfoList)
-                {
-                    if (m.path.Count > 1)
-                    {
-                        s += "           Type = " + m.moveType.ToString()+ " LandingPlatform= " + m.landingPlatform.id+ " Distancia: " + m.distanceToObstacle.ToString();
-                        //s += "           Type = " + m.moveType.ToString() + " X= " + m.x + " VX= " + m.velocityX + " LandingPlatform= " + m.landingPlatform.id + " Shape=" + m.shape.ToString() + " Collectibles caught= ";
-                        foreach (int d in m.diamondsCollected)
-                        {
-                            s += d.ToString() + " ";
-                        }
-                        s += "\n";
-                    }
-                }
-            }
-
-            Log.LogInformation(s, true); */
         }
 
         protected void SetCollectibles(CollectibleRepresentation[] colI)

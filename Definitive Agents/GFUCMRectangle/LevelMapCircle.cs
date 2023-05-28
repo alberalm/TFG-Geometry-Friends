@@ -51,10 +51,7 @@ namespace GeometryFriendsAgents
                     return p;
                 }
             }
-            //This point shouldn't be reachable. If it is, we can debug it
-            int[] z = new int[] { 3, 4, 5, 5, 5, 5, 5, 5, 4, 3 };//Divided by 2
-                                                                 //int aux = z[-1];
-                                                                 //Bugs when the collision isn't whith the top of an obstacle aka platform 
+           //Bugs when the collision isn't whith the top of an obstacle aka platform 
             return new Platform(-2);
         }
 
