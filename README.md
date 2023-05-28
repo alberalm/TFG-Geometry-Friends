@@ -18,4 +18,4 @@ This repository contains the following folders:
 To try one of these agents, there are several methods to run the project:
 
 - If you are using Windows, you can just execute the GeometryFriends.exe file inside GeometryFriendsGame/Release. Once on the main menu, select the "Agents only" option and choose the level you want to test the agent on. Further information about how to execute each agent is available in the corresponding folders, especially to change between UCM Physics and UCM QLearning circle agents.
-- If you are using Linux/Mac or if you want to configure something (for example, change from the UCM Physics agent to the UCM QLearning agent when testing the circle agent), you need to follow the steps shown in this [tutotrial](https://geometryfriends.gaips.inesc-id.pt/guides/c%23).
+- If you are using Linux/Mac or if you want to configure something (for example, change from the UCM Physics agent to the UCM QLearning agent when testing the circle agent), you need to follow the steps shown in this [tutotrial](https://geometryfriends.gaips.inesc-id.pt/guides/c%23). This steps are also summarized in the **Definitive Agents** folder.
