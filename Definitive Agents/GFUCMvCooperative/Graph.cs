@@ -219,7 +219,7 @@ namespace GeometryFriendsAgents
                         }
                     }
                 }
-
+                /*
                 Tuple<Tuple<int, int>, int> node_tuple = new Tuple<Tuple<int, int>, int>
                     (
                     new Tuple<int, int>(n.plan_circle[n.plan_circle.Count - 1].landingPlatform.id, n.plan_rectangle[n.plan_rectangle.Count - 1].landingPlatform.id),
@@ -227,11 +227,15 @@ namespace GeometryFriendsAgents
                     );
 
                 // If we already have visited a similar node or enough time has passed, continue
-                if (seen.Contains(node_tuple) /*|| sw.ElapsedMilliseconds >= 500*/)
+                if (seen.Contains(node_tuple) || sw.ElapsedMilliseconds >= 500)
                 {
                     continue;
                 }
-                seen.Add(node_tuple);
+                seen.Add(node_tuple);*/
+                if (sw.ElapsedMilliseconds >= 500)
+                {
+                    continue;
+                }
                 // To eliminate false move
                 if (n.plan_circle[0].moveType == MoveType.NOMOVE)
                 {
@@ -328,6 +332,10 @@ namespace GeometryFriendsAgents
                 {
                     return false;
                 }
+            }
+            if(mc.moveType == MoveType.ADJACENT && mr.moveType != MoveType.ADJACENT)
+            {
+                return false;
             }
             if (mc.departurePlatform.real && mc.landingPlatform.real)
             {

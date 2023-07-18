@@ -20,6 +20,8 @@ namespace GeometryFriendsAgents
         public bool rightEdgeIsDangerous;
         public Moves moveDuringFlight;
         public bool risky;
+        public bool closeLeft;
+        public bool closeRight;
 
         public MoveInformation(MoveInformation other)
         {
@@ -36,6 +38,8 @@ namespace GeometryFriendsAgents
             this.rightEdgeIsDangerous = other.rightEdgeIsDangerous;
             this.moveDuringFlight = other.moveDuringFlight;
             this.risky = other.risky;
+            this.closeLeft = other.closeLeft;
+            this.closeRight = other.closeRight;
         }
 
         public MoveInformation(Platform landingPlatform)
@@ -52,6 +56,8 @@ namespace GeometryFriendsAgents
             this.distanceToObstacle = 0;
             this.moveDuringFlight = Moves.NO_ACTION;
             this.risky = false;
+            this.closeLeft = false;
+            this.closeRight = false;
         }
 
         public MoveInformation(Platform landingPlatform, Platform departurePlatform, int x, int xlandPoint, int velocityX, MoveType moveType, List<int> diamondsCollected, List<Tuple<float, float>> path, int distanceToObstacle)

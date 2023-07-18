@@ -27,10 +27,10 @@
     <TimeLimit value="90" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="39" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="44" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="53" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="57" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="58" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="64" />
     </HighScores>
   </Level1>
   <Level2>
@@ -54,6 +54,7 @@
     <TimeLimit value="30" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="21" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="22" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="22" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="23" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
@@ -83,6 +84,7 @@
     <TimeLimit value="60" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="26" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="29" />
     </HighScores>
   </Level3>
@@ -108,6 +110,7 @@
     <TimeLimit value="60" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="20" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="27" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="27" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="29" />
     </HighScores>
@@ -135,9 +138,9 @@
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="20" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="22" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="24" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="25" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="29" />
     </HighScores>
   </Level5>
   <Level6>

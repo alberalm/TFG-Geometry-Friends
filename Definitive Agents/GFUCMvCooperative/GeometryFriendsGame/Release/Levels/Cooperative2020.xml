@@ -16,7 +16,9 @@
     <TimeLimit value="180" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="13" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="15" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="15" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="43" />
     </HighScores>
   </Level1>
   <Level2>
@@ -120,6 +122,7 @@
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="15" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="15" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="28" />
     </HighScores>
   </Level5>
   <Level6>
@@ -144,9 +147,10 @@
     <TimeLimit value="180" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="24" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="29" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="35" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="52" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="55" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="174" />
     </HighScores>
   </Level6>
   <Level7>
@@ -167,11 +171,11 @@
     <OrangeElevators />
     <TimeLimit value="60" />
     <HighScores>
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="0" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="1" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="1" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="1" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="2" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="3" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="3" />
     </HighScores>
   </Level7>
   <Level8>
@@ -272,6 +276,7 @@
     <TimeLimit value="240" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="82" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="92" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="114" />
     </HighScores>
   </Level10>

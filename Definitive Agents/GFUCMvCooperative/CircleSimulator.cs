@@ -155,14 +155,31 @@ namespace GeometryFriendsAgents
                         {
                             if (x_t + i >= 0 && x_t + i < GameInfo.LEVEL_MAP_WIDTH && (levelMap[x_t + i, y_t + k] == PixelType.OBSTACLE || levelMap[x_t + i, y_t + k] == PixelType.PLATFORM))
                             {
-                                if ((int)(i * i + k * k) < m.distanceToObstacle * m.distanceToObstacle)
+                                if (m.distanceToObstacle <= 6)
+                                {
+                                    if (k < 0)
+                                    {
+                                        m.closeLeft = true;
+                                    }
+                                    else
+                                    {
+                                        m.closeRight = true;
+                                    }
+                                }
+                                if (m.closeLeft && m.closeRight)
+                                {
+                                    m.risky = true;
+                                }
+                                if ((int)(i * i + k * k) <= m.distanceToObstacle * m.distanceToObstacle)
                                 {
                                     m.distanceToObstacle = (int)Math.Sqrt(i * i + k * k);
+                                    
                                 }
                             }
                         }
                     }
                 }
+                
                 t += dt;
                 x_tfloat = x_0 + vx_0 * t;
                 y_tfloat = (float)(y_0 - vy_0 * t + GameInfo.GRAVITY * Math.Pow(t, 2) / 2);

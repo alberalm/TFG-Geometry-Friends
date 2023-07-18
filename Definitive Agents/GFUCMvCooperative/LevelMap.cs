@@ -165,7 +165,7 @@ namespace GeometryFriendsAgents
 
         protected abstract void PlatformUnion();
 
-        public abstract void GenerateMoveInformation();
+        public abstract void GenerateMoveInformation(LevelMapRectangle levelMapRectangle);
 
         public abstract Platform GetPlatform(int x, int y);
 

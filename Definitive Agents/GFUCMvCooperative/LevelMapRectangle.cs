@@ -85,7 +85,7 @@ namespace GeometryFriendsAgents
             moveGenerator.trajectoryAdder.rectangleSimulator.DrawConnectionsVertex(ref debugInformation);
         }
 
-        public override void GenerateMoveInformation()
+        public override void GenerateMoveInformation(LevelMapRectangle levelMapRectangle)
         {
             // ADJACENT MOVES
             for (int k = 0; k < platformList.Count; k++)

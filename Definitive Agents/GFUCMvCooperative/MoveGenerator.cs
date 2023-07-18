@@ -397,18 +397,18 @@ namespace GeometryFriendsAgents
             }
         }
 
-        public void GenerateJump(ref List<Platform> platformList, int k, int i, int x, int velocity_step)
+        public void GenerateJump(ref List<Platform> platformList, int k, int i, int x, int velocity_step, LevelMapRectangle levelMapRectangle)
         {
             Platform p = platformList[k];
             int vx = i * velocity_step;
             
             if (trajectoryAdder.circleSimulator.EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
             {
-                trajectoryAdder.AddJump(ref platformList, ref p, vx, MoveType.JUMP, x);
+                trajectoryAdder.AddJump(ref platformList, ref p, vx, MoveType.JUMP, x, levelMapRectangle);
             }
             if (trajectoryAdder.circleSimulator.EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, -vx))
             {
-                trajectoryAdder.AddJump(ref platformList, ref p, -vx, MoveType.JUMP, x);
+                trajectoryAdder.AddJump(ref platformList, ref p, -vx, MoveType.JUMP, x, levelMapRectangle);
             }
         }
 

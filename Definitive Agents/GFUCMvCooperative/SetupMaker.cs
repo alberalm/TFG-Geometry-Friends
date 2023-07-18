@@ -867,7 +867,7 @@ namespace GeometryFriendsAgents
             
             /*levelMapCircle.DrawConnections(ref newDebugInfo);
             levelMapRectangle.DrawConnections(ref newDebugInfo);*/
-            //DrawLevelMap(ref newDebugInfo);
+            DrawLevelMap(ref newDebugInfo);
             DrawCollectibles(ref newDebugInfo);
             PlanDebug(ref newDebugInfo);
             DrawPanels(ref newDebugInfo);

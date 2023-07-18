@@ -271,7 +271,7 @@ namespace GeometryFriendsAgents
             small_circle_to_small_rectangle = aux_dict;
         }
 
-        public override void GenerateMoveInformation()
+        public override void GenerateMoveInformation(LevelMapRectangle levelMapRectangle)
         {
             int num_velocities, velocity_step;
             if (GameInfo.PHYSICS)
@@ -307,7 +307,7 @@ namespace GeometryFriendsAgents
                         Parallel.For(0, num_velocities + 1, i =>
                         //for (int i = 0; i < num_velocities + 1; i++)
                         {
-                            moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step);
+                            moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step, levelMapRectangle);
                         });
                         //}
                     }
@@ -328,7 +328,7 @@ namespace GeometryFriendsAgents
                         }
                         Parallel.For(0, l, i =>
                         {
-                            moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step);
+                            moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step,levelMapRectangle);
                         });
                     }
                 });

@@ -18,7 +18,7 @@ namespace GeometryFriendsAgents
     {
         //agent implementation specificiation
         private bool implementedAgent;
-        private string agentName = "UCMAgent";
+        private string agentName = "UCMRectangleAgent";
 
         //auxiliary variables for agent action
         public Moves currentAction;

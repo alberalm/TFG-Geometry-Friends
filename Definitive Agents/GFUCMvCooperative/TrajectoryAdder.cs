@@ -2,7 +2,9 @@
 using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using static GeometryFriendsAgents.LevelMap;
+using static GeometryFriendsAgents.RectangleShape;
 
 namespace GeometryFriendsAgents
 {
@@ -343,17 +345,38 @@ namespace GeometryFriendsAgents
             }
         }
 
-        public void AddJump(ref List<Platform> platformList, ref Platform p, int vx, MoveType moveType, int x)
+        public void AddJump(ref List<Platform> platformList, ref Platform p, int vx, MoveType moveType, int x, LevelMapRectangle levelMapRectangle)
         {
             MoveInformation m = new MoveInformation(new Platform(-1), p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
             List<MoveInformation> move_list = circleSimulator.SimulateMove(ref platformList, x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, vx, (int)GameInfo.JUMP_VELOCITYY, ref m, 0.015f);
             foreach(MoveInformation move in move_list)
             {
                 MoveInformation moveaux = move;
-                if(move.departurePlatform.real || move.landingPlatform.real || move.diamondsCollected.Count != 0)
+                
+                bool valid = true;
+                
+                int xPlatform = move.xlandPoint;
+                int yPlatform = move.landingPlatform.yTop + RectangleShape.height(RectangleShape.Shape.HORIZONTAL);
+                foreach (Platform platform in levelMapRectangle.platformList)
                 {
-                    AddToPlatform(ref platformList, ref p, ref moveaux, move.CompareCircle);
+                    if (platform.yTop == yPlatform && platform.leftEdge < xPlatform && platform.rightEdge >= xPlatform)
+                    {
+                         valid=platform.real;
+                         break;
+                    }
                 }
+                
+                if (!move.landingPlatform.real && !valid)
+                {
+                    //Shouldn't add move
+                }
+                else
+                {
+                    if (move.departurePlatform.real || move.landingPlatform.real || move.diamondsCollected.Count != 0)
+                    {
+                        AddToPlatform(ref platformList, ref p, ref moveaux, move.CompareCircle);
+                    }
+                }                
             }
         }
     }

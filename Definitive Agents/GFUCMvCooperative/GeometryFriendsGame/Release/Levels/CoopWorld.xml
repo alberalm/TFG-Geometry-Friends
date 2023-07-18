@@ -59,6 +59,8 @@
     <GreenElevators />
     <OrangeElevators />
     <HighScores>
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="6" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="7" />
       <HighScore name="No Name" value="13" />
     </HighScores>
   </Level3>

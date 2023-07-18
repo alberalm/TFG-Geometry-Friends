@@ -449,90 +449,98 @@ namespace GeometryFriendsAgents
                     count = 0;
                     waitingForCircleToLand = false;
                 }
-                int w = 0;
-                if (setupMaker.actionSelectorCircle.move != null)
+
+                if (setupMaker.actionSelectorCircle.move != null && setupMaker.actionSelectorCircle.move.moveType == MoveType.ADJACENT)
                 {
-                    w = RectangleShape.width(RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[0].Item2 + GameInfo.CIRCLE_RADIUS))));
-                    if (setupMaker.actionSelectorCircle.move.velocityX == 0)
-                    {
-                        move.x = setupMaker.actionSelectorCircle.move.x;
-                    }
-                    else if (setupMaker.actionSelectorCircle.move.velocityX > 0)
-                    {
-                        move.x = setupMaker.actionSelectorCircle.move.x - w / 2 + 4;
-                    }
-                    else
-                    {
-                        move.x = setupMaker.actionSelectorCircle.move.x + w / 2 - 3;
-                    }
+                    m = getPhisicsMove(rI, move);
                 }
-                
-                move.shape = RectangleShape.Shape.HORIZONTAL;
-                move.velocityX = 0;
-                move.moveType = MoveType.COOPMOVE;
-                m = getPhisicsMove(rI, move);
-                if (Math.Abs(setupMaker.rectangleInfo.X - move.x * GameInfo.PIXEL_LENGTH) <  GameInfo.PIXEL_LENGTH
-                    && Math.Abs(setupMaker.rectangleInfo.VelocityX) < 20)
-                {
-                    m = Moves.NO_ACTION;
-                }
-                if(Math.Abs(setupMaker.rectangleInfo.X - move.x * GameInfo.PIXEL_LENGTH) < 10 * GameInfo.PIXEL_LENGTH
-                    && Math.Abs(setupMaker.rectangleInfo.VelocityX) < 75)
-                {
-                    foreach(Platform small_p in setupMaker.levelMapCircle.simplified_to_small[setupMaker.actionSelectorCircle.move.departurePlatform])
-                    {
-                        if (Math.Abs(small_p.yTop*GameInfo.PIXEL_LENGTH - GameInfo.CIRCLE_RADIUS - setupMaker.actionSelectorCircle.move.path[0].Item2) < GameInfo.PIXEL_LENGTH)
-                        {
-                            foreach(RectangleShape.Shape shape in GameInfo.SHAPES)
-                            {
-                                if (small_p.shapes[(int)shape])
-                                {
-                                    move.shape = shape;
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                    }
-                    if(Math.Abs(RectangleShape.fheight(move.shape) - setupMaker.rectangleInfo.Height) < GameInfo.PIXEL_LENGTH / 2)
-                    {
-                        setupMaker.rectangleAgentReadyForCoop = true;
-                    }
-                }
-                if (!setupMaker.circleAgentReadyForCoop)
-                {
+                else
+                {                   
+                    int w = 0;
                     if (setupMaker.actionSelectorCircle.move != null)
                     {
-                        if (setupMaker.actionSelectorCircle.move.departurePlatform.id == setupMaker.actionSelectorCircle.move.landingPlatform.id)
+                        w = RectangleShape.width(RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[0].Item2 + GameInfo.CIRCLE_RADIUS))));
+                        if (setupMaker.actionSelectorCircle.move.velocityX == 0)
                         {
-                            PrepareForCircleLanding(true);
-                            float height = currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[setupMaker.actionSelectorCircle.move.path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS);
-                            move.shape = RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, height));                          
-                            waitingForCircleToLand = true;
-                            if (setupMaker.circleInfo.VelocityY < 0)
-                            {
-                                setupMaker.circleInAir = true;
-                            }
+                            move.x = setupMaker.actionSelectorCircle.move.x;
+                        }
+                        else if (setupMaker.actionSelectorCircle.move.velocityX > 0)
+                        {
+                            move.x = setupMaker.actionSelectorCircle.move.x - w / 2 + 4;
                         }
                         else
                         {
-                            if(setupMaker.actionSelectorCircle.move.landingPlatform.yTop > setupMaker.currentPlatformRectangle.yTop + 1 - GameInfo.HORIZONTAL_RECTANGLE_HEIGHT / GameInfo.PIXEL_LENGTH)
+                            move.x = setupMaker.actionSelectorCircle.move.x + w / 2 - 3;
+                        }
+                    }
+
+                    move.shape = RectangleShape.Shape.HORIZONTAL;
+                    move.velocityX = 0;
+                    move.moveType = MoveType.COOPMOVE;
+                    m = getPhisicsMove(rI, move);
+                    if (Math.Abs(setupMaker.rectangleInfo.X - move.x * GameInfo.PIXEL_LENGTH) < GameInfo.PIXEL_LENGTH
+                        && Math.Abs(setupMaker.rectangleInfo.VelocityX) < 20)
+                    {
+                        m = Moves.NO_ACTION;
+                    }
+                    if (Math.Abs(setupMaker.rectangleInfo.X - move.x * GameInfo.PIXEL_LENGTH) < 10 * GameInfo.PIXEL_LENGTH
+                        && Math.Abs(setupMaker.rectangleInfo.VelocityX) < 75)
+                    {
+                        foreach (Platform small_p in setupMaker.levelMapCircle.simplified_to_small[setupMaker.actionSelectorCircle.move.departurePlatform])
+                        {
+                            if (Math.Abs(small_p.yTop * GameInfo.PIXEL_LENGTH - GameInfo.CIRCLE_RADIUS - setupMaker.actionSelectorCircle.move.path[0].Item2) < GameInfo.PIXEL_LENGTH)
                             {
-                                PrepareForCircleLanding(false);
-                                avoidCircle = true;
+                                foreach (RectangleShape.Shape shape in GameInfo.SHAPES)
+                                {
+                                    if (small_p.shapes[(int)shape])
+                                    {
+                                        move.shape = shape;
+                                        break;
+                                    }
+                                }
+                                break;
                             }
-                            else
+                        }
+                        if (Math.Abs(RectangleShape.fheight(move.shape) - setupMaker.rectangleInfo.Height) < GameInfo.PIXEL_LENGTH / 2)
+                        {
+                            setupMaker.rectangleAgentReadyForCoop = true;
+                        }
+                    }
+                    if (!setupMaker.circleAgentReadyForCoop)
+                    {
+                        if (setupMaker.actionSelectorCircle.move != null)
+                        {
+                            if (setupMaker.actionSelectorCircle.move.departurePlatform.id == setupMaker.actionSelectorCircle.move.landingPlatform.id)
                             {
                                 PrepareForCircleLanding(true);
-                                waitingForCircleToLand = true;
                                 float height = currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[setupMaker.actionSelectorCircle.move.path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS);
                                 move.shape = RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, height));
+                                waitingForCircleToLand = true;
                                 if (setupMaker.circleInfo.VelocityY < 0)
                                 {
                                     setupMaker.circleInAir = true;
                                 }
                             }
-                        }                        
+                            else
+                            {
+                                if (setupMaker.actionSelectorCircle.move.landingPlatform.yTop > setupMaker.currentPlatformRectangle.yTop + 1 - GameInfo.HORIZONTAL_RECTANGLE_HEIGHT / GameInfo.PIXEL_LENGTH)
+                                {
+                                    PrepareForCircleLanding(false);
+                                    avoidCircle = true;
+                                }
+                                else
+                                {
+                                    PrepareForCircleLanding(true);
+                                    waitingForCircleToLand = true;
+                                    float height = currentPlatform.yTop * GameInfo.PIXEL_LENGTH - (setupMaker.actionSelectorCircle.move.path[setupMaker.actionSelectorCircle.move.path.Count - 1].Item2 + GameInfo.CIRCLE_RADIUS);
+                                    move.shape = RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, height));
+                                    if (setupMaker.circleInfo.VelocityY < 0)
+                                    {
+                                        setupMaker.circleInAir = true;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
