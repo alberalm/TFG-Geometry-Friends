@@ -1,3 +1,0 @@
-El de Reinforcement Learning solo funciona el círculo. Peor que nivel de NKUST mas o menos
-El rectángulo de Subgoal Astar funciona. Peor que el nuestro pero algo para comparar. El círculo no funciona.
-El rectángulo de RERT es candidato a ser testeado. Peor que el nuestro pero funciona. El círculo también funciona y hace algunas cosas bien pero peor que Ricardo/BrianCook. Sin cooperación.
