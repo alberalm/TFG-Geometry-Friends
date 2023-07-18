@@ -1,0 +1,285 @@
+<Levels>
+  <Level1>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="104" Y="248" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="776" Y="504" />
+      <Collectible X="104" Y="680" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="744" Y="568" centered="false" height="64" width="16" />
+      <Obstacle X="40" Y="312" centered="false" height="48" width="240" />
+      <Obstacle X="40" Y="56" centered="false" height="16" width="64" />
+      <Obstacle X="24" Y="360" centered="false" height="64" width="96" />
+      <Obstacle X="40" Y="40" centered="false" height="128" width="144" />
+      <Obstacle X="744" Y="568" centered="false" height="208" width="80" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="12" />
+      <HighScore name="UCMAgent" value="12" />
+      <HighScore name="UCMAgent" value="13" />
+      <HighScore name="UCMAgent" value="25" />
+      <HighScore name="UCMAgent" value="30" />
+    </HighScores>
+  </Level1>
+  <Level2>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="104" Y="680" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="1128" Y="200" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="376" Y="456" centered="false" height="64" width="176" />
+      <Obstacle X="808" Y="232" centered="false" height="64" width="112" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="41" />
+    </HighScores>
+  </Level2>
+  <Level3>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="584" Y="312" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="696" Y="440" />
+      <Collectible X="696" Y="536" />
+      <Collectible X="696" Y="632" />
+      <Collectible X="264" Y="296" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="472" Y="360" centered="false" height="32" width="176" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="12" />
+      <HighScore name="UCMAgent" value="14" />
+      <HighScore name="UCMAgent" value="14" />
+    </HighScores>
+  </Level3>
+  <Level4>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="88" Y="712" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="88" Y="168" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="40" Y="216" centered="false" height="32" width="304" />
+      <Obstacle X="344" Y="360" centered="false" height="32" width="128" />
+      <Obstacle X="504" Y="248" centered="false" height="384" width="32" />
+      <Obstacle X="536" Y="600" centered="false" height="32" width="192" />
+      <Obstacle X="504" Y="216" centered="false" height="32" width="256" />
+      <Obstacle X="856" Y="440" centered="false" height="32" width="192" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="18" />
+      <HighScore name="UCMAgent" value="20" />
+      <HighScore name="UCMAgent" value="20" />
+      <HighScore name="UCMAgent" value="20" />
+      <HighScore name="UCMAgent" value="20" />
+    </HighScores>
+  </Level4>
+  <Level5>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="168" Y="168" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="248" Y="472" />
+      <Collectible X="88" Y="696" />
+      <Collectible X="1192" Y="696" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="152" Y="216" centered="false" height="304" width="32" />
+      <Obstacle X="152" Y="520" centered="false" height="32" width="1024" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="15" />
+      <HighScore name="UCMAgent" value="16" />
+      <HighScore name="UCMAgent" value="17" />
+      <HighScore name="UCMAgent" value="23" />
+      <HighScore name="UCMAgent" value="24" />
+    </HighScores>
+  </Level5>
+  <Level6>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="1192" Y="328" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="968" Y="392" />
+      <Collectible X="712" Y="296" />
+      <Collectible X="424" Y="584" />
+      <Collectible X="104" Y="408" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="1160" Y="392" centered="false" height="368" width="80" />
+      <Obstacle X="936" Y="472" centered="false" height="320" width="64" />
+      <Obstacle X="680" Y="584" centered="false" height="192" width="64" />
+      <Obstacle X="392" Y="696" centered="false" height="80" width="64" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="31" />
+      <HighScore name="UCMAgent" value="32" />
+      <HighScore name="UCMAgent" value="36" />
+      <HighScore name="UCMAgent" value="50" />
+    </HighScores>
+  </Level6>
+  <Level7>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="88" Y="104" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="120" Y="456" />
+      <Collectible X="1176" Y="696" />
+      <Collectible X="1176" Y="232" />
+      <Collectible X="120" Y="296" />
+      <Collectible X="1176" Y="472" />
+      <Collectible X="120" Y="664" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="40" Y="152" centered="false" height="48" width="672" />
+      <Obstacle X="520" Y="312" centered="false" height="48" width="720" />
+      <Obstacle X="40" Y="344" centered="false" height="48" width="208" />
+      <Obstacle X="40" Y="504" centered="false" height="48" width="208" />
+      <Obstacle X="520" Y="584" centered="false" height="48" width="736" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="50" />
+      <HighScore name="UCMAgent" value="50" />
+      <HighScore name="UCMAgent" value="52" />
+    </HighScores>
+  </Level7>
+  <Level8>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="120" Y="88" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="1176" Y="152" />
+      <Collectible X="104" Y="312" />
+      <Collectible X="1176" Y="440" />
+      <Collectible X="104" Y="600" />
+      <Collectible X="1192" Y="712" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="40" Y="136" centered="false" height="48" width="1072" />
+      <Obstacle X="168" Y="280" centered="false" height="48" width="1088" />
+      <Obstacle X="24" Y="424" centered="false" height="48" width="1088" />
+      <Obstacle X="168" Y="568" centered="false" height="48" width="1120" />
+      <Obstacle X="40" Y="712" centered="false" height="48" width="1088" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="31" />
+      <HighScore name="UCMAgent" value="31" />
+      <HighScore name="UCMAgent" value="31" />
+    </HighScores>
+  </Level8>
+  <Level9>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="600" Y="712" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="88" Y="712" />
+      <Collectible X="1160" Y="712" />
+      <Collectible X="600" Y="120" />
+      <Collectible X="88" Y="328" />
+      <Collectible X="1160" Y="328" />
+      <Collectible X="88" Y="88" />
+      <Collectible X="1160" Y="88" />
+      <Collectible X="600" Y="392" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="40" Y="536" centered="false" height="32" width="352" />
+      <Obstacle X="808" Y="536" centered="false" height="32" width="432" />
+      <Obstacle X="408" Y="312" centered="false" height="32" width="400" />
+      <Obstacle X="40" Y="248" centered="false" height="32" width="208" />
+      <Obstacle X="1016" Y="248" centered="false" height="32" width="224" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="51" />
+      <HighScore name="UCMAgent" value="52" />
+      <HighScore name="UCMAgent" value="56" />
+    </HighScores>
+  </Level9>
+  <Level10>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="632" Y="88" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="664" Y="424" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="184" Y="632" centered="false" height="32" width="304" />
+      <Obstacle X="184" Y="136" centered="false" height="496" width="32" />
+      <Obstacle X="216" Y="136" centered="false" height="32" width="912" />
+      <Obstacle X="1096" Y="168" centered="false" height="336" width="32" />
+      <Obstacle X="600" Y="472" centered="false" height="32" width="496" />
+      <Obstacle X="600" Y="344" centered="false" height="144" width="32" />
+      <Obstacle X="632" Y="344" centered="false" height="32" width="352" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="25" />
+      <HighScore name="UCMAgent" value="26" />
+      <HighScore name="UCMAgent" value="27" />
+    </HighScores>
+  </Level10>
+</Levels>
