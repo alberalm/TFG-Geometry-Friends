@@ -321,7 +321,13 @@ namespace GeometryFriendsAgents
                             {
                                 if (nextMoveInThisPlatform.DistanceToRollingEdge() < min_distance || move.DistanceToRollingEdge() >= min_distance)
                                 {
-                                    return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(move)));
+                                    int jumpHeight = (int) (GameInfo.JUMP_VELOCITYY * GameInfo.JUMP_VELOCITYY / (2 * GameInfo.GRAVITY))/GameInfo.PIXEL_LENGTH;
+                                    if (nextMoveInThisPlatform.landingPlatform.real || 
+                                        (setupMaker.rectangleInfo.X-setupMaker.circleInfo.X)*setupMaker.circleInfo.VelocityX<=0 ||
+                                        Math.Abs(nextMoveInThisPlatform.departurePlatform.yTop- jumpHeight - nextMoveInThisPlatform.landingPlatform.yTop) > 3)
+                                    {
+                                        return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(move)));
+                                    }                                   
                                 }
                             }
 
@@ -359,6 +365,7 @@ namespace GeometryFriendsAgents
                         {
                             return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, false));
                         }
+                        
                         if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= 5*GameInfo.PIXEL_LENGTH && Math.Abs(cI.VelocityX) < 30)
                         {
                             setupMaker.circle_state = "Preparado para hacer un CIRCLETILT...";
@@ -395,7 +402,14 @@ namespace GeometryFriendsAgents
                         {
                             if (moveType == MoveType.JUMP)
                             {
-                                return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(aux_move)));
+                                int jumpHeight = (int)(GameInfo.JUMP_VELOCITYY * GameInfo.JUMP_VELOCITYY / (2 * GameInfo.GRAVITY)) / GameInfo.PIXEL_LENGTH;
+                                if (plan[0].landingPlatform.real ||
+                                    (setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) * setupMaker.circleInfo.VelocityX <= 0 ||
+                                    Math.Abs(plan[0].departurePlatform.yTop - jumpHeight - plan[0].landingPlatform.yTop) > 3)
+                                {
+                                    return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(aux_move)));
+                                }
+                                return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                             }
                             else
                             {
@@ -416,7 +430,12 @@ namespace GeometryFriendsAgents
                                 {
                                     if (aux_move.DistanceToRollingEdge() < min_distance || move.DistanceToRollingEdge() >= min_distance)
                                     {
-                                        return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(move)));
+                                        int jumpHeight = (int)(GameInfo.JUMP_VELOCITYY * GameInfo.JUMP_VELOCITYY / (2 * GameInfo.GRAVITY)) / GameInfo.PIXEL_LENGTH;
+                                        if (plan[0].landingPlatform.real || (setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) * setupMaker.circleInfo.VelocityX <= 0 ||
+                                        Math.Abs(plan[0].departurePlatform.yTop - jumpHeight - plan[0].landingPlatform.yTop) > 3)
+                                        {
+                                            return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(move)));
+                                        }
                                     }
                                 }
                             }

@@ -55,10 +55,10 @@
     <TimeLimit value="150" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="36" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="40" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="42" />
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="50" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="61" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="77" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="55" />
     </HighScores>
   </Level2>
   <Level3>
@@ -116,9 +116,10 @@
     <TimeLimit value="100" />
     <HighScores>
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="33" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="34" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="46" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="46" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="57" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="63" />
     </HighScores>
   </Level4>
   <Level5>
@@ -138,8 +139,10 @@
     <OrangeElevators />
     <TimeLimit value="65" />
     <HighScores>
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="36" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="36" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="36" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="43" />
     </HighScores>
   </Level5>
 </Levels>

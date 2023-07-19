@@ -46,9 +46,9 @@
     <TimeLimit value="90" />
     <HighScores>
       <HighScore name="No Name" value="14" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="19" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="19" />
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="20" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="20" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="20" />
     </HighScores>
   </Level2>
@@ -134,9 +134,9 @@
     <HighScores>
       <HighScore name="No Name" value="14" />
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="24" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="27" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="27" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="29" />
-      <HighScore name="No Name" value="32" />
     </HighScores>
   </Level5>
   <Level6>
@@ -222,10 +222,10 @@
     <TimeLimit value="125" />
     <HighScores>
       <HighScore name="No Name" value="26" />
-      <HighScore name="No Name" value="37" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="37" />
+      <HighScore name="No Name" value="37" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="40" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="40" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="41" />
     </HighScores>
   </Level8>
   <Level9>
@@ -277,10 +277,10 @@
     <TimeLimit value="35" />
     <HighScores>
       <HighScore name="No Name" value="8" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="11" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="13" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="13" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="17" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="18" />
-      <HighScore name="UCMAgent&amp;UCMAgent" value="18" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="15" />
     </HighScores>
   </Level10>
 </Levels>
