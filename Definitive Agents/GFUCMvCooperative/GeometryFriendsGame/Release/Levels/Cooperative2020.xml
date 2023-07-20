@@ -223,6 +223,7 @@
     <TimeLimit value="180" />
     <HighScores>
       <HighScore name="UCMAgent&amp;UCMAgent" value="23" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="24" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="32" />
       <HighScore name="UCMAgent&amp;UCMAgent" value="35" />
     </HighScores>

@@ -76,3 +76,9 @@ D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMRectangle\obj\Debug\G
 D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMRectangle\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
 D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMRectangle\obj\Debug\GeometryFriendsAgents.dll
 D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMRectangle\obj\Debug\GeometryFriendsAgents.pdb
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMRectangle\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.dll
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMRectangle\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.pdb
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMRectangle\obj\Debug\GeometryFriendsAgents.csproj.AssemblyReference.cache
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMRectangle\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMRectangle\obj\Debug\GeometryFriendsAgents.dll
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMRectangle\obj\Debug\GeometryFriendsAgents.pdb

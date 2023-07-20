@@ -63,6 +63,8 @@ namespace GeometryFriendsAgents
         Platform currentPlatform;
         private bool hasFinishedDrop = true;
         private bool hasFinishedTilt = true;
+        private bool onAir = false;
+        private int airUpdates = 0;
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -541,21 +543,37 @@ namespace GeometryFriendsAgents
                         }
                         else if (actionSelector.move.moveType == MoveType.FALL)
                         {
-                            currentAction = actionSelector.move.moveDuringFlight;                            
+                            onAir = true;
+                            airUpdates = 0;
+                            if (actionSelector.move.landingPlatform.yTop - actionSelector.move.departurePlatform.yTop > 15
+                                && rectangleInfo.Y > actionSelector.move.departurePlatform.yTop * GameInfo.PIXEL_LENGTH
+                                && actionSelector.move.moveDuringFlight == Moves.NO_ACTION)
+                            {
+                                currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                            }
+                            else
+                            {
+                                currentAction = actionSelector.move.moveDuringFlight;
+                            }
                         }
                         else
                         {
                             currentAction = Moves.NO_ACTION;
                         }
                     }
-                    else
-                    {
-                        // TODO
-
-                    }
                 }
                 else
                 {
+                    if (onAir)
+                    {
+                        airUpdates++;
+                        if(airUpdates > 10)
+                        {
+                            onAir = false;
+                        }
+                        currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                        return;
+                    }
                     // Check if height is really what we are told -> Generates up and down movement in falls
                     if (Math.Abs((rectangleInfo.Height + 2 * rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatform.yTop * 2) > 4)
                     {

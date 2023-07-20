@@ -45,9 +45,12 @@ namespace GeometryFriendsAgents
         public Platform currentPlatformRectangle;
         private bool hasFinishedDrop = true;
         private bool hasFinishedTilt = true;
+        private bool onAir = false;
+        private int airUpdates = 0;
         private double t = 0;
         private double t_0 = 0;
         private bool finished_changing = true;
+
         //Debug
         private DebugInformation[] debugInfo = null;
         private List<DebugInformation> newDebugInfo;
@@ -478,7 +481,18 @@ namespace GeometryFriendsAgents
                         }
                         else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.FALL)
                         {
-                            currentAction = setupMaker.actionSelectorRectangle.move.moveDuringFlight;                            
+                            onAir = true;
+                            airUpdates = 0;
+                            if (setupMaker.actionSelectorRectangle.move.landingPlatform.yTop - setupMaker.actionSelectorRectangle.move.departurePlatform.yTop > 15
+                                && setupMaker.rectangleInfo.Y > setupMaker.actionSelectorRectangle.move.departurePlatform.yTop * GameInfo.PIXEL_LENGTH
+                                && setupMaker.actionSelectorRectangle.move.moveDuringFlight == Moves.NO_ACTION)
+                            {
+                                currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                            }
+                            else
+                            {
+                                currentAction = setupMaker.actionSelectorRectangle.move.moveDuringFlight;
+                            }
                         }
                         else
                         {
@@ -493,6 +507,16 @@ namespace GeometryFriendsAgents
                 }
                 else
                 {
+                    if (onAir)
+                    {
+                        airUpdates++;
+                        if (airUpdates > 10)
+                        {
+                            onAir = false;
+                        }
+                        currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                        return;
+                    }
                     // Check if height is really what we are told -> Generates up and down movement in falls and changing positions
                     if (Math.Abs((setupMaker.rectangleInfo.Height + 2 * setupMaker.rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatformRectangle.yTop * 2) > 4)
                     {
