@@ -524,6 +524,17 @@ namespace GeometryFriendsAgents
                                 currentAction = Moves.NO_ACTION;
                             }
                         }
+                        else if (actionSelector.move.moveType == MoveType.WIDEADJ)
+                        {
+                            if (actionSelector.move.x > actionSelector.move.departurePlatform.rightEdge)
+                            {
+                                currentAction = Moves.MOVE_RIGHT;
+                            }
+                            else
+                            {
+                                currentAction = Moves.MOVE_LEFT;
+                            }
+                        }
                         else if (actionSelector.move.moveType == MoveType.BIGHOLEDROP)
                         {
                             int distance_x;

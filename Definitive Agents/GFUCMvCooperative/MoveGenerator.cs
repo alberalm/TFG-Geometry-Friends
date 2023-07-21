@@ -135,7 +135,7 @@ namespace GeometryFriendsAgents
                         {
                             if(p.yTop - p2.yTop > 11)
                             {
-                                int vx = trajectoryAdder.rectangleSimulator.CalculateMaxVelocity(platformList, p, p2.rightEdge);
+                                int vx = trajectoryAdder.rectangleSimulator.CalculateMaxVelocity(platformList, p, false);
                                 trajectoryAdder.AddTilt(ref platformList, ref p, vx, MoveType.HIGHTILT, p.rightEdge, s, p2);
                             }
                             else
@@ -148,7 +148,7 @@ namespace GeometryFriendsAgents
                         {
                             if (p.yTop - p2.yTop > 11)
                             {
-                                int vx = trajectoryAdder.rectangleSimulator.CalculateMinVelocity(platformList, p, p2.leftEdge);
+                                int vx = trajectoryAdder.rectangleSimulator.CalculateMinVelocity(platformList, p, false);
                                 trajectoryAdder.AddTilt(ref platformList, ref p, vx, MoveType.HIGHTILT, p.leftEdge, s, p2);
                             }
                             else
@@ -168,7 +168,7 @@ namespace GeometryFriendsAgents
                             }
                             else
                             {
-                                int vx = trajectoryAdder.rectangleSimulator.CalculateMaxVelocity(platformList, p, p2.rightEdge);
+                                int vx = trajectoryAdder.rectangleSimulator.CalculateMaxVelocity(platformList, p, false);
                                 trajectoryAdder.AddTilt(ref platformList, ref p, vx, MoveType.CIRCLETILT, p.rightEdge, s, p2);
                             }
                         }
@@ -182,7 +182,7 @@ namespace GeometryFriendsAgents
                             }
                             else
                             {
-                                int vx = trajectoryAdder.rectangleSimulator.CalculateMinVelocity(platformList, p, p2.leftEdge);
+                                int vx = trajectoryAdder.rectangleSimulator.CalculateMinVelocity(platformList, p, false);
                                 trajectoryAdder.AddTilt(ref platformList, ref p, vx, MoveType.CIRCLETILT, p.leftEdge, s, p2);
                             }
                         }
@@ -282,10 +282,18 @@ namespace GeometryFriendsAgents
                 x++;
             }
             if (levelMapRectangle[x, p.yTop] == PixelType.PLATFORM &&
-                x - p.rightEdge > 1 + RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2 &&
-                x - p.rightEdge < RectangleShape.width(RectangleShape.Shape.HORIZONTAL))
+                x - p.rightEdge > 1 + RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2)
             {
-                trajectoryAdder.AddBigHoleAdj(ref platformList, ref p, 1, MoveType.BIGHOLEADJ, (x + p.rightEdge) / 2 + 1, s, GetPlatform(platformList, x, p.yTop));
+                if (x - p.rightEdge < RectangleShape.width(RectangleShape.Shape.HORIZONTAL))
+                {
+                    trajectoryAdder.AddBigHoleAdj(ref platformList, ref p, 1, MoveType.BIGHOLEADJ, (x + p.rightEdge) / 2 + 1, s, GetPlatform(platformList, x, p.yTop));
+                }
+                else
+                {
+                    Platform p2 = GetPlatform(platformList, x, p.yTop);
+                    int vx = trajectoryAdder.rectangleSimulator.CalculateMaxVelocity(platformList, p, true);
+                    trajectoryAdder.AddBigHoleAdj(ref platformList, ref p, vx, MoveType.WIDEADJ, p.rightEdge + 1, s, p2);
+                }
             }
             // Left moves
             x = p.leftEdge - 1;
@@ -294,10 +302,18 @@ namespace GeometryFriendsAgents
                 x--;
             }
             if (levelMapRectangle[x, p.yTop] == PixelType.PLATFORM &&
-                p.leftEdge - x > 1 + RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2 &&
-                p.leftEdge - x < RectangleShape.width(RectangleShape.Shape.HORIZONTAL))
+                p.leftEdge - x > 1 + RectangleShape.width(RectangleShape.Shape.HORIZONTAL) / 2)
             {
-                trajectoryAdder.AddBigHoleAdj(ref platformList, ref p, -1, MoveType.BIGHOLEADJ, (x + p.leftEdge) / 2 + 1, s, GetPlatform(platformList, x, p.yTop));
+                if (p.leftEdge - x < RectangleShape.width(RectangleShape.Shape.HORIZONTAL))
+                {
+                    trajectoryAdder.AddBigHoleAdj(ref platformList, ref p, -1, MoveType.BIGHOLEADJ, (x + p.leftEdge) / 2 + 1, s, GetPlatform(platformList, x, p.yTop));
+                }
+                else
+                {
+                    Platform p2 = GetPlatform(platformList, x, p.yTop);
+                    int vx = trajectoryAdder.rectangleSimulator.CalculateMinVelocity(platformList, p, true);
+                    trajectoryAdder.AddBigHoleAdj(ref platformList, ref p, vx, MoveType.WIDEADJ, p.leftEdge - 1, s, p2);
+                }
             }
         }
 

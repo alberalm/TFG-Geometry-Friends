@@ -89,12 +89,13 @@ namespace GeometryFriendsAgents
             return new Tuple<Platform, Platform>(left, right);
         }
 
-        public int CalculateMaxVelocity(List<Platform> platformList, Platform p, int edge)
+        public int CalculateMaxVelocity(List<Platform> platformList, Platform p, bool count_initial)
         {
             Platform next_platform = AdjacentPlatforms(platformList, p).Item1;
 
             // Squared, need to perform square root at the end
-            double target_velocity = 0; // do not count initial platform to leave some margin
+            // count_initial is used on wideadj, else discard the current platform (for hightilts) to leave some margin
+            double target_velocity = count_initial ? 2 * GameInfo.RECTANGLE_ACCELERATION * (p.rightEdge - p.leftEdge - 2) : 0;
 
             while (next_platform.id != -1 && next_platform.shapes[(int)RectangleShape.Shape.VERTICAL])
             {
@@ -105,12 +106,13 @@ namespace GeometryFriendsAgents
             return (int) Math.Sqrt(target_velocity * GameInfo.PIXEL_LENGTH);
         }
 
-        public int CalculateMinVelocity(List<Platform> platformList, Platform p, int edge)
+        public int CalculateMinVelocity(List<Platform> platformList, Platform p, bool count_initial)
         {
             Platform next_platform = AdjacentPlatforms(platformList, p).Item2;
 
             // Squared, need to perform square root at the end
-            double target_velocity = 0; // do not count initial platform to leave some margin
+            // count_initial is used on wideadj, else discard the current platform (for hightilts) to leave some margin
+            double target_velocity = count_initial ? 2 * GameInfo.RECTANGLE_ACCELERATION * (p.rightEdge - p.leftEdge - 2) : 0;
 
             while (next_platform.id != -1 && next_platform.shapes[(int)RectangleShape.Shape.VERTICAL])
             {

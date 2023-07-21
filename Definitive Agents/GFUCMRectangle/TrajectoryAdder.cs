@@ -193,7 +193,8 @@ namespace GeometryFriendsAgents
             MoveInformation m = new MoveInformation(landing, p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10)
             {
                 shape = s,
-                xlandPoint = vx < 0 ? landing.rightEdge : landing.leftEdge
+                xlandPoint = vx < 0 ? landing.rightEdge : landing.leftEdge,
+                risky = moveType == MoveType.WIDEADJ
             };
 
             m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - RectangleShape.height(s) / 2) * GameInfo.PIXEL_LENGTH));

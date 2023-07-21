@@ -45,6 +45,8 @@
     <OrangeElevators />
     <TimeLimit value="180" />
     <HighScores>
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="9" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="11" />
       <HighScore name="No Name" value="15" />
     </HighScores>
   </Level2>

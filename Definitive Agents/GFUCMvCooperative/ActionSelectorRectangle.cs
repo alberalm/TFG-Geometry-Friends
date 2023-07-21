@@ -153,7 +153,7 @@ namespace GeometryFriendsAgents
             {
                 return GetToPosition(current_position, target_position, current_velocity, target_velocity, move);
             }
-            else if (move.moveType == MoveType.TILT || move.moveType == MoveType.HIGHTILT || move.moveType == MoveType.CIRCLETILT)
+            else if (move.moveType == MoveType.TILT || move.moveType == MoveType.HIGHTILT || move.moveType == MoveType.CIRCLETILT || move.moveType == MoveType.WIDEADJ)
             {
                 if (Math.Abs(current_position - target_position) > 3 * GameInfo.PIXEL_LENGTH &&
                     ((target_velocity < 0 && current_position < target_position) || (target_velocity > 0 && current_position > target_position)))
@@ -188,6 +188,11 @@ namespace GeometryFriendsAgents
                     {
                         return Moves.MOVE_LEFT;
                     }
+                }
+                else if(move.moveType == MoveType.WIDEADJ)
+                {
+                    int edge = move.velocityX > 0 ? move.departurePlatform.rightEdge : move.departurePlatform.leftEdge;
+                    return GetToPosition(current_position, edge * GameInfo.PIXEL_LENGTH, current_velocity, target_velocity, move);
                 }
                 else
                 {

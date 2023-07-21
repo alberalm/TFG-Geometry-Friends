@@ -462,6 +462,17 @@ namespace GeometryFriendsAgents
                                 currentAction = Moves.NO_ACTION;
                             }
                         }
+                        else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.WIDEADJ)
+                        {
+                            if (setupMaker.actionSelectorRectangle.move.x > setupMaker.actionSelectorRectangle.move.departurePlatform.rightEdge)
+                            {
+                                currentAction = Moves.MOVE_RIGHT;
+                            }
+                            else
+                            {
+                                currentAction = Moves.MOVE_LEFT;
+                            }
+                        }
                         else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEDROP)
                         {
                             int distance_x;
