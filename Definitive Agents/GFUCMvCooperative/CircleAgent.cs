@@ -191,111 +191,77 @@ namespace GeometryFriendsAgents
         //implements abstract circle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            if (setupMaker == null)
+            try
             {
-                return;
-            }
-
-            setupMaker.currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
-            setupMaker.currentPlatformRectangle = setupMaker.levelMapRectangle.PlatformBelowRectangle(setupMaker.rectangleInfo);
-            UpdateDraw();
-
-            if (Math.Abs(setupMaker.circleInfo.X - setupMaker.lastCircleInfo.X) <= 5 && Math.Abs(setupMaker.circleInfo.Y - setupMaker.lastCircleInfo.Y) <= 5)
-            {
-                setupMaker.timesStuckCircle++;
-            }
-            else
-            {
-                setupMaker.lastCircleInfo = setupMaker.circleInfo;
-                setupMaker.timesStuckCircle = 0;
-            }
-
-            if (t_recovery > 0 || (setupMaker.timesStuckCircle > 70 && setupMaker.timesStuckRectangle > 70 &&
-                Math.Abs(setupMaker.circleInfo.X- setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH &&
-                Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH))
-            {
-                t_recovery += elapsedGameTime.TotalMilliseconds;
-                if (setupMaker.timesStuckCircle > 70 && t_recovery > 300 + setupMaker.numStuck * 100)
+                if (setupMaker == null)
                 {
-                    RandomActionWithLessJump();
-                    t_recovery = 1;
+                    return;
                 }
-                else if (t_recovery > 300 + setupMaker.numStuck * 100)
+
+                setupMaker.currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
+                setupMaker.currentPlatformRectangle = setupMaker.levelMapRectangle.PlatformBelowRectangle(setupMaker.rectangleInfo);
+                //UpdateDraw();
+
+                if (Math.Abs(setupMaker.circleInfo.X - setupMaker.lastCircleInfo.X) <= 5 && Math.Abs(setupMaker.circleInfo.Y - setupMaker.lastCircleInfo.Y) <= 5)
                 {
-                    t_recovery = 0;
-                    setupMaker.numStuck++;
-                }
-                setupMaker.circle_state = "Sistema de recuperación...";
-                return;
-            }
-            
-            t_0 += elapsedGameTime.TotalMilliseconds;
-            t += elapsedGameTime.TotalMilliseconds;
-            if (t < 100)
-            {
-                return;
-            }
-            currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
-            
-            if (!setupMaker.levelMapCircle.AtBorder(setupMaker.circleInfo, currentPlatformCircle, ref currentAction, setupMaker.planCircle))
-            {
-                if (currentPlatformCircle.id == -1 && setupMaker.CircleAboveRectangle())
-                {
-                    setupMaker.circle_state = "Manteniendo el equilibrio encima del rectángulo...";
-                    Platform rectangle_platform = setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo);
-                    foreach(int id in setupMaker.levelMapCircle.small_circle_to_small_rectangle.Keys)
-                    {
-                        if(setupMaker.levelMapCircle.small_circle_to_small_rectangle[id].id == rectangle_platform.id)
-                        {
-                            currentPlatformCircle = setupMaker.levelMapCircle.platformList[id];
-                            break;
-                        }
-                    }
-                }
-                if (currentPlatformCircle.id == -1) // Ball is in the air
-                {
-                    setupMaker.circle_state = "Volando...";
-                    if (!flag)
-                    {
-                        if (setupMaker.circleInfo.VelocityX > 0)
-                        {
-                            currentAction = Moves.ROLL_LEFT;
-                        }
-                        else
-                        {
-                            currentAction = Moves.ROLL_RIGHT;
-                        }
-                    }
-                    else
-                    {
-                        if (setupMaker.circleInfo.VelocityX > 0)
-                        {
-                            currentAction = Moves.ROLL_RIGHT;
-                        }
-                        else
-                        {
-                            currentAction = Moves.ROLL_LEFT;
-                        }
-                    }
+                    setupMaker.timesStuckCircle++;
                 }
                 else
                 {
-                    if (setupMaker.planCircle.Count == 0 || ((currentPlatformCircle.real || setupMaker.CircleAboveRectangle()) &&
-                            setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id)
-                            || (setupMaker.planCircle[0].moveType == MoveType.COOPMOVE && setupMaker.planRectangle[0].moveType == MoveType.COOPMOVE)) //CIRCLE IN LAST PLATFORM
+                    setupMaker.lastCircleInfo = setupMaker.circleInfo;
+                    setupMaker.timesStuckCircle = 0;
+                }
+
+                if (t_recovery > 0 || (setupMaker.timesStuckCircle > 70 && setupMaker.timesStuckRectangle > 70 &&
+                    Math.Abs(setupMaker.circleInfo.X - setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH &&
+                    Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH))
+                {
+                    t_recovery += elapsedGameTime.TotalMilliseconds;
+                    if (setupMaker.timesStuckCircle > 70 && t_recovery > 300 + setupMaker.numStuck * 100)
                     {
-                        // TODO: Add logic with failed move
-                        setupMaker.Replanning();
+                        RandomActionWithLessJump();
+                        t_recovery = 1;
                     }
-                    setupMaker.UpdateChanging();
-                    if (setupMaker.changing)
+                    else if (t_recovery > 300 + setupMaker.numStuck * 100)
                     {
-                        setupMaker.circle_state = "Intercambiando posición con el rectángulo...";
-                        if (setupMaker.rectangleInfo.X > setupMaker.circleInfo.X)
+                        t_recovery = 0;
+                        setupMaker.numStuck++;
+                    }
+                    setupMaker.circle_state = "Sistema de recuperación...";
+                    return;
+                }
+
+                t_0 += elapsedGameTime.TotalMilliseconds;
+                t += elapsedGameTime.TotalMilliseconds;
+                if (t < 100)
+                {
+                    return;
+                }
+                currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
+
+                if (!setupMaker.levelMapCircle.AtBorder(setupMaker.circleInfo, currentPlatformCircle, ref currentAction, setupMaker.planCircle))
+                {
+                    if (currentPlatformCircle.id == -1 && setupMaker.CircleAboveRectangle())
+                    {
+                        setupMaker.circle_state = "Manteniendo el equilibrio encima del rectángulo...";
+                        Platform rectangle_platform = setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo);
+                        foreach (int id in setupMaker.levelMapCircle.small_circle_to_small_rectangle.Keys)
                         {
-                            if (setupMaker.circleInfo.VelocityX > 100)
+                            if (setupMaker.levelMapCircle.small_circle_to_small_rectangle[id].id == rectangle_platform.id)
                             {
-                                currentAction = Moves.NO_ACTION;
+                                currentPlatformCircle = setupMaker.levelMapCircle.platformList[id];
+                                break;
+                            }
+                        }
+                    }
+                    if (currentPlatformCircle.id == -1) // Ball is in the air
+                    {
+                        setupMaker.circle_state = "Volando...";
+                        if (!flag)
+                        {
+                            if (setupMaker.circleInfo.VelocityX > 0)
+                            {
+                                currentAction = Moves.ROLL_LEFT;
                             }
                             else
                             {
@@ -304,52 +270,94 @@ namespace GeometryFriendsAgents
                         }
                         else
                         {
-                            if (setupMaker.circleInfo.VelocityX < -100)
+                            if (setupMaker.circleInfo.VelocityX > 0)
                             {
-                                currentAction = Moves.NO_ACTION;
+                                currentAction = Moves.ROLL_RIGHT;
                             }
                             else
                             {
                                 currentAction = Moves.ROLL_LEFT;
                             }
                         }
-                        finished_changing = false;
-                        return;
-                    }
-                    else if(!finished_changing)
-                    {
-                        if(Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) < GameInfo.VERTICAL_RECTANGLE_HEIGHT/2 + GameInfo.CIRCLE_RADIUS)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            finished_changing = true;
-                        }
-                    }
-                    Tuple<Moves, Tuple<bool, bool>> tup;
-                    if (GameInfo.PHYSICS)
-                    {
-                        tup = setupMaker.actionSelectorCircle.nextActionPhisics(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformCircle);
                     }
                     else
                     {
-                        //tup = setupMaker.actionSelectorCircle.nextActionQTable(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformCircle);
+                        if (setupMaker.planCircle.Count == 0 || ((currentPlatformCircle.real || setupMaker.CircleAboveRectangle()) &&
+                                setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id)
+                                || (setupMaker.planCircle[0].moveType == MoveType.COOPMOVE && setupMaker.planRectangle[0].moveType == MoveType.COOPMOVE)) //CIRCLE IN LAST PLATFORM
+                        {
+                            // TODO: Add logic with failed move
+                            setupMaker.Replanning();
+                        }
+                        setupMaker.UpdateChanging();
+                        if (setupMaker.changing)
+                        {
+                            setupMaker.circle_state = "Intercambiando posición con el rectángulo...";
+                            if (setupMaker.rectangleInfo.X > setupMaker.circleInfo.X)
+                            {
+                                if (setupMaker.circleInfo.VelocityX > 100)
+                                {
+                                    currentAction = Moves.NO_ACTION;
+                                }
+                                else
+                                {
+                                    currentAction = Moves.ROLL_RIGHT;
+                                }
+                            }
+                            else
+                            {
+                                if (setupMaker.circleInfo.VelocityX < -100)
+                                {
+                                    currentAction = Moves.NO_ACTION;
+                                }
+                                else
+                                {
+                                    currentAction = Moves.ROLL_LEFT;
+                                }
+                            }
+                            finished_changing = false;
+                            return;
+                        }
+                        else if (!finished_changing)
+                        {
+                            if (Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) < GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + GameInfo.CIRCLE_RADIUS)
+                            {
+                                return;
+                            }
+                            else
+                            {
+                                finished_changing = true;
+                            }
+                        }
+                        Tuple<Moves, Tuple<bool, bool>> tup;
+                        if (GameInfo.PHYSICS)
+                        {
+                            tup = setupMaker.actionSelectorCircle.nextActionPhisics(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformCircle);
+                        }
+                        else
+                        {
+                            //tup = setupMaker.actionSelectorCircle.nextActionQTable(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformCircle);
+                        }
+                        currentAction = tup.Item1;
+                        if (tup.Item2.Item1)
+                        {
+                            t = 0;
+                        }
+                        flag = tup.Item2.Item2;
                     }
-                    currentAction = tup.Item1;
-                    if (tup.Item2.Item1)
-                    {
-                        t = 0;
-                    }
-                    flag = tup.Item2.Item2;
+                }
+                else
+                {
+                    setupMaker.circle_state = "Evitando caer por un borde...";
+                }
+                if (currentAction == Moves.JUMP)
+                {
+                    setupMaker.circleAgentReadyForCoop = false;
                 }
             }
-            else {
-                setupMaker.circle_state = "Evitando caer por un borde...";
-            }
-            if(currentAction == Moves.JUMP)
+            catch(Exception e)
             {
-                setupMaker.circleAgentReadyForCoop = false;
+
             }
         }
 

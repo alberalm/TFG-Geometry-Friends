@@ -308,140 +308,163 @@ namespace GeometryFriendsAgents
         //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            if(setupMaker.levelMapRectangle == null)
+            try
             {
-                return;
-            }
-            if (Math.Abs(setupMaker.rectangleInfo.X - setupMaker.lastRectangleInfo.X) <= 5 && Math.Abs(setupMaker.rectangleInfo.Y - setupMaker.lastRectangleInfo.Y) <= 5)
-            {
-                setupMaker.timesStuckRectangle++;
-            }
-            else
-            {
-                setupMaker.lastRectangleInfo = setupMaker.rectangleInfo;
-                setupMaker.timesStuckRectangle = 0;
-            }
-            
-            //UpdateDraw();
-
-            if (((t_0 > 0 || setupMaker.timesStuckRectangle > 70) &&
-                (setupMaker.actionSelectorRectangle.move == null || setupMaker.actionSelectorRectangle.move.moveType != MoveType.COOPMOVE || setupMaker.currentPlatformRectangle.id == -1))
-                || ((t_0 > 0 || (setupMaker.timesStuckRectangle > 70 && setupMaker.timesStuckCircle > 70)) &&
-                Math.Abs(setupMaker.circleInfo.X - setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH &&
-                Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH))
-            {
-                t_0 += elapsedGameTime.TotalMilliseconds;
-                if (setupMaker.timesStuckRectangle > 70 && t_0 > 300 + setupMaker.numStuck * 100)
+                if (setupMaker.levelMapRectangle == null)
                 {
-                    RandomAction();
-                    t_0 = 1;
+                    return;
                 }
-                else if(t_0 > 300 + setupMaker.numStuck * 100)
+                if (Math.Abs(setupMaker.rectangleInfo.X - setupMaker.lastRectangleInfo.X) <= 5 && Math.Abs(setupMaker.rectangleInfo.Y - setupMaker.lastRectangleInfo.Y) <= 5)
                 {
-                    t_0 = 0;
-                }
-                setupMaker.rectangle_state = "Sistema de recuperación...";
-                return;
-            }
-
-            if (update_counter != 4 && setupMaker.actionSelectorRectangle.move != null && setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEDROP)
-            {
-                update_counter++;
-                return;
-            }
-            update_counter = 0;
-
-            currentPlatformRectangle = setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo);
-            setupMaker.currentPlatformRectangle = setupMaker.levelMapRectangle.PlatformBelowRectangle(setupMaker.rectangleInfo);
-            
-            //Become horozintal asap when move=drop
-            if (!hasFinishedDrop && setupMaker.planRectangle.Count > 0 && !setupMaker.planRectangle[0].landingPlatform.real)
-            {
-                if (setupMaker.rectangleInfo.Height < GameInfo.HORIZONTAL_RECTANGLE_HEIGHT + 5)
-                {
-                    hasFinishedDrop = true;
+                    setupMaker.timesStuckRectangle++;
                 }
                 else
                 {
-                    currentAction = setupMaker.levelMapRectangle.RectangleCanMorphDown(setupMaker.rectangleInfo) ? Moves.MORPH_DOWN : Moves.NO_ACTION;
+                    setupMaker.lastRectangleInfo = setupMaker.rectangleInfo;
+                    setupMaker.timesStuckRectangle = 0;
+                }
+
+                //UpdateDraw();
+
+                if (((t_0 > 0 || setupMaker.timesStuckRectangle > 70) &&
+                    (setupMaker.actionSelectorRectangle.move == null || setupMaker.actionSelectorRectangle.move.moveType != MoveType.COOPMOVE || setupMaker.currentPlatformRectangle.id == -1))
+                    || ((t_0 > 0 || (setupMaker.timesStuckRectangle > 70 && setupMaker.timesStuckCircle > 70)) &&
+                    Math.Abs(setupMaker.circleInfo.X - setupMaker.rectangleInfo.X) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH &&
+                    Math.Abs(setupMaker.circleInfo.Y - setupMaker.rectangleInfo.Y) < GameInfo.CIRCLE_RADIUS + GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + 2 * GameInfo.PIXEL_LENGTH))
+                {
+                    t_0 += elapsedGameTime.TotalMilliseconds;
+                    if (setupMaker.timesStuckRectangle > 70 && t_0 > 300 + setupMaker.numStuck * 100)
+                    {
+                        RandomAction();
+                        t_0 = 1;
+                    }
+                    else if (t_0 > 300 + setupMaker.numStuck * 100)
+                    {
+                        t_0 = 0;
+                    }
+                    setupMaker.rectangle_state = "Sistema de recuperación...";
                     return;
                 }
-            }
 
-            //Mantain action while tilting and check if tilt has finished
-            if (setupMaker.actionSelectorRectangle.move != null)
-            {
-                int edge = setupMaker.actionSelectorRectangle.move.velocityX > 0 ? setupMaker.actionSelectorRectangle.move.landingPlatform.leftEdge : setupMaker.actionSelectorRectangle.move.landingPlatform.rightEdge;
-                if (!hasFinishedTilt)
+                if (update_counter != 4 && setupMaker.actionSelectorRectangle.move != null && setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEDROP)
                 {
-                    if ((setupMaker.actionSelectorRectangle.move.moveType == MoveType.TILT && 
-                        Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH) ||
-                        (setupMaker.actionSelectorRectangle.move.moveType == MoveType.HIGHTILT &&
-                        Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 10 * GameInfo.PIXEL_LENGTH) ||
-                        (setupMaker.actionSelectorRectangle.move.moveType == MoveType.CIRCLETILT &&
-                        Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 16 * GameInfo.PIXEL_LENGTH))
+                    update_counter++;
+                    return;
+                }
+                update_counter = 0;
+
+                currentPlatformRectangle = setupMaker.levelMapRectangle.RectanglePlatform(setupMaker.rectangleInfo);
+                setupMaker.currentPlatformRectangle = setupMaker.levelMapRectangle.PlatformBelowRectangle(setupMaker.rectangleInfo);
+
+                //Become horozintal asap when move=drop
+                if (!hasFinishedDrop && setupMaker.planRectangle.Count > 0 && !setupMaker.planRectangle[0].landingPlatform.real)
+                {
+                    if (setupMaker.rectangleInfo.Height < GameInfo.HORIZONTAL_RECTANGLE_HEIGHT + 5)
                     {
-                        hasFinishedTilt = true;
-                        setupMaker.actionSelectorRectangle.tilt_height = 0;
+                        hasFinishedDrop = true;
                     }
                     else
                     {
+                        currentAction = setupMaker.levelMapRectangle.RectangleCanMorphDown(setupMaker.rectangleInfo) ? Moves.MORPH_DOWN : Moves.NO_ACTION;
                         return;
                     }
                 }
-                
-                if ((setupMaker.actionSelectorRectangle.move.moveType == MoveType.TILT && Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH ) ||
-                    (setupMaker.actionSelectorRectangle.move.moveType == MoveType.HIGHTILT && Math.Sign(setupMaker.rectangleInfo.VelocityX) == Math.Sign(setupMaker.actionSelectorRectangle.move.velocityX)
-                    && Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 7 * GameInfo.PIXEL_LENGTH) ||
-                    (setupMaker.actionSelectorRectangle.move.moveType == MoveType.CIRCLETILT && Math.Sign(setupMaker.rectangleInfo.VelocityX) == Math.Sign(setupMaker.actionSelectorRectangle.move.velocityX)
-                    && Math.Sign(setupMaker.circleInfo.X - setupMaker.rectangleInfo.X) == Math.Sign(edge * GameInfo.PIXEL_LENGTH - setupMaker.circleInfo.X) &&
-                    Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 15 * GameInfo.PIXEL_LENGTH))
+
+                //Mantain action while tilting and check if tilt has finished
+                if (setupMaker.actionSelectorRectangle.move != null)
                 {
-                    if (setupMaker.actionSelectorRectangle.move.velocityX > 0)
+                    int edge = setupMaker.actionSelectorRectangle.move.velocityX > 0 ? setupMaker.actionSelectorRectangle.move.landingPlatform.leftEdge : setupMaker.actionSelectorRectangle.move.landingPlatform.rightEdge;
+                    if (!hasFinishedTilt)
                     {
-                        currentAction = Moves.MOVE_RIGHT;
+                        if ((setupMaker.actionSelectorRectangle.move.moveType == MoveType.TILT &&
+                            Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH) ||
+                            (setupMaker.actionSelectorRectangle.move.moveType == MoveType.HIGHTILT &&
+                            Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 10 * GameInfo.PIXEL_LENGTH) ||
+                            (setupMaker.actionSelectorRectangle.move.moveType == MoveType.CIRCLETILT &&
+                            Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 16 * GameInfo.PIXEL_LENGTH))
+                        {
+                            hasFinishedTilt = true;
+                            setupMaker.actionSelectorRectangle.tilt_height = 0;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+
+                    if ((setupMaker.actionSelectorRectangle.move.moveType == MoveType.TILT && Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH) ||
+                        (setupMaker.actionSelectorRectangle.move.moveType == MoveType.HIGHTILT && Math.Sign(setupMaker.rectangleInfo.VelocityX) == Math.Sign(setupMaker.actionSelectorRectangle.move.velocityX)
+                        && Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 7 * GameInfo.PIXEL_LENGTH) ||
+                        (setupMaker.actionSelectorRectangle.move.moveType == MoveType.CIRCLETILT && Math.Sign(setupMaker.rectangleInfo.VelocityX) == Math.Sign(setupMaker.actionSelectorRectangle.move.velocityX)
+                        && Math.Sign(setupMaker.circleInfo.X - setupMaker.rectangleInfo.X) == Math.Sign(edge * GameInfo.PIXEL_LENGTH - setupMaker.circleInfo.X) &&
+                        Math.Abs(setupMaker.rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 15 * GameInfo.PIXEL_LENGTH))
+                    {
+                        if (setupMaker.actionSelectorRectangle.move.velocityX > 0)
+                        {
+                            currentAction = Moves.MOVE_RIGHT;
+                        }
+                        else
+                        {
+                            currentAction = Moves.MOVE_LEFT;
+                        }
+                        hasFinishedTilt = false;
+                        return;
+                    }
+                }
+
+                // Normal behaviour
+                if (!finished_changing)
+                {
+                    if (Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) < GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + GameInfo.CIRCLE_RADIUS)
+                    {
+                        return;
                     }
                     else
                     {
-                        currentAction = Moves.MOVE_LEFT;
+                        finished_changing = true;
                     }
-                    hasFinishedTilt = false;
-                    return;
                 }
-            }
 
-            // Normal behaviour
-            if (!finished_changing)
-            {
-                if (Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) < GameInfo.VERTICAL_RECTANGLE_HEIGHT / 2 + GameInfo.CIRCLE_RADIUS)
+                if ((setupMaker.actionSelectorRectangle.move != null && ((setupMaker.actionSelectorRectangle.move.moveType == MoveType.FALL &&
+                    Math.Abs(setupMaker.actionSelectorRectangle.move.x * GameInfo.PIXEL_LENGTH - setupMaker.rectangleInfo.X) <= 2 * GameInfo.PIXEL_LENGTH)
+                    || setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEDROP))
+                    || !setupMaker.levelMapRectangle.AtBorder(setupMaker.rectangleInfo, currentPlatformRectangle, ref currentAction, setupMaker.planRectangle))
                 {
-                    return;
-                }
-                else
-                {
-                    finished_changing = true;
-                }
-            }
-
-            if ((setupMaker.actionSelectorRectangle.move != null && ((setupMaker.actionSelectorRectangle.move.moveType == MoveType.FALL &&
-                Math.Abs(setupMaker.actionSelectorRectangle.move.x * GameInfo.PIXEL_LENGTH - setupMaker.rectangleInfo.X) <= 2 * GameInfo.PIXEL_LENGTH)
-                || setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEDROP))
-                || !setupMaker.levelMapRectangle.AtBorder(setupMaker.rectangleInfo, currentPlatformRectangle, ref currentAction, setupMaker.planRectangle))
-            {
-                if (currentPlatformRectangle.id == -1) // Rectangle is in the air
-                {
-                    setupMaker.rectangle_state = "Volando...";
-                    if (setupMaker.actionSelectorRectangle.move != null)
+                    if (currentPlatformRectangle.id == -1) // Rectangle is in the air
                     {
-                        // Become horozintal asap when move=drop
-                        if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.DROP && setupMaker.levelMapRectangle.RectangleCanMorphDown(setupMaker.rectangleInfo))
+                        setupMaker.rectangle_state = "Volando...";
+                        if (setupMaker.actionSelectorRectangle.move != null)
                         {
-                            currentAction = Moves.MORPH_DOWN;
-                            hasFinishedDrop = false;
-                        }
-                        else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.MONOSIDEDROP || setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEADJ)
-                        {
-                            if (setupMaker.rectangleInfo.Y / GameInfo.PIXEL_LENGTH < setupMaker.actionSelectorRectangle.move.departurePlatform.yTop)
+                            // Become horozintal asap when move=drop
+                            if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.DROP && setupMaker.levelMapRectangle.RectangleCanMorphDown(setupMaker.rectangleInfo))
+                            {
+                                currentAction = Moves.MORPH_DOWN;
+                                hasFinishedDrop = false;
+                            }
+                            else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.MONOSIDEDROP || setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEADJ)
+                            {
+                                if (setupMaker.rectangleInfo.Y / GameInfo.PIXEL_LENGTH < setupMaker.actionSelectorRectangle.move.departurePlatform.yTop)
+                                {
+                                    if (setupMaker.actionSelectorRectangle.move.x > setupMaker.actionSelectorRectangle.move.departurePlatform.rightEdge)
+                                    {
+                                        currentAction = Moves.MOVE_RIGHT;
+                                    }
+                                    else
+                                    {
+                                        currentAction = Moves.MOVE_LEFT;
+                                    }
+                                }
+                                else if (setupMaker.levelMapRectangle.RectangleCanMorphDown(setupMaker.rectangleInfo))
+                                {
+                                    currentAction = Moves.MORPH_DOWN;
+                                    hasFinishedDrop = false;
+                                }
+                                else
+                                {
+                                    currentAction = Moves.NO_ACTION;
+                                }
+                            }
+                            else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.WIDEADJ)
                             {
                                 if (setupMaker.actionSelectorRectangle.move.x > setupMaker.actionSelectorRectangle.move.departurePlatform.rightEdge)
                                 {
@@ -452,146 +475,130 @@ namespace GeometryFriendsAgents
                                     currentAction = Moves.MOVE_LEFT;
                                 }
                             }
-                            else if (setupMaker.levelMapRectangle.RectangleCanMorphDown(setupMaker.rectangleInfo))
+                            else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEDROP)
                             {
-                                currentAction = Moves.MORPH_DOWN;
-                                hasFinishedDrop = false;
+                                int distance_x;
+                                if (setupMaker.actionSelectorRectangle.move.velocityX > 0)
+                                {
+                                    distance_x = ((int)(setupMaker.rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - setupMaker.actionSelectorRectangle.move.departurePlatform.rightEdge;
+                                }
+                                else
+                                {
+                                    distance_x = ((int)(setupMaker.rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - setupMaker.actionSelectorRectangle.move.departurePlatform.leftEdge;
+                                }
+                                // Remember move.velocityX stores the hole's width
+                                StateRectangle state = new StateRectangle(distance_x, setupMaker.actionSelectorRectangle.move.departurePlatform.yTop - ((int)(setupMaker.rectangleInfo.Y / GameInfo.PIXEL_LENGTH)),
+                                    RectangleAgent.DiscreetVelocity(setupMaker.rectangleInfo.VelocityX), (int)(setupMaker.rectangleInfo.Height / (2 * GameInfo.PIXEL_LENGTH)), setupMaker.actionSelectorRectangle.move.velocityX);
+
+                                currentAction = setupMaker.lRectangle.ChooseMove(state, setupMaker.actionSelectorRectangle.move.velocityX);
+                            }
+                            else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.FALL)
+                            {
+                                onAir = true;
+                                airUpdates = 0;
+                                if (setupMaker.actionSelectorRectangle.move.landingPlatform.yTop - setupMaker.actionSelectorRectangle.move.departurePlatform.yTop > 15
+                                    && setupMaker.rectangleInfo.Y > setupMaker.actionSelectorRectangle.move.departurePlatform.yTop * GameInfo.PIXEL_LENGTH
+                                    && setupMaker.actionSelectorRectangle.move.moveDuringFlight == Moves.NO_ACTION)
+                                {
+                                    currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                                }
+                                else
+                                {
+                                    currentAction = setupMaker.actionSelectorRectangle.move.moveDuringFlight;
+                                }
                             }
                             else
                             {
                                 currentAction = Moves.NO_ACTION;
                             }
                         }
-                        else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.WIDEADJ)
-                        {
-                            if (setupMaker.actionSelectorRectangle.move.x > setupMaker.actionSelectorRectangle.move.departurePlatform.rightEdge)
-                            {
-                                currentAction = Moves.MOVE_RIGHT;
-                            }
-                            else
-                            {
-                                currentAction = Moves.MOVE_LEFT;
-                            }
-                        }
-                        else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.BIGHOLEDROP)
-                        {
-                            int distance_x;
-                            if (setupMaker.actionSelectorRectangle.move.velocityX > 0)
-                            {
-                                distance_x = ((int)(setupMaker.rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - setupMaker.actionSelectorRectangle.move.departurePlatform.rightEdge;
-                            }
-                            else
-                            {
-                                distance_x = ((int)(setupMaker.rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - setupMaker.actionSelectorRectangle.move.departurePlatform.leftEdge;
-                            }
-                            // Remember move.velocityX stores the hole's width
-                            StateRectangle state = new StateRectangle(distance_x, setupMaker.actionSelectorRectangle.move.departurePlatform.yTop - ((int)(setupMaker.rectangleInfo.Y / GameInfo.PIXEL_LENGTH)),
-                                RectangleAgent.DiscreetVelocity(setupMaker.rectangleInfo.VelocityX), (int)(setupMaker.rectangleInfo.Height / (2 * GameInfo.PIXEL_LENGTH)), setupMaker.actionSelectorRectangle.move.velocityX);
-
-                            currentAction = setupMaker.lRectangle.ChooseMove(state, setupMaker.actionSelectorRectangle.move.velocityX);
-                        }
-                        else if (setupMaker.actionSelectorRectangle.move.moveType == MoveType.FALL)
-                        {
-                            onAir = true;
-                            airUpdates = 0;
-                            if (setupMaker.actionSelectorRectangle.move.landingPlatform.yTop - setupMaker.actionSelectorRectangle.move.departurePlatform.yTop > 15
-                                && setupMaker.rectangleInfo.Y > setupMaker.actionSelectorRectangle.move.departurePlatform.yTop * GameInfo.PIXEL_LENGTH
-                                && setupMaker.actionSelectorRectangle.move.moveDuringFlight == Moves.NO_ACTION)
-                            {
-                                currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
-                            }
-                            else
-                            {
-                                currentAction = setupMaker.actionSelectorRectangle.move.moveDuringFlight;
-                            }
-                        }
                         else
                         {
-                            currentAction = Moves.NO_ACTION;
+                            // TODO
+
                         }
                     }
                     else
                     {
-                        // TODO
-
-                    }
-                }
-                else
-                {
-                    if (onAir)
-                    {
-                        airUpdates++;
-                        if (airUpdates > 10)
+                        if (onAir)
                         {
-                            onAir = false;
-                        }
-                        currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
-                        return;
-                    }
-                    // Check if height is really what we are told -> Generates up and down movement in falls and changing positions
-                    if (Math.Abs((setupMaker.rectangleInfo.Height + 2 * setupMaker.rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatformRectangle.yTop * 2) > 4)
-                    {
-                        if (setupMaker.rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
-                        {
-                            currentAction = currentAction == Moves.MORPH_UP ? Moves.MORPH_DOWN : Moves.MORPH_UP;
-                        }
-                        else
-                        {
+                            airUpdates++;
+                            if (airUpdates > 10)
+                            {
+                                onAir = false;
+                            }
                             currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                            return;
                         }
-                        return;
-                    }
-                    if (setupMaker.levelMapRectangle.HitsCeiling(setupMaker.rectangleInfo,currentPlatformRectangle))
-                    {
-                        currentAction = Moves.MORPH_DOWN;
-                        return;
-                    }
-
-                    if (setupMaker.planRectangle.Count == 0 || setupMaker.planRectangle[0].departurePlatform.id != setupMaker.levelMapRectangle.small_to_simplified[currentPlatformRectangle].id) //RECTANGLE IN LAST PLATFORM
-                    {
-                        // TODO: Add logic with failed move
-                        setupMaker.Replanning();
-                    }
-
-                    if (setupMaker.changing)
-                    {
-                        setupMaker.rectangle_state = "Intercambiando posición con el círculo...";
-                        if (setupMaker.rectangleInfo.Height < GameInfo.VERTICAL_RECTANGLE_HEIGHT - 20 && setupMaker.levelMapRectangle.RectangleCanMorphUp(setupMaker.rectangleInfo))
+                        // Check if height is really what we are told -> Generates up and down movement in falls and changing positions
+                        if (Math.Abs((setupMaker.rectangleInfo.Height + 2 * setupMaker.rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatformRectangle.yTop * 2) > 4)
                         {
-                            currentAction = Moves.MORPH_UP;
-                        }
-                        else if (setupMaker.rectangleInfo.X > setupMaker.circleInfo.X)
-                        {
-                            if (setupMaker.rectangleInfo.VelocityX < -100)
+                            if (setupMaker.rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
                             {
-                                currentAction = Moves.NO_ACTION;
+                                currentAction = currentAction == Moves.MORPH_UP ? Moves.MORPH_DOWN : Moves.MORPH_UP;
                             }
                             else
                             {
-                                currentAction = Moves.MOVE_LEFT;
+                                currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
                             }
+                            return;
                         }
-                        else
+                        if (setupMaker.levelMapRectangle.HitsCeiling(setupMaker.rectangleInfo, currentPlatformRectangle))
                         {
-                            if (setupMaker.rectangleInfo.VelocityX > 100)
+                            currentAction = Moves.MORPH_DOWN;
+                            return;
+                        }
+
+                        if (setupMaker.planRectangle.Count == 0 || setupMaker.planRectangle[0].departurePlatform.id != setupMaker.levelMapRectangle.small_to_simplified[currentPlatformRectangle].id) //RECTANGLE IN LAST PLATFORM
+                        {
+                            // TODO: Add logic with failed move
+                            setupMaker.Replanning();
+                        }
+
+                        if (setupMaker.changing)
+                        {
+                            setupMaker.rectangle_state = "Intercambiando posición con el círculo...";
+                            if (setupMaker.rectangleInfo.Height < GameInfo.VERTICAL_RECTANGLE_HEIGHT - 20 && setupMaker.levelMapRectangle.RectangleCanMorphUp(setupMaker.rectangleInfo))
                             {
-                                currentAction = Moves.NO_ACTION;
+                                currentAction = Moves.MORPH_UP;
+                            }
+                            else if (setupMaker.rectangleInfo.X > setupMaker.circleInfo.X)
+                            {
+                                if (setupMaker.rectangleInfo.VelocityX < -100)
+                                {
+                                    currentAction = Moves.NO_ACTION;
+                                }
+                                else
+                                {
+                                    currentAction = Moves.MOVE_LEFT;
+                                }
                             }
                             else
                             {
-                                currentAction = Moves.MOVE_RIGHT;
+                                if (setupMaker.rectangleInfo.VelocityX > 100)
+                                {
+                                    currentAction = Moves.NO_ACTION;
+                                }
+                                else
+                                {
+                                    currentAction = Moves.MOVE_RIGHT;
+                                }
                             }
+                            if (Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) < GameInfo.PIXEL_LENGTH)
+                            {
+                                finished_changing = false;
+                            }
+                            return;
                         }
-                        if(Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X) < GameInfo.PIXEL_LENGTH)
-                        {
-                            finished_changing = false;
-                        }
-                        return;
-                    }
 
-                    currentAction = setupMaker.actionSelectorRectangle.nextActionPhisics(ref setupMaker.planRectangle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformRectangle);
-                    setupMaker.actionSelectorRectangle.lastMove = currentAction;
+                        currentAction = setupMaker.actionSelectorRectangle.nextActionPhisics(ref setupMaker.planRectangle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformRectangle);
+                        setupMaker.actionSelectorRectangle.lastMove = currentAction;
+                    }
                 }
+            }
+            catch(Exception e)
+            {
+
             }
         }
 

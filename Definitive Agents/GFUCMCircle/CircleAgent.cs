@@ -321,75 +321,80 @@ namespace GeometryFriendsAgents
         //implements abstract circle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            UpdateDraw();
-            t_0 += elapsedGameTime.TotalMilliseconds;
-            t += elapsedGameTime.TotalMilliseconds;
-            if (t < 100)
+            try
             {
-                return;
+                //UpdateDraw();
+                t_0 += elapsedGameTime.TotalMilliseconds;
+                t += elapsedGameTime.TotalMilliseconds;
+                if (t < 100)
+                {
+                    return;
+                }
+                currentPlatform = levelMap.CirclePlatform(circleInfo);
+                if (!levelMap.AtBorder(circleInfo, currentPlatform, ref currentAction, plan))
+                {
+                    if (currentPlatform.id == -1) // Ball is in the air
+                    {
+                        if (!flag)
+                        {
+                            if (circleInfo.VelocityX > 0)
+                            {
+                                currentAction = Moves.ROLL_LEFT;
+                            }
+                            else
+                            {
+                                currentAction = Moves.ROLL_RIGHT;
+                            }
+                        }
+                        else
+                        {
+                            if (circleInfo.VelocityX > 0)
+                            {
+                                currentAction = Moves.ROLL_RIGHT;
+                            }
+                            else
+                            {
+                                currentAction = Moves.ROLL_LEFT;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (plan.Count == 0 || plan[0].departurePlatform.id != currentPlatform.id) //CIRCLE IN LAST PLATFORM
+                        {
+                            if (fullPlan.Count - plan.Count - 1 >= 0)
+                            {
+                                plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
+                            }
+                            else
+                            {
+                                plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo, null);
+                            }
+                            fullPlan = new List<MoveInformation>(plan);
+                        }
+                        Tuple<Moves, Tuple<bool, bool>> tup;
+                        if (GameInfo.PHYSICS)
+                        {
+                            tup = actionSelector.nextActionPhisics(ref plan, remaining, circleInfo, currentPlatform);
+                        }
+                        else
+                        {
+                            tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
+                        }
+                        currentAction = tup.Item1;
+                        if (tup.Item2.Item1)
+                        {
+                            t = 0;
+                        }
+                        flag = tup.Item2.Item2;
+                    }
+                }
             }
-            currentPlatform = levelMap.CirclePlatform(circleInfo);
-            if (!levelMap.AtBorder(circleInfo, currentPlatform, ref currentAction, plan))
+            catch(Exception e)
             {
-                if (currentPlatform.id == -1) // Ball is in the air
-                {
-                    if (!flag)
-                    {
-                        if (circleInfo.VelocityX > 0)
-                        {
-                            currentAction = Moves.ROLL_LEFT;
-                        }
-                        else
-                        {
-                            currentAction = Moves.ROLL_RIGHT;
-                        }
-                    }
-                    else
-                    {
-                        if (circleInfo.VelocityX > 0)
-                        {
-                            currentAction = Moves.ROLL_RIGHT;
-                        }
-                        else
-                        {
-                            currentAction = Moves.ROLL_LEFT;
-                        }
-                    }
-                }
-                else
-                {
-                    if (plan.Count == 0 || plan[0].departurePlatform.id != currentPlatform.id) //CIRCLE IN LAST PLATFORM
-                    {
-                        if  (fullPlan.Count - plan.Count - 1 >= 0)
-                        {
-                            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
-                        }
-                        else
-                        {
-                            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo, null);
-                        }
-                        fullPlan = new List<MoveInformation>(plan);
-                    }
-                    Tuple<Moves, Tuple<bool, bool>> tup;
-                    if (GameInfo.PHYSICS)
-                    {
-                       tup = actionSelector.nextActionPhisics(ref plan, remaining, circleInfo, currentPlatform);
-                    }
-                    else
-                    {
-                        tup = actionSelector.nextActionQTable(ref plan, remaining, circleInfo, currentPlatform);
-                    }
-                    currentAction = tup.Item1;
-                    if (tup.Item2.Item1)
-                    {
-                        t = 0;
-                    }
-                    flag = tup.Item2.Item2;
-                }
+
             }
         }
-
-                    
 
         //implements abstract circle interface: signals the agent the end of the current level
         public override void EndGame(int collectiblesCaught, int timeElapsed)

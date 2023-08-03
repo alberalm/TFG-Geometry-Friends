@@ -397,113 +397,135 @@ namespace GeometryFriendsAgents
         //implements abstract rectangle interface: updates the agent state logic and predictions
         public override void Update(TimeSpan elapsedGameTime)
         {
-            if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 5 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 5)
+            try
             {
-                timesStuck++;
-            }
-            else
-            {
-                lastRectangleInfo = rectangleInfo;
-                timesStuck = 0;
-            }
-            
-            UpdateDraw();
-                     
-
-            if (t_0 > 0 || timesStuck > 30)
-            {
-                t_0 += elapsedGameTime.TotalMilliseconds;
-                if (timesStuck > 30 && t_0 > 200)
+                if (Math.Abs(rectangleInfo.X - lastRectangleInfo.X) <= 5 && Math.Abs(rectangleInfo.Y - lastRectangleInfo.Y) <= 5)
                 {
-                    RandomAction();
-                    t_0 = 1;
-                }
-                else if(t_0 > 200)
-                {
-                    t_0 = 0;
-                }
-                return;
-            }
-
-            if (update_counter != 4 && actionSelector.move != null && actionSelector.move.moveType == MoveType.BIGHOLEDROP)
-            {
-                update_counter++;
-                return;
-            }
-            update_counter = 0;
-
-            currentPlatform = levelMap.RectanglePlatform(rectangleInfo);
-            
-            //Become horozintal asap when move=drop
-            if (!hasFinishedDrop && plan.Count > 0 && !plan[0].landingPlatform.real)
-            {
-                if (rectangleInfo.Height < GameInfo.HORIZONTAL_RECTANGLE_HEIGHT + 5)
-                {
-                    hasFinishedDrop = true;
+                    timesStuck++;
                 }
                 else
                 {
-                    currentAction = levelMap.RectangleCanMorphDown(rectangleInfo) ? Moves.MORPH_DOWN : Moves.NO_ACTION;
+                    lastRectangleInfo = rectangleInfo;
+                    timesStuck = 0;
+                }
+
+                //UpdateDraw();       
+
+                if (t_0 > 0 || timesStuck > 30)
+                {
+                    t_0 += elapsedGameTime.TotalMilliseconds;
+                    if (timesStuck > 30 && t_0 > 200)
+                    {
+                        RandomAction();
+                        t_0 = 1;
+                    }
+                    else if (t_0 > 200)
+                    {
+                        t_0 = 0;
+                    }
                     return;
                 }
-            }
 
-            //Mantain action while tilting and check if tilt has finished
-            if (actionSelector.move != null)
-            {
-                int edge = actionSelector.move.velocityX > 0 ? actionSelector.move.landingPlatform.leftEdge : actionSelector.move.landingPlatform.rightEdge;
-                if (!hasFinishedTilt)
+                if (update_counter != 4 && actionSelector.move != null && actionSelector.move.moveType == MoveType.BIGHOLEDROP)
                 {
-                    if ((actionSelector.move.moveType == MoveType.TILT && 
-                        Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH) ||
-                        (actionSelector.move.moveType == MoveType.HIGHTILT &&
-                        Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 10 * GameInfo.PIXEL_LENGTH))
+                    update_counter++;
+                    return;
+                }
+                update_counter = 0;
+
+                currentPlatform = levelMap.RectanglePlatform(rectangleInfo);
+
+                //Become horozintal asap when move=drop
+                if (!hasFinishedDrop && plan.Count > 0 && !plan[0].landingPlatform.real)
+                {
+                    if (rectangleInfo.Height < GameInfo.HORIZONTAL_RECTANGLE_HEIGHT + 5)
                     {
-                        hasFinishedTilt = true;
-                        actionSelector.tilt_height = 0;
+                        hasFinishedDrop = true;
                     }
                     else
                     {
+                        currentAction = levelMap.RectangleCanMorphDown(rectangleInfo) ? Moves.MORPH_DOWN : Moves.NO_ACTION;
                         return;
                     }
                 }
-                
-                if ((actionSelector.move.moveType == MoveType.TILT && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH ) ||
-                    (actionSelector.move.moveType == MoveType.HIGHTILT && Math.Sign(rectangleInfo.VelocityX) == Math.Sign(actionSelector.move.velocityX)
-                    && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 7 * GameInfo.PIXEL_LENGTH))
-                {
-                    if (actionSelector.move.velocityX > 0)
-                    {
-                        currentAction = Moves.MOVE_RIGHT;
-                    }
-                    else
-                    {
-                        currentAction = Moves.MOVE_LEFT;
-                    }
-                    hasFinishedTilt = false;
-                    return;
-                }
-            }
 
-            // Normal behaviour
-            if ((actionSelector.move != null && ((actionSelector.move.moveType == MoveType.FALL &&
-                Math.Abs(actionSelector.move.x * GameInfo.PIXEL_LENGTH - rectangleInfo.X) <= 2 * GameInfo.PIXEL_LENGTH)
-                || actionSelector.move.moveType == MoveType.BIGHOLEDROP))
-                || !levelMap.AtBorder(rectangleInfo, currentPlatform, ref currentAction, plan))
-            {
-                if (currentPlatform.id == -1) // Rectangle is in the air
+                //Mantain action while tilting and check if tilt has finished
+                if (actionSelector.move != null)
                 {
-                    if (actionSelector.move != null)
+                    int edge = actionSelector.move.velocityX > 0 ? actionSelector.move.landingPlatform.leftEdge : actionSelector.move.landingPlatform.rightEdge;
+                    if (!hasFinishedTilt)
                     {
-                        // Become horozintal asap when move=drop
-                        if (actionSelector.move.moveType == MoveType.DROP && levelMap.RectangleCanMorphDown(rectangleInfo))
+                        if ((actionSelector.move.moveType == MoveType.TILT &&
+                            Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 4 * GameInfo.PIXEL_LENGTH) ||
+                            (actionSelector.move.moveType == MoveType.HIGHTILT &&
+                            Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) > 10 * GameInfo.PIXEL_LENGTH))
                         {
-                            currentAction = Moves.MORPH_DOWN;
-                            hasFinishedDrop = false;
+                            hasFinishedTilt = true;
+                            actionSelector.tilt_height = 0;
                         }
-                        else if (actionSelector.move.moveType == MoveType.MONOSIDEDROP || actionSelector.move.moveType == MoveType.BIGHOLEADJ)
+                        else
                         {
-                            if (rectangleInfo.Y / GameInfo.PIXEL_LENGTH < actionSelector.move.departurePlatform.yTop)
+                            return;
+                        }
+                    }
+
+                    if ((actionSelector.move.moveType == MoveType.TILT && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 3 * GameInfo.PIXEL_LENGTH) ||
+                        (actionSelector.move.moveType == MoveType.HIGHTILT && Math.Sign(rectangleInfo.VelocityX) == Math.Sign(actionSelector.move.velocityX)
+                        && Math.Abs(rectangleInfo.X - edge * GameInfo.PIXEL_LENGTH) < 7 * GameInfo.PIXEL_LENGTH))
+                    {
+                        if (actionSelector.move.velocityX > 0)
+                        {
+                            currentAction = Moves.MOVE_RIGHT;
+                        }
+                        else
+                        {
+                            currentAction = Moves.MOVE_LEFT;
+                        }
+                        hasFinishedTilt = false;
+                        return;
+                    }
+                }
+
+                // Normal behaviour
+                if ((actionSelector.move != null && ((actionSelector.move.moveType == MoveType.FALL &&
+                    Math.Abs(actionSelector.move.x * GameInfo.PIXEL_LENGTH - rectangleInfo.X) <= 2 * GameInfo.PIXEL_LENGTH)
+                    || actionSelector.move.moveType == MoveType.BIGHOLEDROP))
+                    || !levelMap.AtBorder(rectangleInfo, currentPlatform, ref currentAction, plan))
+                {
+                    if (currentPlatform.id == -1) // Rectangle is in the air
+                    {
+                        if (actionSelector.move != null)
+                        {
+                            // Become horozintal asap when move=drop
+                            if (actionSelector.move.moveType == MoveType.DROP && levelMap.RectangleCanMorphDown(rectangleInfo))
+                            {
+                                currentAction = Moves.MORPH_DOWN;
+                                hasFinishedDrop = false;
+                            }
+                            else if (actionSelector.move.moveType == MoveType.MONOSIDEDROP || actionSelector.move.moveType == MoveType.BIGHOLEADJ)
+                            {
+                                if (rectangleInfo.Y / GameInfo.PIXEL_LENGTH < actionSelector.move.departurePlatform.yTop)
+                                {
+                                    if (actionSelector.move.x > actionSelector.move.departurePlatform.rightEdge)
+                                    {
+                                        currentAction = Moves.MOVE_RIGHT;
+                                    }
+                                    else
+                                    {
+                                        currentAction = Moves.MOVE_LEFT;
+                                    }
+                                }
+                                else if (levelMap.RectangleCanMorphDown(rectangleInfo))
+                                {
+                                    currentAction = Moves.MORPH_DOWN;
+                                    hasFinishedDrop = false;
+                                }
+                                else
+                                {
+                                    currentAction = Moves.NO_ACTION;
+                                }
+                            }
+                            else if (actionSelector.move.moveType == MoveType.WIDEADJ)
                             {
                                 if (actionSelector.move.x > actionSelector.move.departurePlatform.rightEdge)
                                 {
@@ -514,113 +536,97 @@ namespace GeometryFriendsAgents
                                     currentAction = Moves.MOVE_LEFT;
                                 }
                             }
-                            else if (levelMap.RectangleCanMorphDown(rectangleInfo))
+                            else if (actionSelector.move.moveType == MoveType.BIGHOLEDROP)
                             {
-                                currentAction = Moves.MORPH_DOWN;
-                                hasFinishedDrop = false;
+                                int distance_x;
+                                if (actionSelector.move.velocityX > 0)
+                                {
+                                    distance_x = ((int)(rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - actionSelector.move.departurePlatform.rightEdge;
+                                }
+                                else
+                                {
+                                    distance_x = ((int)(rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - actionSelector.move.departurePlatform.leftEdge;
+                                }
+                                // Remember move.velocityX stores the hole's width
+                                StateRectangle state = new StateRectangle(distance_x, actionSelector.move.departurePlatform.yTop - ((int)(rectangleInfo.Y / GameInfo.PIXEL_LENGTH)),
+                                    RectangleAgent.DiscreetVelocity(rectangleInfo.VelocityX), (int)(rectangleInfo.Height / (2 * GameInfo.PIXEL_LENGTH)), actionSelector.move.velocityX);
+
+                                currentAction = l.ChooseMove(state, actionSelector.move.velocityX);
+                            }
+                            else if (actionSelector.move.moveType == MoveType.FALL)
+                            {
+                                onAir = true;
+                                airUpdates = 0;
+                                if (actionSelector.move.landingPlatform.yTop - actionSelector.move.departurePlatform.yTop > 15
+                                    && rectangleInfo.Y > actionSelector.move.departurePlatform.yTop * GameInfo.PIXEL_LENGTH
+                                    && actionSelector.move.moveDuringFlight == Moves.NO_ACTION)
+                                {
+                                    currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                                }
+                                else
+                                {
+                                    currentAction = actionSelector.move.moveDuringFlight;
+                                }
                             }
                             else
                             {
                                 currentAction = Moves.NO_ACTION;
                             }
                         }
-                        else if (actionSelector.move.moveType == MoveType.WIDEADJ)
+                    }
+                    else
+                    {
+                        if (onAir)
                         {
-                            if (actionSelector.move.x > actionSelector.move.departurePlatform.rightEdge)
+                            airUpdates++;
+                            if (airUpdates > 10)
                             {
-                                currentAction = Moves.MOVE_RIGHT;
+                                onAir = false;
+                            }
+                            currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
+                            return;
+                        }
+                        // Check if height is really what we are told -> Generates up and down movement in falls
+                        if (Math.Abs((rectangleInfo.Height + 2 * rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatform.yTop * 2) > 4)
+                        {
+                            if (rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
+                            {
+                                currentAction = currentAction == Moves.MORPH_UP ? Moves.MORPH_DOWN : Moves.MORPH_UP;
                             }
                             else
-                            {
-                                currentAction = Moves.MOVE_LEFT;
-                            }
-                        }
-                        else if (actionSelector.move.moveType == MoveType.BIGHOLEDROP)
-                        {
-                            int distance_x;
-                            if (actionSelector.move.velocityX > 0)
-                            {
-                                distance_x = ((int)(rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - actionSelector.move.departurePlatform.rightEdge;
-                            }
-                            else
-                            {
-                                distance_x = ((int)(rectangleInfo.X / GameInfo.PIXEL_LENGTH)) - actionSelector.move.departurePlatform.leftEdge;
-                            }
-                            // Remember move.velocityX stores the hole's width
-                            StateRectangle state = new StateRectangle(distance_x, actionSelector.move.departurePlatform.yTop - ((int)(rectangleInfo.Y / GameInfo.PIXEL_LENGTH)),
-                                RectangleAgent.DiscreetVelocity(rectangleInfo.VelocityX), (int)(rectangleInfo.Height / (2 * GameInfo.PIXEL_LENGTH)), actionSelector.move.velocityX);
-
-                            currentAction = l.ChooseMove(state, actionSelector.move.velocityX);
-                        }
-                        else if (actionSelector.move.moveType == MoveType.FALL)
-                        {
-                            onAir = true;
-                            airUpdates = 0;
-                            if (actionSelector.move.landingPlatform.yTop - actionSelector.move.departurePlatform.yTop > 15
-                                && rectangleInfo.Y > actionSelector.move.departurePlatform.yTop * GameInfo.PIXEL_LENGTH
-                                && actionSelector.move.moveDuringFlight == Moves.NO_ACTION)
                             {
                                 currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
                             }
+                            return;
+                        }
+                        if (levelMap.HitsCeiling(rectangleInfo, currentPlatform))
+                        {
+                            currentAction = Moves.MORPH_DOWN;
+                            return;
+                        }
+
+                        if (plan.Count == 0 || plan[0].departurePlatform.id != levelMap.small_to_simplified[currentPlatform].id) //RECTANGLE IN LAST PLATFORM
+                        {
+                            if (fullPlan.Count - plan.Count - 1 >= 0)
+                            {
+                                plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
+                            }
                             else
                             {
-                                currentAction = actionSelector.move.moveDuringFlight;
+                                plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, null);
                             }
+                            fullPlan = new List<MoveInformation>(plan);
                         }
-                        else
-                        {
-                            currentAction = Moves.NO_ACTION;
-                        }
+
+
+                        currentAction = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
+                        actionSelector.lastMove = currentAction;
                     }
                 }
-                else
-                {
-                    if (onAir)
-                    {
-                        airUpdates++;
-                        if(airUpdates > 10)
-                        {
-                            onAir = false;
-                        }
-                        currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
-                        return;
-                    }
-                    // Check if height is really what we are told -> Generates up and down movement in falls
-                    if (Math.Abs((rectangleInfo.Height + 2 * rectangleInfo.Y) / GameInfo.PIXEL_LENGTH - currentPlatform.yTop * 2) > 4)
-                    {
-                        if (rectangleInfo.Height > GameInfo.SQUARE_HEIGHT)
-                        {
-                            currentAction = currentAction == Moves.MORPH_UP ? Moves.MORPH_DOWN : Moves.MORPH_UP;
-                        }
-                        else
-                        {
-                            currentAction = currentAction == Moves.MORPH_DOWN ? Moves.MORPH_UP : Moves.MORPH_DOWN;
-                        }
-                        return;
-                    }
-                    if (levelMap.HitsCeiling(rectangleInfo,currentPlatform))
-                    {
-                        currentAction = Moves.MORPH_DOWN;
-                        return;
-                    }
+            }
+            catch(Exception e)
+            {
 
-                    if (plan.Count == 0 || plan[0].departurePlatform.id != levelMap.small_to_simplified[currentPlatform].id) //RECTANGLE IN LAST PLATFORM
-                    {
-                        if (fullPlan.Count - plan.Count - 1 >= 0)
-                        {
-                            plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, fullPlan[fullPlan.Count - plan.Count - 1]);
-                        }
-                        else
-                        {
-                            plan = graph.SearchAlgorithm(levelMap.small_to_simplified[levelMap.RectanglePlatform(rectangleInfo)].id, collectiblesInfo, null);
-                        }
-                        fullPlan = new List<MoveInformation>(plan);
-                    }
-
-                    
-                    currentAction = actionSelector.nextActionPhisics(ref plan, remaining, rectangleInfo, currentPlatform);
-                    actionSelector.lastMove = currentAction;
-                }
             }
         }
 

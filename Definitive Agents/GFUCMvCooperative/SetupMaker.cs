@@ -91,7 +91,10 @@ namespace GeometryFriendsAgents
             levelMapCircle = new LevelMapCircle();
             levelMapRectangle = new LevelMapRectangle();
 
-            lCircle = new LearningCircle();
+            if (!GameInfo.PHYSICS)
+            {
+                lCircle = new LearningCircle();
+            }
             lRectangle = new LearningRectangle();
             circle_to_rectangle = new Dictionary<int, int>();
 
