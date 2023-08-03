@@ -103,7 +103,10 @@ namespace GeometryFriendsAgents
             newDebugInfo = new List<DebugInformation>();
             trajectory = new List<CircleRepresentation>();
 
-            l = new LearningCircle();
+            if (!GameInfo.PHYSICS)
+            {
+                l = new LearningCircle();
+            }
         }
 
         //implements abstract circle interface: used to setup the initial information so that the agent has basic knowledge about the level

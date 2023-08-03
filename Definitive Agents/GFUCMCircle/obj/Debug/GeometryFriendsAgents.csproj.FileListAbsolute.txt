@@ -64,3 +64,9 @@ D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMCircle\obj\Debug\Geom
 D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMCircle\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
 D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMCircle\obj\Debug\GeometryFriendsAgents.dll
 D:\TFG Infor\TFG---Geometry-Friends\Definitive Agents\GFUCMCircle\obj\Debug\GeometryFriendsAgents.pdb
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMCircle\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.dll
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMCircle\GeometryFriendsGame\Release\Agents\GeometryFriendsAgents.pdb
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMCircle\obj\Debug\GeometryFriendsAgents.csproj.AssemblyReference.cache
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMCircle\obj\Debug\GeometryFriendsAgents.csproj.CoreCompileInputs.cache
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMCircle\obj\Debug\GeometryFriendsAgents.dll
+E:\Documentos\TFG_Info\TFG-Geometry-Friends\Definitive Agents\GFUCMCircle\obj\Debug\GeometryFriendsAgents.pdb

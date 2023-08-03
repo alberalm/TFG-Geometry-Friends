@@ -80,6 +80,7 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMAgent" value="30" />
+      <HighScore name="UCMAgent" value="38" />
       <HighScore name="UCMAgent" value="55" />
       <HighScore name="UCMAgent" value="61" />
       <HighScore name="UCMAgent" value="94" />

@@ -169,6 +169,17 @@ namespace GeometryFriendsAgents
                 {
                     return 1;
                 }
+                if(EnoughSpaceToAccelerateCircle(departurePlatform.leftEdge, departurePlatform.rightEdge, x, velocityX + (velocityX < 0 ? -1 : 1) * 20))
+                {
+                    if(!other.EnoughSpaceToAccelerateCircle(other.departurePlatform.leftEdge, other.departurePlatform.rightEdge, other.x, other.velocityX + (other.velocityX < 0 ? -1 : 1) * 20))
+                    {
+                        return 1;
+                    }
+                }
+                else if(other.EnoughSpaceToAccelerateCircle(other.departurePlatform.leftEdge, other.departurePlatform.rightEdge, other.x, other.velocityX + (other.velocityX < 0 ? -1 : 1) * 20))
+                {
+                    return -1;
+                }
                 if (this.Value() < other.Value())
                 {
                     return 1;
@@ -348,6 +359,18 @@ namespace GeometryFriendsAgents
                 return false;
             }
             return true;
+        }
+
+        protected bool EnoughSpaceToAccelerateCircle(int leftEdge, int rigthEdge, int x, int vx)
+        {
+            if (vx > 0)
+            {
+                return vx * vx <= 2 * GameInfo.CIRCLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (x - leftEdge - 1);
+            }
+            else
+            {
+                return vx * vx <= 2 * GameInfo.CIRCLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (rigthEdge - 1 - x);
+            }
         }
     }
 }
