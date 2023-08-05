@@ -8,6 +8,8 @@ using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using static GeometryFriendsAgents.Graph;
+using System.Windows;
 
 namespace GeometryFriendsAgents
 {
@@ -63,6 +65,8 @@ namespace GeometryFriendsAgents
         ActionSelectorCircle actionSelector;
         Platform currentPlatform;
         bool flag = false;
+        bool simulated = true;
+        List<int> collectiblesRemaining = new List<int>();
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -182,8 +186,8 @@ namespace GeometryFriendsAgents
                 {
                     int x = (int)(circleInfo.X / GameInfo.PIXEL_LENGTH);
                     int y = (int)(circleInfo.Y / GameInfo.PIXEL_LENGTH);
-                    DebugInformation di = DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x + i) * GameInfo.PIXEL_LENGTH, (y + j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen);
-                    newDebugInfo.Add(di);
+                    //DebugInformation di = DebugInformationFactory.CreateRectangleDebugInfo(new PointF((x + i) * GameInfo.PIXEL_LENGTH, (y + j) * GameInfo.PIXEL_LENGTH), new Size(GameInfo.PIXEL_LENGTH, GameInfo.PIXEL_LENGTH), GeometryFriends.XNAStub.Color.YellowGreen);
+                    //newDebugInfo.Add(di);
                 }
             }
 
@@ -330,12 +334,36 @@ namespace GeometryFriendsAgents
                 {
                     return;
                 }
+                if(collectiblesRemaining.Count != nCollectiblesLeft)
+                {
+                    List<int> newList = new List<int>();
+                    foreach (CollectibleRepresentation c in collectiblesInfo)
+                    {
+                        int index = graph.GetDiamondID(c);
+                        if (index != -1)
+                        {
+                            newList.Add(index);
+                        }
+                    }
+                    collectiblesRemaining = newList;
+                }
                 currentPlatform = levelMap.CirclePlatform(circleInfo);
                 if (!levelMap.AtBorder(circleInfo, currentPlatform, ref currentAction, plan))
                 {
                     if (currentPlatform.id == -1) // Ball is in the air
                     {
-                        if (!flag)
+                        if (flag)
+                        {
+                            if (circleInfo.VelocityX > 0)
+                            {
+                                currentAction = Moves.ROLL_RIGHT;
+                            }
+                            else
+                            {
+                                currentAction = Moves.ROLL_LEFT;
+                            }
+                        }
+                        else if (simulated)
                         {
                             if (circleInfo.VelocityX > 0)
                             {
@@ -348,18 +376,44 @@ namespace GeometryFriendsAgents
                         }
                         else
                         {
-                            if (circleInfo.VelocityX > 0)
+                            // we simulate the jump/fall once it has started with the precise speed to determine the way the circle needs to roll during the flight
+                            MoveInformation new_move = new MoveInformation(new Platform(-1), new Platform(-1), (int) circleInfo.X / GameInfo.PIXEL_LENGTH, -1, (int) circleInfo.VelocityX, MoveType.FALL, new List<int>(), new List<Tuple<float, float>>(), 10);
+                            new_move.path.Add(new Tuple<float, float>(circleInfo.X, circleInfo.Y));
+                            levelMap.SimulateMove(circleInfo.X, circleInfo.Y, circleInfo.VelocityX, circleInfo.VelocityY, ref new_move);
+                            Platform landing = new_move.landingPlatform;
+                            if(new_move.xlandPoint == -1) // collision of type 'other'
                             {
-                                currentAction = Moves.ROLL_RIGHT;
+                                flag = true;
                             }
                             else
                             {
-                                currentAction = Moves.ROLL_LEFT;
+                                if (circleInfo.VelocityX > 0)
+                                {
+                                    if (new_move.xlandPoint <= landing.leftEdge + 2)
+                                    {
+                                        flag = true;
+                                    }
+                                }
+                                else
+                                {
+                                    if (new_move.xlandPoint >= landing.rightEdge - 2)
+                                    {
+                                        flag = true;
+                                    }
+                                }
                             }
+                            simulated = true;
                         }
                     }
                     else
                     {
+                        simulated = false;
+                        MoveInformation mm = new MoveInformation(new Platform(-1), currentPlatform, (int)circleInfo.X / GameInfo.PIXEL_LENGTH, 0, (int)circleInfo.VelocityX, MoveType.NOMOVE, new List<int>(), new List<Tuple<float, float>>(), 10);
+                        levelMap.SimulateMove(circleInfo.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)circleInfo.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref mm);
+                        if (Utilities.Contained(collectiblesRemaining, mm.diamondsCollected))
+                        {
+                            currentAction = Moves.JUMP;
+                        }
                         if (plan.Count == 0 || plan[0].departurePlatform.id != currentPlatform.id) //CIRCLE IN LAST PLATFORM
                         {
                             if (fullPlan.Count - plan.Count - 1 >= 0)

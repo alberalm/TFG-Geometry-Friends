@@ -1,0 +1,58 @@
+<Levels>
+  <Level1>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="-1000" Y="-1000" />
+    <SquareStartingPosition X="120" Y="376" />
+    <Collectibles>
+      <Collectible X="312" Y="256" />
+      <Collectible X="550" Y="568" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="512" height="48" X="392" Y="168" centered="false" />
+      <Obstacle width="240" height="48" X="1016" Y="280" centered="false" />
+      <Obstacle width="688" height="48" X="24" Y="440" centered="false" />
+      <Obstacle width="448" height="48" X="824" Y="440" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="30" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="10" />
+    </HighScores>
+  </Level1>
+  <Level2>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="-1000" Y="-1000" />
+    <SquareStartingPosition X="120" Y="376" />
+    <Collectibles>
+      <Collectible X="312" Y="256" />
+      <Collectible X="550" Y="568" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="512" height="48" X="392" Y="168" centered="false" />
+      <Obstacle width="240" height="48" X="1016" Y="280" centered="false" />
+      <Obstacle width="688" height="48" X="24" Y="440" centered="false" />
+      <Obstacle width="448" height="48" X="816" Y="440" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="30" />
+    <HighScores>
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="10" />
+      <HighScore name="UCMAgent" value="10" />
+      <HighScore name="UCMAgent" value="10" />
+    </HighScores>
+  </Level2>
+</Levels>

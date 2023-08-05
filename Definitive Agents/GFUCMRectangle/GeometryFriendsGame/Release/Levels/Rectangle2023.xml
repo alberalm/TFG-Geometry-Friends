@@ -115,10 +115,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="IST Rectangle" value="9" />
-      <HighScore name="UCMAgent" value="10" />
-      <HighScore name="IST Rectangle" value="10" />
-      <HighScore name="UCMAgent" value="11" />
-      <HighScore name="IST Rectangle" value="11" />
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="9" />
+      <HighScore name="UCMAgent" value="9" />
     </HighScores>
   </Level4>
   <Level5>

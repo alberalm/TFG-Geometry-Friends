@@ -146,6 +146,7 @@ namespace GeometryFriendsAgents
             MoveType moveType = MoveType.NOMOVE;
             MoveInformation nextMoveInThisPlatform;
             int min_distance = 3 * GameInfo.CIRCLE_RADIUS / (GameInfo.PIXEL_LENGTH * 5);
+
             if (plan.Count > 0)
             {
                 nextMoveInThisPlatform = DiamondsCanBeCollectedFrom(currentPlatform, remaining, (int)(cI.X / GameInfo.PIXEL_LENGTH), plan[0]);
@@ -212,7 +213,6 @@ namespace GeometryFriendsAgents
                     {
                         if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHISICS) == target_velocity)
                         {
-
                             plan.RemoveAt(0);
                             if (moveType == MoveType.JUMP)
                             {
@@ -261,7 +261,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private bool JumpNeedsAngularMomentum(MoveInformation m)
+        public bool JumpNeedsAngularMomentum(MoveInformation m)
         {
             return Math.Abs(m.landingPlatform.yTop + GameInfo.JUMP_VELOCITYY * GameInfo.JUMP_VELOCITYY / (2 * GameInfo.GRAVITY * GameInfo.PIXEL_LENGTH) - m.departurePlatform.yTop) <= 5;
         }

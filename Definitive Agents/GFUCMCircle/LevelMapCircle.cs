@@ -12,6 +12,8 @@ namespace GeometryFriendsAgents
 {
     public class LevelMapCircle : LevelMap
     {
+        List<MoveInformation> parabolas = new List<MoveInformation>();
+
         public Platform PlatformBelowCircle(CircleRepresentation cI)
         {
             for (int i = 0; i < platformList.Count; i++)
@@ -259,7 +261,6 @@ namespace GeometryFriendsAgents
             {
                 num_velocities = GameInfo.NUM_VELOCITIES_PHISICS;
                 velocity_step = GameInfo.VELOCITY_STEP_PHISICS;
-
             }
             else
             {
@@ -288,7 +289,6 @@ namespace GeometryFriendsAgents
                 Parallel.For(p.leftEdge + 1, p.rightEdge, x =>
                 {
                     Parallel.For(0, num_velocities + 1, i =>
-
                     {
                         int vx = i * velocity_step;
                         if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
@@ -360,7 +360,7 @@ namespace GeometryFriendsAgents
                 }
             }
         }
-        List<MoveInformation> parabolas = new List<MoveInformation>();
+
         public void SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m)
         {
             bool flag = false;
@@ -432,7 +432,6 @@ namespace GeometryFriendsAgents
                 y_t = (int)(y_tfloat / GameInfo.PIXEL_LENGTH);
                 cct = CircleIntersectsWithObstacle(x_t, y_t);
             }
-
             if (cct != CollisionType.Bottom)
             {
                 m.landingPlatform = new Platform(-2);

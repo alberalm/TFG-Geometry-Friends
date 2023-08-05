@@ -167,8 +167,10 @@ namespace GeometryFriendsAgents
                 int index = GetDiamondID(c);
                 if(index != -1)
                 {
-                    foreach(Diamond d in collectibles) {
-                        if (d.id == index) {
+                    foreach(Diamond d in collectibles)
+                    {
+                        if (d.id == index)
+                        {
                             newList.Add(d);
                             diamonds[index] = count;
                             count++;
@@ -181,21 +183,13 @@ namespace GeometryFriendsAgents
             Node sol = new Node(null, null, 0, 0);
             List<bool> auxlist = Enumerable.Repeat(false,collectibles.Count).ToList();
             queue.Add(new Node(new List<MoveInformation> { new MoveInformation(platforms[src]) }, auxlist, 0, 0));
-            int limit = collectibles.Count;
-            foreach(Diamond d in collectibles)
-            {
-                if(d.isAbovePlatform.Count > 0)
-                {
-                    limit--;
-                }
-            }
             sw.Restart();
             while (queue.Count > 0)
             {
                 Node n = queue[0];
                 queue.RemoveAt(0);
                 // If depth is too high (more than #platforms * #collectibles), we our representation does not have any solution
-                if (n.depth > platforms.Count * Math.Max(limit, 3) || sw.ElapsedMilliseconds >= 400)
+                if (sw.ElapsedMilliseconds >= 400)
                 {
                     continue;
                 }
@@ -203,7 +197,6 @@ namespace GeometryFriendsAgents
                 MoveInformation move = n.plan[n.plan.Count - 1];
                 foreach (int d in move.diamondsCollected)
                 {
-                    //Arreglado?
                     if (diamonds.ContainsKey(d) && !n.caught[diamonds[d]])
                     {
                         n.caught[diamonds[d]] = true;
