@@ -10,6 +10,7 @@ namespace GeometryFriendsAgents
     class ActionSelectorCircle : ActionSelector
     {
         public LevelMapCircle levelMap;
+        public MoveInformation move;
 
         public ActionSelectorCircle(Dictionary<CollectibleRepresentation, int> collectibleId, LearningCircle l, LevelMapCircle levelMap, Graph graph): base(collectibleId, l, graph)
         {
@@ -157,6 +158,7 @@ namespace GeometryFriendsAgents
             }
             if (nextMoveInThisPlatform != null)
             {
+                move = nextMoveInThisPlatform;
                 target_position = nextMoveInThisPlatform.x;
                 target_velocity = nextMoveInThisPlatform.velocityX;
                 moveType = nextMoveInThisPlatform.moveType;
@@ -203,11 +205,24 @@ namespace GeometryFriendsAgents
                 if (plan.Count > 0)
                 {
                     MoveInformation aux_move = plan[0];
+                    move = aux_move;
                     target_position = plan[0].x;
                     target_velocity = plan[0].velocityX;
                     moveType = plan[0].moveType;
                     brake_distance = cI.VelocityX * cI.VelocityX / (2 * GameInfo.CIRCLE_ACCELERATION);
                     acceleration_distance = target_velocity * target_velocity / (2 * GameInfo.CIRCLE_ACCELERATION);
+
+                    if(aux_move.moveType == MoveType.CLIMB)
+                    {
+                        if(aux_move.velocityX > 0)
+                        {
+                            return new Tuple<Moves, Tuple<bool, bool>>(Moves.ROLL_RIGHT, new Tuple<bool, bool>(false, true));
+                        }
+                        else
+                        {
+                            return new Tuple<Moves, Tuple<bool, bool>>(Moves.ROLL_LEFT, new Tuple<bool, bool>(false, true));
+                        }
+                    }
 
                     if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= GameInfo.TARGET_POINT_ERROR * GameInfo.PIXEL_LENGTH)
                     {

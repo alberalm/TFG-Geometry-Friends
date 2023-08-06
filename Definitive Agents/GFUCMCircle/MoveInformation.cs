@@ -147,6 +147,14 @@ namespace GeometryFriendsAgents
             {
                 return 0;
             }
+            if(moveType == MoveType.CLIMB && other.moveType == MoveType.JUMP) // Climb is safer
+            {
+                return 1;
+            }
+            else if (other.moveType == MoveType.CLIMB && moveType == MoveType.JUMP)
+            {
+                return -1;
+            }
             if (Utilities.Contained(diamondsCollected, other.diamondsCollected) && Utilities.Contained(other.diamondsCollected, diamondsCollected)) //diamondsCollected=other.diamondsCollected
             {
                 int m = GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH;

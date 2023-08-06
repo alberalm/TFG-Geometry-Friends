@@ -147,7 +147,7 @@ namespace GeometryFriendsAgents
         private void InitialDraw()
         {
             newDebugInfo.Add(DebugInformationFactory.CreateClearDebugInfo());
-            //levelMap.DrawLevelMap(ref newDebugInfo);
+            levelMap.DrawLevelMap(ref newDebugInfo);
             levelMap.DrawConnections(ref newDebugInfo);
             //levelMap.DrawConnectionsVertex(ref newDebugInfo);
             PlanDebug();
@@ -348,6 +348,11 @@ namespace GeometryFriendsAgents
                     collectiblesRemaining = newList;
                 }
                 currentPlatform = levelMap.CirclePlatform(circleInfo);
+                if(actionSelector.move != null && actionSelector.move.moveType == MoveType.CLIMB && currentPlatform.id != actionSelector.move.landingPlatform.id)
+                {
+                    currentAction = actionSelector.move.velocityX > 0 ? Moves.ROLL_RIGHT : Moves.ROLL_LEFT;
+                    return;
+                }
                 if (!levelMap.AtBorder(circleInfo, currentPlatform, ref currentAction, plan))
                 {
                     if (currentPlatform.id == -1) // Ball is in the air

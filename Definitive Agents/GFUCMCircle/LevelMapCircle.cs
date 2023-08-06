@@ -277,11 +277,11 @@ namespace GeometryFriendsAgents
                     int vx = (i + 1) * velocity_step;
                     if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge + Math.Max(0, 8 - i), vx))
                     {
-                        AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + Math.Max(0, 8 - i));
+                        AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + Math.Max(0, 8 - i), ref p);
                     }
                     if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge - Math.Max(0, 8 - i), -vx))
                     {
-                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(0, 8 - i));
+                        AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(0, 8 - i), ref p);
                     }
                 });
 
@@ -293,23 +293,41 @@ namespace GeometryFriendsAgents
                         int vx = i * velocity_step;
                         if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
                         {
-                            AddTrajectory(ref p, vx, MoveType.JUMP, x);
+                            AddTrajectory(ref p, vx, MoveType.JUMP, x, ref p);
                         }
                         if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, -vx))
                         {
-                            AddTrajectory(ref p, -vx, MoveType.JUMP, x);
+                            AddTrajectory(ref p, -vx, MoveType.JUMP, x, ref p);
                         }
                     });
                 });
 
+                Parallel.For(0, platformList.Count, i =>
+                {
+                    Platform p2 = platformList[i];
+                    if (p.yTop - p2.yTop > 0 && p.yTop - p2.yTop < 3)
+                    {
+                        if (p2.leftEdge - p.rightEdge < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH
+                            && p2.leftEdge - p.rightEdge >= 0)
+                        {
+                            AddTrajectory(ref p, 1, MoveType.CLIMB, p.rightEdge, ref p2);
+                        }
+                        else if (p.leftEdge - p2.rightEdge < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH + 1
+                            && p.leftEdge - p2.rightEdge >= 0)
+                        {
+                            AddTrajectory(ref p, -1, MoveType.CLIMB, p.leftEdge, ref p2);
+                        }
+                    }
+                });
+
                 Parallel.For(p.leftEdge, p.rightEdge + 1, x =>
                 {
-                    AddTrajectory(ref p, 0, MoveType.NOMOVE, x);
+                    AddTrajectory(ref p, 0, MoveType.NOMOVE, x, ref p);
                 });
             }
         }
 
-        private void AddTrajectory(ref Platform p, int vx, MoveType moveType, int x)
+        private void AddTrajectory(ref Platform p, int vx, MoveType moveType, int x, ref Platform landing)
         {
             // Any trajectory with distance <= 10 should be safe to not collide (?)
             MoveInformation m = new MoveInformation(new Platform(-1), p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
@@ -331,6 +349,12 @@ namespace GeometryFriendsAgents
                     m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH));
                     m.diamondsCollected.Add(GetDiamondCollected(x, p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH));
                 }
+            }
+            else if(moveType == MoveType.CLIMB)
+            {
+                m.landingPlatform = landing;
+                m.xlandPoint = vx > 0 ? landing.leftEdge : landing.rightEdge;
+                m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, (p.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH));
             }
             lock (platformList)
             {
