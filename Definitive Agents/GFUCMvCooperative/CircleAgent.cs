@@ -46,6 +46,8 @@ namespace GeometryFriendsAgents
         private double t_0 = 0;
         private double t_recovery = 0;
         private bool finished_changing = true;
+        bool simulated = true;
+        List<int> collectiblesRemaining = new List<int>();
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -237,7 +239,28 @@ namespace GeometryFriendsAgents
                 {
                     return;
                 }
+
+                if (collectiblesRemaining.Count != remaining.Count)
+                {
+                    List<int> newList = new List<int>();
+                    foreach (CollectibleRepresentation c in remaining)
+                    {
+                        int index = setupMaker.graph.GetDiamondID(c);
+                        if (index != -1)
+                        {
+                            newList.Add(index);
+                        }
+                    }
+                    collectiblesRemaining = newList;
+                }
                 currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
+
+                if (setupMaker.actionSelectorCircle.move != null && setupMaker.actionSelectorCircle.move.moveType == MoveType.CLIMB &&
+                    currentPlatformCircle.real && setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id != setupMaker.actionSelectorCircle.move.landingPlatform.id)
+                {
+                    currentAction = setupMaker.actionSelectorCircle.move.velocityX > 0 ? Moves.ROLL_RIGHT : Moves.ROLL_LEFT;
+                    return;
+                }
 
                 if (!setupMaker.levelMapCircle.AtBorder(setupMaker.circleInfo, currentPlatformCircle, ref currentAction, setupMaker.planCircle))
                 {
@@ -257,7 +280,18 @@ namespace GeometryFriendsAgents
                     if (currentPlatformCircle.id == -1) // Ball is in the air
                     {
                         setupMaker.circle_state = "Volando...";
-                        if (!flag)
+                        if (flag)
+                        {
+                            if (setupMaker.circleInfo.VelocityX > 0)
+                            {
+                                currentAction = Moves.ROLL_RIGHT;
+                            }
+                            else
+                            {
+                                currentAction = Moves.ROLL_LEFT;
+                            }
+                        }
+                        else if (simulated)
                         {
                             if (setupMaker.circleInfo.VelocityX > 0)
                             {
@@ -270,18 +304,44 @@ namespace GeometryFriendsAgents
                         }
                         else
                         {
-                            if (setupMaker.circleInfo.VelocityX > 0)
+                            // we simulate the jump/fall once it has started with the precise speed to determine the way the circle needs to roll during the flight
+                            MoveInformation new_move = new MoveInformation(new Platform(-1), new Platform(-1), (int)setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH, -1, (int)setupMaker.circleInfo.VelocityX, MoveType.FALL, new List<int>(), new List<Tuple<float, float>>(), 10);
+                            new_move.path.Add(new Tuple<float, float>(setupMaker.circleInfo.X, setupMaker.circleInfo.Y));
+                            setupMaker.levelMapCircle.SimulateMove(setupMaker.circleInfo.X, setupMaker.circleInfo.Y, setupMaker.circleInfo.VelocityX, setupMaker.circleInfo.VelocityY, ref new_move, 0.005f);
+                            Platform landing = new_move.landingPlatform;
+                            if (new_move.xlandPoint == -1) // collision of type 'other'
                             {
-                                currentAction = Moves.ROLL_RIGHT;
+                                flag = true;
                             }
                             else
                             {
-                                currentAction = Moves.ROLL_LEFT;
+                                if (setupMaker.circleInfo.VelocityX > 0)
+                                {
+                                    if (new_move.xlandPoint <= landing.leftEdge + 2)
+                                    {
+                                        flag = true;
+                                    }
+                                }
+                                else
+                                {
+                                    if (new_move.xlandPoint >= landing.rightEdge - 2)
+                                    {
+                                        flag = true;
+                                    }
+                                }
                             }
+                            simulated = true;
                         }
                     }
                     else
                     {
+                        simulated = false;
+                        MoveInformation mm = new MoveInformation(new Platform(-1), setupMaker.currentPlatformCircle, (int)setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH, 0, (int)setupMaker.circleInfo.VelocityX, MoveType.NOMOVE, new List<int>(), new List<Tuple<float, float>>(), 10);
+                        setupMaker.levelMapCircle.SimulateMove(setupMaker.circleInfo.X, (setupMaker.currentPlatformCircle.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)setupMaker.circleInfo.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref mm, 0.005f);
+                        if (Utilities.Contained(collectiblesRemaining, mm.diamondsCollected))
+                        {
+                            currentAction = Moves.JUMP;
+                        }
                         if (setupMaker.planCircle.Count == 0 || ((currentPlatformCircle.real || setupMaker.CircleAboveRectangle()) &&
                                 setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id)
                                 || (setupMaker.planCircle[0].moveType == MoveType.COOPMOVE && setupMaker.planRectangle[0].moveType == MoveType.COOPMOVE)) //CIRCLE IN LAST PLATFORM

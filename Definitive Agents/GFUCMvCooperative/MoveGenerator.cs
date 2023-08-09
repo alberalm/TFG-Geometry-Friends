@@ -413,6 +413,25 @@ namespace GeometryFriendsAgents
             }
         }
 
+        public void GenerateClimb(ref List<Platform> platformList, int k, int i)
+        {
+            Platform p = platformList[k];
+            Platform p2 = platformList[i];
+            if (p.yTop - p2.yTop > 0 && p.yTop - p2.yTop < 3)
+            {
+                if (p2.leftEdge - p.rightEdge < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH
+                    && p2.leftEdge - p.rightEdge >= 0)
+                {
+                    trajectoryAdder.AddClimb(ref platformList, ref p, 1, MoveType.CLIMB, p.rightEdge, p2);
+                }
+                else if (p.leftEdge - p2.rightEdge < GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH + 1
+                    && p.leftEdge - p2.rightEdge >= 0)
+                {
+                    trajectoryAdder.AddClimb(ref platformList, ref p, -1, MoveType.CLIMB, p.leftEdge, p2);
+                }
+            }
+        }
+
         public void GenerateJump(ref List<Platform> platformList, int k, int i, int x, int velocity_step, LevelMapRectangle levelMapRectangle)
         {
             Platform p = platformList[k];

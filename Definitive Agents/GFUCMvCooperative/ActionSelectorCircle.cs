@@ -347,11 +347,24 @@ namespace GeometryFriendsAgents
                 if (plan.Count > 0)
                 {
                     MoveInformation aux_move = plan[0];
+                    move = aux_move;
                     target_position = plan[0].x;
                     target_velocity = plan[0].velocityX;
                     moveType = plan[0].moveType;
                     brake_distance = cI.VelocityX * cI.VelocityX / (2 * GameInfo.CIRCLE_ACCELERATION);
                     acceleration_distance = target_velocity * target_velocity / (2 * GameInfo.CIRCLE_ACCELERATION);
+
+                    if (aux_move.moveType == MoveType.CLIMB)
+                    {
+                        if (aux_move.velocityX > 0)
+                        {
+                            return new Tuple<Moves, Tuple<bool, bool>>(Moves.ROLL_RIGHT, new Tuple<bool, bool>(false, true));
+                        }
+                        else
+                        {
+                            return new Tuple<Moves, Tuple<bool, bool>>(Moves.ROLL_LEFT, new Tuple<bool, bool>(false, true));
+                        }
+                    }
 
                     if (plan[0].moveType == MoveType.COOPMOVE && setupMaker.planRectangle[0].moveType == MoveType.CIRCLETILT)
                     {
@@ -463,7 +476,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private bool JumpNeedsAngularMomentum(MoveInformation m)
+        public bool JumpNeedsAngularMomentum(MoveInformation m)
         {
             return Math.Abs(m.landingPlatform.yTop + GameInfo.JUMP_VELOCITYY * GameInfo.JUMP_VELOCITYY / (2 * GameInfo.GRAVITY * GameInfo.PIXEL_LENGTH) - m.departurePlatform.yTop) <= 7;
         }

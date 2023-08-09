@@ -328,11 +328,16 @@ namespace GeometryFriendsAgents
                         }
                         Parallel.For(0, l, i =>
                         {
-                            moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step,levelMapRectangle);
+                            moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step, levelMapRectangle);
                         });
                     }
                 });
                 //}
+
+                Parallel.For(0, platformList.Count, i =>
+                {
+                    moveGenerator.GenerateClimb(ref platformList, k, i);
+                });
 
                 Parallel.For(p.leftEdge, p.rightEdge + 1, x =>
                 {
@@ -341,7 +346,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private void AddTrajectory(ref Platform p, int vx, MoveType moveType, int x)
+        private void AddTrajectory(ref Platform p, int vx, MoveType moveType, int x, ref Platform landing)
         {
             // Any trajectory with distance <= 10 should be safe to not collide (?)
             MoveInformation m = new MoveInformation(new Platform(-1), p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);

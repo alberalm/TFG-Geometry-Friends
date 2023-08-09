@@ -380,5 +380,17 @@ namespace GeometryFriendsAgents
                 }                
             }
         }
+
+        public void AddClimb(ref List<Platform> platformList, ref Platform p, int vx, MoveType moveType, int x, Platform landing)
+        {
+            MoveInformation m = new MoveInformation(landing, p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10)
+            {
+                xlandPoint = vx > 0 ? landing.leftEdge : landing.rightEdge
+            };
+
+            m.path.Add(new Tuple<float, float>(x * GameInfo.PIXEL_LENGTH, p.yTop * GameInfo.PIXEL_LENGTH - GameInfo.CIRCLE_RADIUS));
+
+            AddToPlatform(ref platformList, ref p, ref m, m.CompareCircle);
+        }
     }
 }
