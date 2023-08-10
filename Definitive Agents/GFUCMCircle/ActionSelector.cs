@@ -1,9 +1,6 @@
-﻿using GeometryFriends.AI;
-using GeometryFriends.AI.Perceptions.Information;
+﻿using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GeometryFriendsAgents
 {
@@ -16,7 +13,6 @@ namespace GeometryFriendsAgents
         public float brake_distance = 0;
         public float acceleration_distance = 0;
         public Graph graph;
-        
 
         public ActionSelector(Dictionary<CollectibleRepresentation,int> collectibleId, Learning l, Graph graph)
         {

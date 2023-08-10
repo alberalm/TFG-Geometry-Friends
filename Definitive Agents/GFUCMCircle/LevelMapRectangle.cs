@@ -3,13 +3,9 @@ using GeometryFriends.AI.Debug;
 using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
-using System.Xml.Linq;
 
 namespace GeometryFriendsAgents
 {

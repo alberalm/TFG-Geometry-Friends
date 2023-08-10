@@ -1,15 +1,7 @@
 ﻿using GeometryFriends.AI;
-using GeometryFriends.AI.Debug;
 using GeometryFriends.AI.Perceptions.Information;
-using GeometryFriends.XNAStub;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using static GeometryFriendsAgents.RectangleShape;
 
 namespace GeometryFriendsAgents

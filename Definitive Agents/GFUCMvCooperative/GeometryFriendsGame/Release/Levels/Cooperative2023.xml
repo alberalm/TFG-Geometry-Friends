@@ -21,11 +21,11 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
-      <HighScore name="IST Circle&amp;IST Rectangle" value="31" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="34" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="36" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="36" />
-      <HighScore name="IST Circle&amp;IST Rectangle" value="36" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="27" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="28" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="28" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="29" />
     </HighScores>
   </Level1>
   <Level2>
@@ -52,11 +52,11 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="31" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="38" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="43" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="43" />
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="44" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="48" />
     </HighScores>
   </Level2>
   <Level3>
@@ -90,10 +90,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="IST Circle&amp;IST Rectangle" value="42" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="44" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="47" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="47" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="47" />
-      <HighScore name="IST Circle&amp;IST Rectangle" value="48" />
-      <HighScore name="IST Circle&amp;IST Rectangle" value="51" />
-      <HighScore name="IST Circle&amp;IST Rectangle" value="51" />
     </HighScores>
   </Level3>
   <Level4>
@@ -121,11 +121,11 @@
     <OrangeElevators />
     <TimeLimit value="180" />
     <HighScores>
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="39" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="47" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="48" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="48" />
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="49" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="50" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="51" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="51" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="54" />
     </HighScores>
   </Level4>
   <Level5>
@@ -158,8 +158,8 @@
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="26" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="26" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
     </HighScores>
   </Level5>
 </Levels>

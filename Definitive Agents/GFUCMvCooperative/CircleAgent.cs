@@ -277,6 +277,32 @@ namespace GeometryFriendsAgents
                             }
                         }
                     }
+                    if (setupMaker.CircleAboveRectangle() && setupMaker.planCircle.Count > 0)
+                    {
+                        double distance_to_rectangle_edge = Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X);
+                        if (distance_to_rectangle_edge > GameInfo.RECTANGLE_AREA / (2 * setupMaker.rectangleInfo.Height) - 2 * GameInfo.PIXEL_LENGTH
+                            && Math.Abs(setupMaker.circleInfo.X - setupMaker.actionSelectorCircle.move.x * GameInfo.PIXEL_LENGTH) > 2 * GameInfo.PIXEL_LENGTH)
+                        {
+                            if (distance_to_rectangle_edge > GameInfo.RECTANGLE_AREA / (2 * setupMaker.rectangleInfo.Height) - GameInfo.PIXEL_LENGTH)
+                            {
+                                currentAction = setupMaker.rectangleInfo.X > setupMaker.circleInfo.X ? Moves.ROLL_RIGHT : Moves.ROLL_LEFT;
+                                return;
+                            }
+                            else
+                            {
+                                if(setupMaker.rectangleInfo.X > setupMaker.circleInfo.X && setupMaker.circleInfo.VelocityX < 0)
+                                {
+                                    currentAction = Moves.ROLL_RIGHT;
+                                    return;
+                                }
+                                else if(setupMaker.rectangleInfo.X < setupMaker.circleInfo.X && setupMaker.circleInfo.VelocityX > 0)
+                                {
+                                    currentAction = Moves.ROLL_LEFT;
+                                    return;
+                                }
+                            }
+                        }
+                    }
                     if (currentPlatformCircle.id == -1) // Ball is in the air
                     {
                         setupMaker.circle_state = "Volando...";

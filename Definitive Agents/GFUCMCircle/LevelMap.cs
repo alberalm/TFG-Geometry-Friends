@@ -1,13 +1,8 @@
-﻿using GeometryFriends;
-using GeometryFriends.AI;
-using GeometryFriends.AI.Debug;
+﻿using GeometryFriends.AI.Debug;
 using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeometryFriendsAgents
 {
