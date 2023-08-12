@@ -539,10 +539,6 @@ namespace GeometryFriendsAgents
                         {
                             return Moves.ROLL_RIGHT;
                         }
-                        else if (square_target < inf_threshold)
-                        {
-                            return Moves.ROLL_RIGHT;
-                        }
                         else if (square_target <= inf_threshold + 5)
                         {
                             return Moves.ROLL_RIGHT;

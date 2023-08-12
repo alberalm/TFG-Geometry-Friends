@@ -8,8 +8,6 @@ using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Runtime.Remoting;
 
 namespace GeometryFriendsAgents
 {
@@ -48,6 +46,8 @@ namespace GeometryFriendsAgents
         private bool finished_changing = true;
         bool simulated = true;
         List<int> collectiblesRemaining = new List<int>();
+        private int time_after_landing = 0;
+        private int previous_platform = -1;
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -235,6 +235,7 @@ namespace GeometryFriendsAgents
 
                 t_0 += elapsedGameTime.TotalMilliseconds;
                 t += elapsedGameTime.TotalMilliseconds;
+
                 if (t < 100)
                 {
                     return;
@@ -254,6 +255,10 @@ namespace GeometryFriendsAgents
                     collectiblesRemaining = newList;
                 }
                 currentPlatformCircle = setupMaker.levelMapCircle.CirclePlatform(setupMaker.circleInfo);
+                if (currentPlatformCircle.id != previous_platform || currentPlatformCircle.id == -1)
+                {
+                    previous_platform = currentPlatformCircle.id;
+                }
 
                 if (setupMaker.actionSelectorCircle.move != null && setupMaker.actionSelectorCircle.move.moveType == MoveType.CLIMB &&
                     currentPlatformCircle.real && setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id != setupMaker.actionSelectorCircle.move.landingPlatform.id)
@@ -279,33 +284,44 @@ namespace GeometryFriendsAgents
                     }
                     if (setupMaker.CircleAboveRectangle() && setupMaker.planCircle.Count > 0)
                     {
-                        double distance_to_rectangle_edge = Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X);
-                        if (distance_to_rectangle_edge > GameInfo.RECTANGLE_AREA / (2 * setupMaker.rectangleInfo.Height) - 2 * GameInfo.PIXEL_LENGTH
-                            && Math.Abs(setupMaker.circleInfo.X - setupMaker.actionSelectorCircle.move.x * GameInfo.PIXEL_LENGTH) > 2 * GameInfo.PIXEL_LENGTH)
+                        double distance_between_centers = Math.Abs(setupMaker.rectangleInfo.X - setupMaker.circleInfo.X);
+                        // Circle near rectangle's edge
+                        if (distance_between_centers > GameInfo.RECTANGLE_AREA / (2 * setupMaker.rectangleInfo.Height) - 2 * GameInfo.PIXEL_LENGTH)
                         {
-                            if (distance_to_rectangle_edge > GameInfo.RECTANGLE_AREA / (2 * setupMaker.rectangleInfo.Height) - GameInfo.PIXEL_LENGTH)
+                            if(Math.Abs(setupMaker.circleInfo.X - setupMaker.actionSelectorCircle.move.x * GameInfo.PIXEL_LENGTH) > 2 * GameInfo.PIXEL_LENGTH)
                             {
-                                currentAction = setupMaker.rectangleInfo.X > setupMaker.circleInfo.X ? Moves.ROLL_RIGHT : Moves.ROLL_LEFT;
-                                return;
+                                if (distance_between_centers > GameInfo.RECTANGLE_AREA / (2 * setupMaker.rectangleInfo.Height) - GameInfo.PIXEL_LENGTH)
+                                {
+                                    currentAction = setupMaker.rectangleInfo.X > setupMaker.circleInfo.X ? Moves.ROLL_RIGHT : Moves.ROLL_LEFT;
+                                    return;
+                                }
+                                else
+                                {
+                                    if (setupMaker.rectangleInfo.X > setupMaker.circleInfo.X && setupMaker.circleInfo.VelocityX < 0)
+                                    {
+                                        currentAction = Moves.ROLL_RIGHT;
+                                        return;
+                                    }
+                                    else if (setupMaker.rectangleInfo.X < setupMaker.circleInfo.X && setupMaker.circleInfo.VelocityX > 0)
+                                    {
+                                        currentAction = Moves.ROLL_LEFT;
+                                        return;
+                                    }
+                                }
                             }
-                            else
+                            else if (distance_between_centers > GameInfo.RECTANGLE_AREA / (2 * setupMaker.rectangleInfo.Height) - GameInfo.PIXEL_LENGTH
+                                && Math.Abs(setupMaker.circleInfo.VelocityX) > 50)
                             {
-                                if(setupMaker.rectangleInfo.X > setupMaker.circleInfo.X && setupMaker.circleInfo.VelocityX < 0)
-                                {
-                                    currentAction = Moves.ROLL_RIGHT;
-                                    return;
-                                }
-                                else if(setupMaker.rectangleInfo.X < setupMaker.circleInfo.X && setupMaker.circleInfo.VelocityX > 0)
-                                {
-                                    currentAction = Moves.ROLL_LEFT;
-                                    return;
-                                }
+                                currentAction = Moves.JUMP;
+                                setupMaker.circleAgentReadyForCoop = false;
+                                return;
                             }
                         }
                     }
                     if (currentPlatformCircle.id == -1) // Ball is in the air
                     {
                         setupMaker.circle_state = "Volando...";
+                        time_after_landing = -5;
                         if (flag)
                         {
                             if (setupMaker.circleInfo.VelocityX > 0)
@@ -333,7 +349,7 @@ namespace GeometryFriendsAgents
                             // we simulate the jump/fall once it has started with the precise speed to determine the way the circle needs to roll during the flight
                             MoveInformation new_move = new MoveInformation(new Platform(-1), new Platform(-1), (int)setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH, -1, (int)setupMaker.circleInfo.VelocityX, MoveType.FALL, new List<int>(), new List<Tuple<float, float>>(), 10);
                             new_move.path.Add(new Tuple<float, float>(setupMaker.circleInfo.X, setupMaker.circleInfo.Y));
-                            setupMaker.levelMapCircle.SimulateMove(setupMaker.circleInfo.X, setupMaker.circleInfo.Y, setupMaker.circleInfo.VelocityX, setupMaker.circleInfo.VelocityY, ref new_move, 0.005f);
+                            setupMaker.levelMapCircle.SimulateMove(setupMaker.circleInfo.X, setupMaker.circleInfo.Y, setupMaker.circleInfo.VelocityX, setupMaker.circleInfo.VelocityY, ref new_move, 0.015f);
                             Platform landing = new_move.landingPlatform;
                             if (new_move.xlandPoint == -1) // collision of type 'other'
                             {
@@ -362,11 +378,18 @@ namespace GeometryFriendsAgents
                     else
                     {
                         simulated = false;
-                        MoveInformation mm = new MoveInformation(new Platform(-1), setupMaker.currentPlatformCircle, (int)setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH, 0, (int)setupMaker.circleInfo.VelocityX, MoveType.NOMOVE, new List<int>(), new List<Tuple<float, float>>(), 10);
-                        setupMaker.levelMapCircle.SimulateMove(setupMaker.circleInfo.X, (setupMaker.currentPlatformCircle.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)setupMaker.circleInfo.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref mm, 0.005f);
-                        if (Utilities.Contained(collectiblesRemaining, mm.diamondsCollected))
+                        time_after_landing++;
+                        if (time_after_landing >= 10 || time_after_landing == -1)
                         {
-                            currentAction = Moves.JUMP;
+                            time_after_landing = 0;
+                            MoveInformation mm = new MoveInformation(new Platform(-1), setupMaker.currentPlatformCircle, (int)setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH, 0, (int)setupMaker.circleInfo.VelocityX, MoveType.NOMOVE, new List<int>(), new List<Tuple<float, float>>(), 10);
+                            setupMaker.levelMapCircle.SimulateMove(setupMaker.circleInfo.X, (setupMaker.currentPlatformCircle.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)setupMaker.circleInfo.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref mm, 0.015f);
+                            if (Utilities.Contained(collectiblesRemaining, mm.diamondsCollected))
+                            {
+                                currentAction = Moves.JUMP;
+                                setupMaker.circleAgentReadyForCoop = false;
+                                return;
+                            }
                         }
                         if (setupMaker.planCircle.Count == 0 || ((currentPlatformCircle.real || setupMaker.CircleAboveRectangle()) &&
                                 setupMaker.planCircle[0].departurePlatform.id != setupMaker.levelMapCircle.small_to_simplified[currentPlatformCircle].id)
@@ -435,6 +458,17 @@ namespace GeometryFriendsAgents
                 else
                 {
                     setupMaker.circle_state = "Evitando caer por un borde...";
+                    if (currentPlatformCircle.id != -1)
+                    {
+                        time_after_landing++;
+                        simulated = false;
+                        MoveInformation mm = new MoveInformation(new Platform(-1), currentPlatformCircle, (int)setupMaker.circleInfo.X / GameInfo.PIXEL_LENGTH, 0, (int)setupMaker.circleInfo.VelocityX, MoveType.NOMOVE, new List<int>(), new List<Tuple<float, float>>(), 10);
+                        setupMaker.levelMapCircle.SimulateMove(setupMaker.circleInfo.X, (currentPlatformCircle.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)setupMaker.circleInfo.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref mm, 0.015f);
+                        if (Utilities.Contained(collectiblesRemaining, mm.diamondsCollected))
+                        {
+                            currentAction = Moves.JUMP;
+                        }
+                    }
                 }
                 if (currentAction == Moves.JUMP)
                 {

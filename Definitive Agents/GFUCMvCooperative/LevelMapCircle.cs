@@ -346,25 +346,6 @@ namespace GeometryFriendsAgents
             }
         }
 
-        private void AddTrajectory(ref Platform p, int vx, MoveType moveType, int x, ref Platform landing)
-        {
-            // Any trajectory with distance <= 10 should be safe to not collide (?)
-            MoveInformation m = new MoveInformation(new Platform(-1), p, x, 0, vx, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
-
-            if (moveType == MoveType.JUMP)
-            {
-
-            }
-            else if (moveType == MoveType.FALL)
-            {
-
-            }
-            else if (moveType == MoveType.NOMOVE)
-            {
-                
-            }
-        }
-
         public List<MoveInformation> SimulateMove(float x_0, float y_0, float vx_0, float vy_0, ref MoveInformation m, float dt)
         {
             return moveGenerator.trajectoryAdder.circleSimulator.SimulateMove(ref platformList, x_0, y_0, vx_0, vy_0, ref m, dt);
