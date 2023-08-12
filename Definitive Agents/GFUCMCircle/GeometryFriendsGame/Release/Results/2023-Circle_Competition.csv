@@ -1,8 +1,16 @@
 Geometry Friends Agents
 World: ;Circle2023
 level;runs;collectibles average;collectibles available;time average;time limit;score average
-1;10;2;2;21,3;120;365
-2;10;3;3;27,9;120;454
-3;10;1,8;2;66;120;270
-4;10;3;3;16;120;473
-5;10;3;3;21,5;120;464
+1;10;2;2;19,5;120;201
+2;10;3;3;11,4;120;301
+3;10;2;2;45,2;120;201
+4;10;3;3;15,7;120;301
+5;10;3;3;21,7;120;301
+Geometry Friends Agents
+World: ;Circle2023
+level;runs;collectibles average;collectibles available;time average;time limit;score average
+1;10;2;2;18,7;120;201
+2;10;3;3;11,5;120;301
+3;10;2;2;32,9;120;201
+4;10;2,9;3;26,2;120;291
+5;10;3;3;21,9;120;301

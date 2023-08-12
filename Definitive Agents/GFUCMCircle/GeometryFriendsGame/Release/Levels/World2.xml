@@ -153,4 +153,27 @@
       <HighScore name="UCMAgent" value="7" />
     </HighScores>
   </Level7>
+  <Level8>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="888" Y="328" />
+    <SquareStartingPosition X="-1000" Y="-1000" />
+    <Collectibles>
+      <Collectible X="104" Y="344" />
+      <Collectible X="1176" Y="664" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle width="1056" height="64" X="40" Y="376" centered="false" />
+      <Obstacle width="800" height="32" X="40" Y="264" centered="false" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <HighScores>
+      <HighScore name="UCMAgent" value="23" />
+      <HighScore name="UCMAgent" value="23" />
+      <HighScore name="UCMAgent" value="23" />
+    </HighScores>
+  </Level8>
 </Levels>

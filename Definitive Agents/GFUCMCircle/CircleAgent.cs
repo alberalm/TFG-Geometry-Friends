@@ -8,8 +8,6 @@ using GeometryFriends.AI.Perceptions.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using static GeometryFriendsAgents.Graph;
-using System.Windows;
 
 namespace GeometryFriendsAgents
 {
@@ -67,6 +65,9 @@ namespace GeometryFriendsAgents
         bool flag = false;
         bool simulated = true;
         List<int> collectiblesRemaining = new List<int>();
+        private int time_after_landing = 0;
+        private int previous_platform = -1;
+        private double time_on_this_platform = 0;
 
         //Debug
         private DebugInformation[] debugInfo = null;
@@ -76,7 +77,6 @@ namespace GeometryFriendsAgents
 
         //Learning
         private double t = 0;
-        private double t_0 = 0;
         private LearningCircle l;
 
         public CircleAgent()
@@ -135,7 +135,7 @@ namespace GeometryFriendsAgents
             levelMap.CreateLevelMap(colI, oI, rPI); 
             graph = new Graph(levelMap.GetPlatforms(),colI);
             
-            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(cI).id, colI,null);
+            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(cI).id, colI, null);
             fullPlan = new List<MoveInformation>(plan);
 
             actionSelector = new ActionSelectorCircle(collectibleId, l, levelMap, graph);
@@ -328,8 +328,8 @@ namespace GeometryFriendsAgents
             try
             {
                 //UpdateDraw();
-                t_0 += elapsedGameTime.TotalMilliseconds;
                 t += elapsedGameTime.TotalMilliseconds;
+                time_on_this_platform += elapsedGameTime.TotalMilliseconds;
                 if (t < 100)
                 {
                     return;
@@ -348,6 +348,11 @@ namespace GeometryFriendsAgents
                     collectiblesRemaining = newList;
                 }
                 currentPlatform = levelMap.CirclePlatform(circleInfo);
+                if(currentPlatform.id != previous_platform || currentPlatform.id == -1)
+                {
+                    previous_platform = currentPlatform.id;
+                    time_on_this_platform = 0;
+                }
                 if(actionSelector.move != null && actionSelector.move.moveType == MoveType.CLIMB && currentPlatform.id != actionSelector.move.landingPlatform.id)
                 {
                     currentAction = actionSelector.move.velocityX > 0 ? Moves.ROLL_RIGHT : Moves.ROLL_LEFT;
@@ -357,6 +362,7 @@ namespace GeometryFriendsAgents
                 {
                     if (currentPlatform.id == -1) // Ball is in the air
                     {
+                        time_after_landing = -5;
                         if (flag)
                         {
                             if (circleInfo.VelocityX > 0)
@@ -413,11 +419,17 @@ namespace GeometryFriendsAgents
                     else
                     {
                         simulated = false;
-                        MoveInformation mm = new MoveInformation(new Platform(-1), currentPlatform, (int)circleInfo.X / GameInfo.PIXEL_LENGTH, 0, (int)circleInfo.VelocityX, MoveType.NOMOVE, new List<int>(), new List<Tuple<float, float>>(), 10);
-                        levelMap.SimulateMove(circleInfo.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)circleInfo.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref mm);
-                        if (Utilities.Contained(collectiblesRemaining, mm.diamondsCollected))
+                        time_after_landing++;
+                        if (time_after_landing >= 10 || time_after_landing == -1)
                         {
-                            currentAction = Moves.JUMP;
+                            time_after_landing = 0;
+                            MoveInformation mm = new MoveInformation(new Platform(-1), currentPlatform, (int)circleInfo.X / GameInfo.PIXEL_LENGTH, 0, (int)circleInfo.VelocityX, MoveType.NOMOVE, new List<int>(), new List<Tuple<float, float>>(), 10);
+                            levelMap.SimulateMove(circleInfo.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)circleInfo.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref mm);
+                            if (Utilities.Contained(collectiblesRemaining, mm.diamondsCollected))
+                            {
+                                currentAction = Moves.JUMP;
+                                return;
+                            }
                         }
                         if (plan.Count == 0 || plan[0].departurePlatform.id != currentPlatform.id) //CIRCLE IN LAST PLATFORM
                         {
@@ -430,6 +442,13 @@ namespace GeometryFriendsAgents
                                 plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo, null);
                             }
                             fullPlan = new List<MoveInformation>(plan);
+                            time_on_this_platform = 0;
+                        }
+                        if(time_on_this_platform > 15000 && plan.Count > 0)
+                        {
+                            plan = graph.SearchAlgorithm(levelMap.PlatformBelowCircle(circleInfo).id, collectiblesInfo, plan[0]);
+                            fullPlan = new List<MoveInformation>(plan);
+                            time_on_this_platform = 0;
                         }
                         Tuple<Moves, Tuple<bool, bool>> tup;
                         if (GameInfo.PHYSICS)
@@ -446,6 +465,20 @@ namespace GeometryFriendsAgents
                             t = 0;
                         }
                         flag = tup.Item2.Item2;
+                    }
+                }
+                else
+                {
+                    if (currentPlatform.id != -1)
+                    {
+                        time_after_landing++;
+                        simulated = false;
+                        MoveInformation mm = new MoveInformation(new Platform(-1), currentPlatform, (int)circleInfo.X / GameInfo.PIXEL_LENGTH, 0, (int)circleInfo.VelocityX, MoveType.NOMOVE, new List<int>(), new List<Tuple<float, float>>(), 10);
+                        levelMap.SimulateMove(circleInfo.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)circleInfo.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref mm);
+                        if (Utilities.Contained(collectiblesRemaining, mm.diamondsCollected))
+                        {
+                            currentAction = Moves.JUMP;
+                        }
                     }
                 }
             }

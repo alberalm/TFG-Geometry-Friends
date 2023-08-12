@@ -10,7 +10,6 @@ namespace GeometryFriendsAgents
 {
     public class LevelMapRectangle : LevelMap
     {
-
         // Returns the highest real platform (remember simplified_platforms contains first all the real platforms and then the ficticious)
         public Platform PlatformBelowRectangle(RectangleRepresentation rI)
         {

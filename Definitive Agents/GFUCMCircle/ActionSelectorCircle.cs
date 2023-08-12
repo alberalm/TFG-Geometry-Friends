@@ -179,7 +179,8 @@ namespace GeometryFriendsAgents
                     {
                         if (moveType == MoveType.NOMOVE)
                         {
-                            return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                            return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance, GameInfo.PIXEL_LENGTH * (target_velocity > 0 ? currentPlatform.rightEdge + 1 : currentPlatform.leftEdge)),
+                                new Tuple<bool, bool>(false, false));
                         }
                         MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
                         levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
@@ -190,12 +191,14 @@ namespace GeometryFriendsAgents
                                 return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
                             }
                         }
-                        return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                        return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance, GameInfo.PIXEL_LENGTH * (target_velocity > 0 ? currentPlatform.rightEdge + 1 : currentPlatform.leftEdge)),
+                            new Tuple<bool, bool>(false, false));
                     }
                 }
                 else
                 {
-                    return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                    return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance, GameInfo.PIXEL_LENGTH * (target_velocity > 0 ? currentPlatform.rightEdge + 1 : currentPlatform.leftEdge)),
+                        new Tuple<bool, bool>(false, false));
                 }
             }
             else
@@ -240,7 +243,8 @@ namespace GeometryFriendsAgents
                         {
                             if (moveType == MoveType.FALL)
                             {
-                                return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                                return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance, GameInfo.PIXEL_LENGTH * (target_velocity > 0 ? currentPlatform.rightEdge + 1 : currentPlatform.leftEdge)),
+                                    new Tuple<bool, bool>(false, false));
                             }
                             MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
                             levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m);
@@ -252,12 +256,14 @@ namespace GeometryFriendsAgents
                                     return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(m)));
                                 }
                             }
-                            return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                            return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance, GameInfo.PIXEL_LENGTH * (target_velocity > 0 ? currentPlatform.rightEdge + 1 : currentPlatform.leftEdge)),
+                                new Tuple<bool, bool>(false, false));
                         }
                     }
                     else
                     {
-                        return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                        return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance, GameInfo.PIXEL_LENGTH * (target_velocity > 0 ? currentPlatform.rightEdge + 1 : currentPlatform.leftEdge)),
+                            new Tuple<bool, bool>(false, false));
                     }
                 }
                 else
@@ -295,7 +301,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        public Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, double brake_distance, double acceleration_distance)
+        public Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, double brake_distance, double acceleration_distance, double edge)
         {
             if (current_position >= target_position)//Circle on the right
             {
@@ -307,6 +313,10 @@ namespace GeometryFriendsAgents
                     }
                     else
                     {
+                        if (Math.Abs(current_position + brake_distance - edge) < GameInfo.PIXEL_LENGTH)
+                        {
+                            return Moves.ROLL_LEFT;
+                        }
                         if (Math.Abs(current_position + brake_distance - target_position - acceleration_distance) <= GameInfo.ERROR * GameInfo.PIXEL_LENGTH)//CHANGED (* GameInfo.PIXEL_LENGTH ADDED)
                         {
                             return Moves.ROLL_RIGHT;
@@ -346,14 +356,11 @@ namespace GeometryFriendsAgents
                     }
                     else
                     {
+                        // ROLL_RIGHT -> brake; ROLL_LEFT -> accelerate
                         double sup_threshold = current_velocity * current_velocity + 2 * (current_position - target_position) * GameInfo.CIRCLE_ACCELERATION;
                         double inf_threshold = current_velocity * current_velocity - 2 * (current_position - target_position) * GameInfo.CIRCLE_ACCELERATION;
                         double square_target = target_velocity * target_velocity;
                         if (square_target > sup_threshold)
-                        {
-                            return Moves.ROLL_RIGHT;
-                        }
-                        else if (square_target < inf_threshold)
                         {
                             return Moves.ROLL_RIGHT;
                         }
@@ -370,7 +377,7 @@ namespace GeometryFriendsAgents
             }
             else
             {
-                Moves m = getPhisicsMove(2 * target_position - current_position, target_position, -current_velocity, -target_velocity, brake_distance, acceleration_distance);
+                Moves m = getPhisicsMove(2 * target_position - current_position, target_position, -current_velocity, -target_velocity, brake_distance, acceleration_distance, 2 * target_position - edge);
                 if (m == Moves.ROLL_LEFT)
                 {
                     return Moves.ROLL_RIGHT;

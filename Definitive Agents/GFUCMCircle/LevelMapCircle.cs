@@ -274,27 +274,27 @@ namespace GeometryFriendsAgents
                 Parallel.For(0, num_velocities, i =>
                 {
                     int vx = (i + 1) * velocity_step;
-                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge + Math.Max(0, 8 - i), vx))
+                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.rightEdge + Math.Max(0, 8 - i), vx + velocity_step / 2))
                     {
                         AddTrajectory(ref p, vx, MoveType.FALL, p.rightEdge + Math.Max(0, 8 - i), ref p);
                     }
-                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge - Math.Max(0, 8 - i), -vx))
+                    if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, p.leftEdge - Math.Max(0, 8 - i), -vx - velocity_step / 2))
                     {
                         AddTrajectory(ref p, -vx, MoveType.FALL, p.leftEdge - Math.Max(0, 8 - i), ref p);
                     }
                 });
 
                 // Parabolic JUMPS
-                Parallel.For(p.leftEdge + 1, p.rightEdge, x =>
+                Parallel.For(p.leftEdge + (p.rightEdge - p.leftEdge >= 3 ? 1 : 0), p.rightEdge, x =>
                 {
                     Parallel.For(0, num_velocities + 1, i =>
                     {
                         int vx = i * velocity_step;
-                        if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx))
+                        if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, vx + velocity_step / 2))
                         {
                             AddTrajectory(ref p, vx, MoveType.JUMP, x, ref p);
                         }
-                        if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, -vx))
+                        if (EnoughSpaceToAccelerate(p.leftEdge, p.rightEdge, x, -vx - velocity_step / 2))
                         {
                             AddTrajectory(ref p, -vx, MoveType.JUMP, x, ref p);
                         }
@@ -554,6 +554,10 @@ namespace GeometryFriendsAgents
 
         protected override bool EnoughSpaceToAccelerate(int leftEdge, int rigthEdge, int x, int vx)
         {
+            if (Math.Abs(vx) < 15)
+            {
+                return true;
+            }
             if (vx > 0)
             {
                 return vx * vx <= 2 * GameInfo.CIRCLE_ACCELERATION * GameInfo.PIXEL_LENGTH * (x - leftEdge - 1);
