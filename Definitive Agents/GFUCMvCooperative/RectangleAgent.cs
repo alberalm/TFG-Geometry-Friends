@@ -591,7 +591,7 @@ namespace GeometryFriendsAgents
                             return;
                         }
 
-                        currentAction = setupMaker.actionSelectorRectangle.nextActionPhisics(ref setupMaker.planRectangle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformRectangle);
+                        currentAction = setupMaker.actionSelectorRectangle.nextActionPHYSICS(ref setupMaker.planRectangle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformRectangle);
                         setupMaker.actionSelectorRectangle.lastMove = currentAction;
                     }
                 }

@@ -258,8 +258,8 @@ namespace GeometryFriendsAgents
             int num_velocities, velocity_step;
             if (GameInfo.PHYSICS)
             {
-                num_velocities = GameInfo.NUM_VELOCITIES_PHISICS;
-                velocity_step = GameInfo.VELOCITY_STEP_PHISICS;
+                num_velocities = GameInfo.NUM_VELOCITIES_PHYSICS;
+                velocity_step = GameInfo.VELOCITY_STEP_PHYSICS;
             }
             else
             {
@@ -285,7 +285,7 @@ namespace GeometryFriendsAgents
                 });
 
                 // Parabolic JUMPS
-                Parallel.For(p.leftEdge + (p.rightEdge - p.leftEdge >= 3 ? 1 : 0), p.rightEdge, x =>
+                for (int x = p.leftEdge + (p.rightEdge - p.leftEdge >= 3 ? 1 : 0); x < p.rightEdge; x++)
                 {
                     Parallel.For(0, num_velocities + 1, i =>
                     {
@@ -299,7 +299,7 @@ namespace GeometryFriendsAgents
                             AddTrajectory(ref p, -vx, MoveType.JUMP, x, ref p);
                         }
                     });
-                });
+                }
 
                 Parallel.For(0, platformList.Count, i =>
                 {

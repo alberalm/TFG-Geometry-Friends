@@ -141,7 +141,7 @@ namespace GeometryFriendsAgents
             }
         }
 
-        public Moves getPhisicsMove(RectangleRepresentation rI, MoveInformation move)
+        public Moves getPHYSICSMove(RectangleRepresentation rI, MoveInformation move)
         {
             RectangleShape.Shape s = RectangleShape.GetShape(rI);
             double current_position = rI.X;
@@ -288,7 +288,7 @@ namespace GeometryFriendsAgents
                 {
                     RectangleRepresentation newrI = new RectangleRepresentation((float)(2 * target_position - current_position), rI.Y, (float)-current_velocity, rI.VelocityY, rI.Height);
                     move.velocityX *= -1;
-                    Moves m = getPhisicsMove(newrI, move);
+                    Moves m = getPHYSICSMove(newrI, move);
                     move.velocityX *= -1;
                     if (m == Moves.MOVE_LEFT)
                     {
@@ -310,7 +310,7 @@ namespace GeometryFriendsAgents
             }
         }
         
-        public Moves nextActionPhisics(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI,RectangleRepresentation rI, Platform currentPlatform)
+        public Moves nextActionPHYSICS(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI,RectangleRepresentation rI, Platform currentPlatform)
         {
             MoveInformation move2 = DiamondsCanBeCollectedFrom(cI, rI, levelMap.small_to_simplified[currentPlatform], remaining, (int)(rI.X / GameInfo.PIXEL_LENGTH));
             
@@ -442,7 +442,7 @@ namespace GeometryFriendsAgents
             {
                 return Moves.MORPH_UP;
             }
-            Moves m = getPhisicsMove(rI, move);
+            Moves m = getPHYSICSMove(rI, move);
             if (setupMaker.CircleAboveRectangle() && count == -1)
             {
                 setupMaker.rectangle_state = "Transportando al círculo...";
@@ -457,7 +457,7 @@ namespace GeometryFriendsAgents
 
                 if (setupMaker.actionSelectorCircle.move != null && setupMaker.actionSelectorCircle.move.moveType == MoveType.ADJACENT)
                 {
-                    m = getPhisicsMove(rI, move);
+                    m = getPHYSICSMove(rI, move);
                 }
                 else
                 {                   
@@ -482,7 +482,7 @@ namespace GeometryFriendsAgents
                     move.shape = RectangleShape.Shape.HORIZONTAL;
                     move.velocityX = 0;
                     move.moveType = MoveType.COOPMOVE;
-                    m = getPhisicsMove(rI, move);
+                    m = getPHYSICSMove(rI, move);
                     if (Math.Abs(setupMaker.rectangleInfo.X - move.x * GameInfo.PIXEL_LENGTH) < GameInfo.PIXEL_LENGTH
                         && Math.Abs(setupMaker.rectangleInfo.VelocityX) < 20)
                     {
@@ -782,7 +782,7 @@ namespace GeometryFriendsAgents
 
 
 
-                    m = getPhisicsMove(rI, move);
+                    m = getPHYSICSMove(rI, move);
                 }
                 else if (setupMaker.planCircle.Count > 0 && setupMaker.planCircle[0].landingPlatform.real && setupMaker.planCircle[0].departurePlatform.real)
                 {
@@ -790,7 +790,7 @@ namespace GeometryFriendsAgents
                     move.x = (int)setupMaker.rectangleInfo.X / GameInfo.PIXEL_LENGTH;
                     m = Moves.NO_ACTION;
                 }
-                m = getPhisicsMove(rI, move);
+                m = getPHYSICSMove(rI, move);
             }
             if (avoidCircle)
             {
@@ -799,7 +799,7 @@ namespace GeometryFriendsAgents
             if(lastX != 0 && move.x == 0)
             {
                 move.x = lastX;
-                m = getPhisicsMove(rI, move);
+                m = getPHYSICSMove(rI, move);
             }
             if (move.x != 0)
             {

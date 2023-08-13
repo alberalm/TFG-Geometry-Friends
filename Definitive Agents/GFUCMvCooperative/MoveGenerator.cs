@@ -449,7 +449,7 @@ namespace GeometryFriendsAgents
 
         public MoveInformation GenerateNewJump(List<Platform> platformList, Platform departurePlatform, Platform landingPlatform, int xLandPoint, int yLandPoint)
         {
-            int velocity_step = GameInfo.VELOCITY_STEP_PHISICS;
+            int velocity_step = GameInfo.VELOCITY_STEP_PHYSICS;
             // Here we calculate from where the circle needs to jump, and with which velocity, to reach the rectangle without intersecting it
             float height = yLandPoint * GameInfo.PIXEL_LENGTH - (yLandPoint * GameInfo.PIXEL_LENGTH + GameInfo.CIRCLE_RADIUS);
             RectangleShape.Shape shape = RectangleShape.GetShape(new RectangleRepresentation(0, 0, 0, 0, height));
@@ -462,7 +462,7 @@ namespace GeometryFriendsAgents
             // Lets temporarily suppose it is horizontal shape
             for (int x = departurePlatform.leftEdge; x <= departurePlatform.rightEdge; x++)
             {
-                for (int i = 0; i < GameInfo.NUM_VELOCITIES_PHISICS; i++)
+                for (int i = 0; i < GameInfo.NUM_VELOCITIES_PHYSICS; i++)
                 {
                     int v_x = velocity_step * i;
                     if(trajectoryAdder.circleSimulator.EnoughSpaceToAccelerate(departurePlatform.leftEdge, departurePlatform.rightEdge, x, v_x))

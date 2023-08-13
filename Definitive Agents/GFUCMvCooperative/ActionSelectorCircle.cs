@@ -175,7 +175,7 @@ namespace GeometryFriendsAgents
             }
         }*/
 
-        public Tuple<Moves, Tuple<bool, bool>> nextActionPhisics(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, RectangleRepresentation rI,Platform currentPlatform)
+        public Tuple<Moves, Tuple<bool, bool>> nextActionPHYSICS(ref List<MoveInformation> plan, List<CollectibleRepresentation> remaining, CircleRepresentation cI, RectangleRepresentation rI,Platform currentPlatform)
         {
             //returns the next move, a first boolean indicating whether the move will lead to an air situation (Jump or fall) and a second boolean indicating whether the ball has to rotate in the
             //same direction of the velocity or in the oposite (in general will be oposite unless the jump lands near the vertix of the parabolla)
@@ -276,7 +276,7 @@ namespace GeometryFriendsAgents
                 
                 if (!setupMaker.rectangleAgentReadyForCoop)
                 {
-                    return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, rI.X, cI.VelocityX - rI.VelocityX, 0, brake_distance, 0), new Tuple<bool, bool>(false, false));
+                    return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, rI.X, cI.VelocityX - rI.VelocityX, 0, brake_distance, 0), new Tuple<bool, bool>(false, false));
                 }
             }
 
@@ -293,7 +293,7 @@ namespace GeometryFriendsAgents
                 acceleration_distance = target_velocity * target_velocity / (2 * GameInfo.CIRCLE_ACCELERATION);
                 if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= GameInfo.TARGET_POINT_ERROR * GameInfo.PIXEL_LENGTH)
                 {
-                    if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHISICS) == target_velocity)
+                    if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHYSICS) == target_velocity)
                     {
                         if (moveType == MoveType.JUMP)
                         {
@@ -309,7 +309,7 @@ namespace GeometryFriendsAgents
                     {
                         if (moveType == MoveType.NOMOVE)
                         {
-                            return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                            return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                         }
                         
                         MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
@@ -333,13 +333,13 @@ namespace GeometryFriendsAgents
 
                         }
                         
-                        return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                        return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                     }
                 }
                 else
                 {
                     setupMaker.circle_state = "Rodando hacia el punto objetivo con la velocidad apropiada...";
-                    return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                    return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                 }
             }
             else
@@ -384,7 +384,7 @@ namespace GeometryFriendsAgents
                             setupMaker.circle_state = "Preparado para hacer un CIRCLETILT...";
                             setupMaker.circleAgentReadyForCircleTilt = true;
                         }
-                        return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                        return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                     }
                     
                     if(plan[0].moveType == MoveType.COOPMOVE && setupMaker.planRectangle[0].moveType != MoveType.CIRCLETILT)
@@ -402,7 +402,7 @@ namespace GeometryFriendsAgents
                         {
                             /*float real_target = target_position * GameInfo.PIXEL_LENGTH + (target_velocity < 0 ? 1 : -1) * acceleration_distance;
                             target_position = (int)(real_target / GameInfo.PIXEL_LENGTH);
-                            return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, real_target,
+                            return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, real_target,
                                 cI.VelocityX, 0, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));*/
                             setupMaker.circle_state = "Esperando a que el rectángulo se coloque para aterrizar sobre él...";
                             return new Tuple<Moves, Tuple<bool, bool>>(Moves.NO_ACTION, new Tuple<bool, bool>(false, false));
@@ -411,7 +411,7 @@ namespace GeometryFriendsAgents
 
                     if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= GameInfo.TARGET_POINT_ERROR * GameInfo.PIXEL_LENGTH)
                     {
-                        if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHISICS) == target_velocity)
+                        if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHYSICS) == target_velocity)
                         {
                             if (moveType == MoveType.JUMP)
                             {
@@ -422,7 +422,7 @@ namespace GeometryFriendsAgents
                                 {
                                     return new Tuple<Moves, Tuple<bool, bool>>(Moves.JUMP, new Tuple<bool, bool>(true, JumpNeedsAngularMomentum(aux_move)));
                                 }
-                                return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                                return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                             }
                             else
                             {
@@ -433,7 +433,7 @@ namespace GeometryFriendsAgents
                         {
                             if (moveType == MoveType.FALL)
                             {
-                                return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                                return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                             }
                             MoveInformation m = new MoveInformation(new Platform(-1), currentPlatform, (int)cI.X / GameInfo.PIXEL_LENGTH, 0, (int)cI.VelocityX, moveType, new List<int>(), new List<Tuple<float, float>>(), 10);
                             List<MoveInformation> moves=levelMap.SimulateMove(cI.X, (currentPlatform.yTop - GameInfo.CIRCLE_RADIUS / GameInfo.PIXEL_LENGTH) * GameInfo.PIXEL_LENGTH, (int)cI.VelocityX, (int)GameInfo.JUMP_VELOCITYY, ref m, 0.015f);
@@ -452,13 +452,13 @@ namespace GeometryFriendsAgents
                                     }
                                 }
                             }
-                            return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                            return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                         }
                     }
                     else
                     {
                         setupMaker.circle_state = "Rodando hacia el punto de "+(move.moveType==MoveType.JUMP?"salto":"caída")+" con la velocidad apropiada...";
-                        return new Tuple<Moves, Tuple<bool, bool>>(getPhisicsMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
+                        return new Tuple<Moves, Tuple<bool, bool>>(getPHYSICSMove(cI.X, target_position * GameInfo.PIXEL_LENGTH, cI.VelocityX, target_velocity, brake_distance, acceleration_distance), new Tuple<bool, bool>(false, false));
                     }
                 }
                 else
@@ -481,7 +481,7 @@ namespace GeometryFriendsAgents
             return Math.Abs(m.landingPlatform.yTop + GameInfo.JUMP_VELOCITYY * GameInfo.JUMP_VELOCITYY / (2 * GameInfo.GRAVITY * GameInfo.PIXEL_LENGTH) - m.departurePlatform.yTop) <= 7;
         }
 
-        public Moves getPhisicsMove(double current_position, double target_position, double current_velocity, double target_velocity, double brake_distance, double acceleration_distance)
+        public Moves getPHYSICSMove(double current_position, double target_position, double current_velocity, double target_velocity, double brake_distance, double acceleration_distance)
         {
             if (current_position >= target_position)//Circle on the right
             {
@@ -552,7 +552,7 @@ namespace GeometryFriendsAgents
             }
             else
             {
-                Moves m = getPhisicsMove(2 * target_position - current_position, target_position, -current_velocity, -target_velocity, brake_distance, acceleration_distance);
+                Moves m = getPHYSICSMove(2 * target_position - current_position, target_position, -current_velocity, -target_velocity, brake_distance, acceleration_distance);
                 if (m == Moves.ROLL_LEFT)
                 {
                     return Moves.ROLL_RIGHT;

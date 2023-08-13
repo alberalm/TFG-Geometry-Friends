@@ -164,7 +164,7 @@ namespace GeometryFriendsAgents
                 acceleration_distance = target_velocity * target_velocity / (2 * GameInfo.CIRCLE_ACCELERATION);
                 if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= GameInfo.TARGET_POINT_ERROR * GameInfo.PIXEL_LENGTH)
                 {
-                    if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHISICS) == target_velocity)
+                    if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHYSICS) == target_velocity)
                     {
                         if (moveType == MoveType.JUMP)
                         {
@@ -227,7 +227,7 @@ namespace GeometryFriendsAgents
 
                     if (Math.Abs(target_position * GameInfo.PIXEL_LENGTH - cI.X) <= GameInfo.TARGET_POINT_ERROR * GameInfo.PIXEL_LENGTH)
                     {
-                        if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHISICS) == target_velocity)
+                        if (CircleAgent.DiscreetVelocity(cI.VelocityX, GameInfo.VELOCITY_STEP_PHYSICS) == target_velocity)
                         {
                             plan.RemoveAt(0);
                             if (moveType == MoveType.JUMP)

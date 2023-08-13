@@ -183,8 +183,8 @@ namespace GeometryFriendsAgents
                     changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
                     if (changing && circleAgent.currentPlatformCircle.id != -1 && rectangleAgent.currentPlatformRectangle.id != -1)
                     {
-                        actionSelectorCircle.nextActionPhisics(ref planCircle, circleAgent.remaining, circleInfo, rectangleInfo, circleAgent.currentPlatformCircle);
-                        actionSelectorRectangle.nextActionPhisics(ref planRectangle, rectangleAgent.remaining, circleInfo, rectangleInfo, rectangleAgent.currentPlatformRectangle);
+                        actionSelectorCircle.nextActionPHYSICS(ref planCircle, circleAgent.remaining, circleInfo, rectangleInfo, circleAgent.currentPlatformCircle);
+                        actionSelectorRectangle.nextActionPHYSICS(ref planRectangle, rectangleAgent.remaining, circleInfo, rectangleInfo, rectangleAgent.currentPlatformRectangle);
                         changing = Math.Sign(actionSelectorCircle.move.x - actionSelectorRectangle.move.x) != Math.Sign(circleInfo.X - rectangleInfo.X);
                     }
                 }

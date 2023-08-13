@@ -58,7 +58,7 @@ namespace GeometryFriendsAgents
 
         public bool EnoughSpaceToAccelerate(int leftEdge, int rigthEdge, int x, int vx)
         {
-            if (Math.Abs(vx) == GameInfo.VELOCITY_STEP_PHISICS || vx==0)
+            if (Math.Abs(vx) == GameInfo.VELOCITY_STEP_PHYSICS || vx==0)
             {
                 return true;
             }

@@ -441,7 +441,7 @@ namespace GeometryFriendsAgents
                         Tuple<Moves, Tuple<bool, bool>> tup;
                         if (GameInfo.PHYSICS)
                         {
-                            tup = setupMaker.actionSelectorCircle.nextActionPhisics(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformCircle);
+                            tup = setupMaker.actionSelectorCircle.nextActionPHYSICS(ref setupMaker.planCircle, remaining, setupMaker.circleInfo, setupMaker.rectangleInfo, currentPlatformCircle);
                         }
                         else
                         {

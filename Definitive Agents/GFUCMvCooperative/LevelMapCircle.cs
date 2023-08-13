@@ -276,8 +276,8 @@ namespace GeometryFriendsAgents
             int num_velocities, velocity_step;
             if (GameInfo.PHYSICS)
             {
-                num_velocities = GameInfo.NUM_VELOCITIES_PHISICS;
-                velocity_step = GameInfo.VELOCITY_STEP_PHISICS;
+                num_velocities = GameInfo.NUM_VELOCITIES_PHYSICS;
+                velocity_step = GameInfo.VELOCITY_STEP_PHYSICS;
             }
             else
             {
@@ -299,8 +299,8 @@ namespace GeometryFriendsAgents
 
                 // Parabolic JUMPS
 
-                Parallel.For(p.leftEdge + 1, p.rightEdge, x =>
-                //for (int x = p.leftEdge + 1; x < p.rightEdge; x++)
+                //Parallel.For(p.leftEdge + 1, p.rightEdge, x =>
+                for (int x = p.leftEdge + 1; x < p.rightEdge; x++)
                 {
                     if (p.real)
                     {
@@ -331,8 +331,8 @@ namespace GeometryFriendsAgents
                             moveGenerator.GenerateJump(ref platformList, k, i, x, velocity_step, levelMapRectangle);
                         });
                     }
-                });
-                //}
+                //});
+                }
 
                 Parallel.For(0, platformList.Count, i =>
                 {

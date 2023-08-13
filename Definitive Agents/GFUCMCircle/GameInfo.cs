@@ -34,11 +34,11 @@ namespace GeometryFriendsAgents
 
         public const int MAX_DISTANCE_CIRCLE = 25;
         public const int MAX_DISTANCE_RECTANGLE = 5;
-        public const int NUM_VELOCITIES_PHISICS = 13;
+        public const int NUM_VELOCITIES_PHYSICS = 13;
         public const int NUM_VELOCITIES_QLEARNING = 7;
         public const int NUM_VELOCITIES_RECTANGLE = 10;
         public const int VELOCITY_STEP_RECTANGLE = 50;
-        public const int VELOCITY_STEP_PHISICS = 15;
+        public const int VELOCITY_STEP_PHYSICS = 15;
         public const int VELOCITY_STEP_QLEARNING = 20;
         public const bool PHYSICS = true;
         public const int TESTING_VELOCITY = 200;
