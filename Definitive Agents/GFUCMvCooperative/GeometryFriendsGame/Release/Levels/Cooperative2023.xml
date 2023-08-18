@@ -21,11 +21,11 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="27" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="28" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="28" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="29" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="31" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="36" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="38" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="39" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="40" />
     </HighScores>
   </Level1>
   <Level2>
@@ -52,11 +52,11 @@
     <OrangeElevators />
     <TimeLimit value="120" />
     <HighScores>
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="29" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="31" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="38" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="43" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="43" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="53" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="54" />
     </HighScores>
   </Level2>
   <Level3>
@@ -90,10 +90,10 @@
     <TimeLimit value="120" />
     <HighScores>
       <HighScore name="IST Circle&amp;IST Rectangle" value="42" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="44" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="47" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="47" />
       <HighScore name="IST Circle&amp;IST Rectangle" value="47" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="48" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="51" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="51" />
     </HighScores>
   </Level3>
   <Level4>
@@ -120,13 +120,6 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="180" />
-    <HighScores>
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="39" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="47" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="48" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="48" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="49" />
-    </HighScores>
   </Level4>
   <Level5>
     <Description />
@@ -154,12 +147,142 @@
     <GreenElevators />
     <OrangeElevators />
     <TimeLimit value="120" />
+  </Level5>
+  <Level6>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="424" Y="680" />
+    <SquareStartingPosition X="824" Y="664" />
+    <Collectibles>
+      <Collectible X="136" Y="280" />
+      <Collectible X="1176" Y="296" />
+      <Collectible X="600" Y="312" />
+      <Collectible X="1192" Y="728" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="1064" Y="408" centered="false" height="288" width="176" />
+      <Obstacle X="232" Y="40" centered="false" height="320" width="48" />
+      <Obstacle X="520" Y="408" centered="false" height="224" width="160" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="IST Circle&amp;IST Rectangle" value="35" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="40" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="42" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="47" />
+      <HighScore name="IST Circle&amp;IST Rectangle" value="48" />
+    </HighScores>
+  </Level6>
+  <Level7>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="104" Y="72" />
+    <SquareStartingPosition X="1144" Y="184" />
+    <Collectibles>
+      <Collectible X="392" Y="88" />
+      <Collectible X="888" Y="88" />
+      <Collectible X="664" Y="88" />
+      <Collectible X="1176" Y="408" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle X="40" Y="504" centered="false" height="48" width="944" />
+    </GreenObstacles>
+    <BlackObstacles>
+      <Obstacle X="984" Y="504" centered="false" height="48" width="256" />
+      <Obstacle X="1000" Y="264" centered="false" height="48" width="240" />
+      <Obstacle X="40" Y="152" centered="false" height="48" width="160" />
+      <Obstacle X="296" Y="40" centered="false" height="96" width="48" />
+      <Obstacle X="952" Y="40" centered="false" height="144" width="48" />
+    </BlackObstacles>
+    <YellowObstacles>
+      <Obstacle X="1080" Y="312" centered="false" height="192" width="48" />
+    </YellowObstacles>
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="IST Circle&amp;IST Rectangle" value="29" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="35" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="36" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="36" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="36" />
+    </HighScores>
+  </Level7>
+  <Level8>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="968" Y="712" />
+    <SquareStartingPosition X="504" Y="152" />
+    <Collectibles>
+      <Collectible X="88" Y="120" />
+      <Collectible X="88" Y="296" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="40" Y="232" centered="false" height="16" width="528" />
+      <Obstacle X="40" Y="200" centered="false" height="32" width="528" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
     <HighScores>
       <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="23" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
-      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="25" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="23" />
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="24" />
     </HighScores>
-  </Level5>
+  </Level8>
+  <Level9>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="344" Y="456" />
+    <SquareStartingPosition X="648" Y="472" />
+    <Collectibles>
+      <Collectible X="360" Y="104" />
+      <Collectible X="1016" Y="104" />
+      <Collectible X="328" Y="680" />
+    </Collectibles>
+    <GreenObstacles />
+    <BlackObstacles>
+      <Obstacle X="40" Y="552" centered="false" height="80" width="688" />
+      <Obstacle X="568" Y="632" centered="false" height="64" width="160" />
+      <Obstacle X="840" Y="184" centered="false" height="48" width="224" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="90" />
+    <HighScores>
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="30" />
+    </HighScores>
+  </Level9>
+  <Level10>
+    <Description />
+    <Tips />
+    <BallStartingPosition X="1064" Y="712" />
+    <SquareStartingPosition X="1048" Y="520" />
+    <Collectibles>
+      <Collectible X="1176" Y="328" />
+      <Collectible X="904" Y="328" />
+      <Collectible X="344" Y="328" />
+      <Collectible X="104" Y="328" />
+    </Collectibles>
+    <GreenObstacles>
+      <Obstacle X="40" Y="600" centered="false" height="32" width="1200" />
+    </GreenObstacles>
+    <BlackObstacles>
+      <Obstacle X="440" Y="376" centered="false" height="160" width="384" />
+    </BlackObstacles>
+    <YellowObstacles />
+    <GreenElevators />
+    <OrangeElevators />
+    <TimeLimit value="120" />
+    <HighScores>
+      <HighScore name="UCMCircleAgent&amp;UCMRectangleAgent" value="27" />
+    </HighScores>
+  </Level10>
 </Levels>
